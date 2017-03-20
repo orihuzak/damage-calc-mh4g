@@ -1,0 +1,6 @@
+ul {
+    list-style: none;
+    padding-left: 0em;
+    /* paddingは要素の中の余白 */
+    /* emはフォントサイズの大きさを１とする単位。厳密にはfont-sizeプロパティの値。 */
+}
