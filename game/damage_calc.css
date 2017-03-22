@@ -1,0 +1,76 @@
+form.card{
+    width: 250;
+    height: 150;
+    padding: 0;
+    background-color: #ff7;
+}
+
+form.card input#weapon_name{
+    width: 120;
+    height: 21;
+    margin: 0;
+    padding: 0;
+}
+
+
+form.card table, th, td{
+    border-width: 1;
+    border-style: solid;
+    border-color: black;
+    border-collapse: collapse;
+
+    font-size: 10;
+}
+
+form.card th, td{
+    width: 34;
+    margin: 0;
+    padding: 0;
+}
+
+form.card th{
+    width: 34;
+    font-weight: bold;
+}
+
+form.card td input{
+    width: 34;
+    height: 20;
+    border-width: 0;
+    margin: 0;
+    padding: 0;
+}
+
+form.card table.element, th, td{
+    border-top: 0;
+}
+
+
+/* ドロップダウンメニュー */
+
+/* 切れ味メニュー */
+
+form.card ul#sharpness_menu{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+form.card ul#sharpness_menu li{
+    float: left;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    width: 34;
+    height: 20;
+    display: block;
+}
+
+form.card ul.child{
+    display: none;
+    position: absolute;
+    margin-top: 20;
+    padding: 0;
+}
+
+
