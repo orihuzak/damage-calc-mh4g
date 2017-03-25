@@ -102,7 +102,7 @@ $(function(){
     $('.card').change(function(){
         //物理ダメージの計算
         phys_dmg = phys_dmg_calc($('#attack').val(),
-                                 $('select#weapon_type').val(),
+                                 $('select.weapon_types').val(),
                                  $('#affinity').val(),
                                  PHYS_SHARP_DICT[$('.sharpness').css('background-color')],
                                  $('#phys_weak').val());
