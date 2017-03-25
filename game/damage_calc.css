@@ -1,5 +1,9 @@
+/* 
+** カードのスタイル
+*/
+
 form.card{
-    width: 250;
+    width: 300;
     height: 150;
     padding: 0;
     background-color: #ff7;
@@ -23,18 +27,18 @@ form.card table, th, td{
 }
 
 form.card th, td{
-    width: 34;
+    width: 40;
     margin: 0;
     padding: 0;
 }
 
 form.card th{
-    width: 34;
+    width: 40;
     font-weight: bold;
 }
 
 form.card td input{
-    width: 34;
+    width: 40;
     height: 20;
     border-width: 0;
     margin: 0;
@@ -45,10 +49,9 @@ form.card table.element, th, td{
     border-top: 0;
 }
 
-
-/* ドロップダウンメニュー */
-
-/* 切れ味メニュー */
+/*
+** 斬れ味ドロップダウンメニュー
+*/
 
 form.card ul#sharpness_menu{
     list-style-type: none;
@@ -56,12 +59,13 @@ form.card ul#sharpness_menu{
     padding: 0;
 }
 
+/* 斬れ味メニューのリスト */
 form.card ul#sharpness_menu li{
     float: left;
     position: relative;
     margin: 0;
     padding: 0;
-    width: 34;
+    width: 20;
     height: 20;
     display: block;
 }
@@ -73,4 +77,50 @@ form.card ul.child{
     padding: 0;
 }
 
+/* ドロップダウンメニュー用のトリガー */
+form.card .trigger_panel{
+    position: relative;
+    display: inline-block;
+    width: 20;
+    height: 20;
+    background-color: #666;
+}
 
+form.card .trigger_panel:hover{
+    background-color: #333;
+}
+
+form.card .trigger{
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: 0 0 0 -5;
+}
+
+
+form.card .trigger:before, 
+          .trigger:after{
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    margin: auto;
+    content: "";
+    vertical-align: middle;
+    transition: .3s;
+}
+
+form.card .trigger:before{
+    left: 3;
+    width: 4;
+    height: 4;
+    border-right: 2px solid #FFF;
+    border-bottom: 2px solid #FFF;
+    transform: rotate(45deg);
+}
+
+/* トリガーの回転 */
+form.card .trigger_panel .close:before{
+    transform: rotate(225deg);
+}
