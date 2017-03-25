@@ -6,6 +6,7 @@
 //
 
 //斬れ味メニューのhtml
+// *class="色"部分はいるのか？
 const SHARPNESS_MENU = 
     '<ul id="sharpness_menu">' + 
         '<li>' +
@@ -21,6 +22,7 @@ const SHARPNESS_MENU =
         '</li>' + 
     '</ul>';
 
+//ドロップダウンメニューをわかりやすくするためのトリガー用のhtml
 const DROPDOWN_TRIGGER = '<span class="dropdown_trigger"></span>';
 
 //斬れ味の色と補正値のマップ
@@ -51,6 +53,11 @@ const ELE_SHARP_DICT = {
 // Functions
 //
 
+//小数点第２位までに丸める
+function to_2_decimal_places(n){
+    return Math.round(n * 100) / 100;
+}
+
 // 物理ダメージ計算
 function phys_dmg_calc(atk, type_coef, affi, phys_sharp, phys_weak){
     return (atk / (type_coef /100.0)) * (1.0 + 0.25 * affi / 100.0) *          phys_sharp * (phys_weak / 100);
@@ -61,17 +68,22 @@ function ele_dmg_calc(ele, ele_sharp, ele_weak){
     return (ele / 10) * ele_sharp * (ele_weak / 100);
 }
 
-//小数点第２位までに丸める
-function to_2_decimal_places(n){
-    return Math.round(n * 100) / 100;
-}
 
+// Main
 $(function(){
     card = $('.card')
 
+    //
     //斬れ味ドロップダウンメニューの追加
-    $("#phys_sharp").append(SHARPNESS_MENU);
-    $("#ele_sharp").append(SHARPNESS_MENU);
+    //
+
+    // メニューの追加
+    $(".sharpness").append(SHARPNESS_MENU);
+    
+    // メニュートリガーの追加
+    $(".sharpness").append(DROPDOWN_TRIGGER);
+
+    
 
     //ドロップダウンメニューの動きを設定。
     $('#sharpness_menu li').hover(function(){
@@ -81,10 +93,9 @@ $(function(){
     });
 
     // 切れ味のドロップダウンリストをクリックすると、
-    // <td pyhs_sharp>の背景色が変更される。
+    // その<td>の背景色が変更される。
     $('.child li').on('click', function(){
-        $('#phys_sharp').css('background-color', $(this).css('background-color'));
-        $('#ele_sharp').css('background-color', $(this).css('background-color'));
+        $('.sharpness').css('background-color', $(this).css('background-color'));
     });
 
     $('.card').change(function(){
@@ -92,12 +103,12 @@ $(function(){
         phys_dmg = phys_dmg_calc($('#attack').val(),
                                  $('select#weapon_type').val(),
                                  $('#affinity').val(),
-                                 PHYS_SHARP_DICT[$('#phys_sharp').css('background-color')],
+                                 PHYS_SHARP_DICT[$('.sharpness').css('background-color')],
                                  $('#phys_weak').val());
 
         // 属性ダメージの計算
         ele_dmg = ele_dmg_calc($('#element').val(), 
-                               ELE_SHARP_DICT[$('#ele_sharp').css('background-color')],
+                               ELE_SHARP_DICT[$('.sharpness').css('background-color')],
                                $('#ele_weak').val());
         $('#phys_dmg').text(to_2_decimal_places(phys_dmg));
         $('#ele_dmg').text(to_2_decimal_places(ele_dmg));
