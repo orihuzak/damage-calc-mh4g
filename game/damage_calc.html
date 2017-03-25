@@ -12,8 +12,8 @@
         <h1>ダメージ計算</h1>
         <main>
             <form class="card">
-                <input id="weapon_name" type="text" placeholder="武器名を入力">
-                <select id="weapon_type">
+                <input class="weapon_name" type="text" placeholder="武器名を入力">
+                <select class="weapon_types">
                     <option value=480>大剣</option>
                     <option value=330>太刀</option>
                     <option value=140>片手剣</option>
@@ -72,6 +72,48 @@
                         </tr> 
                     </tbody> 
                 </table> 
+            </form>
+
+<!-- デザインの改良案 -->
+
+            <form class="card">
+                <input class="weapon_name" type="text" placeholder="武器名を入力">
+                <select class="weapon_types">
+                    <option value=480>大剣</option>
+                    <option value=330>太刀</option>
+                    <option value=140>片手剣</option>
+                    <option value=140>双剣</option>
+                    <option value=520>ハンマー</option>
+                    <option value=520>狩猟笛</option>
+                    <option value=540>スラッシュアックス</option>
+                    <option value=360>チャージアックス</option>
+                    <option value=230>ランス</option>
+                    <option value=230>ガンランス</option>
+                    <option value=130>ライトボウガン</option>
+                    <option value=150>ヘヴィボウガン</option>
+                    <option value=120>弓</option>
+                </select>
+
+                <!-- 出力ブロック -->
+                <div class="output_block">
+                    <p class="sum_of_dmg">総合：</p>
+                    <p class="phys_dmg">物理：</p>
+                    <p class="ele_dmg">属性：</p>
+                </div>
+
+                <!-- 入力ブロック -->
+                <div class="phys_block">                           
+                    <p>表示力：<input class="attack" type="text" placeholder=100 ></p>
+                    <p>会心率：<input id="affinity" type="text" placeholder=0 ></p>
+                    <p>斬れ味：<span class="sharpness"></span></p> 
+                    <p>物理肉質：<input id="phys_weak" placeholder=100 ></p>
+                    
+                </div>
+                <div class="ele_block">
+                    <p>属性値：<input id="element" type="text" placeholder=0 ></p> 
+                    <p class="sharpness">斬れ味：</p> 
+                    <p>属性肉質：<input id="ele_weak" type="text" placeholder=100 ></p>
+                </div>
             </form>
         </main>
     </body>
