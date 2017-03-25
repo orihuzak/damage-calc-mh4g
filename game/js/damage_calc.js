@@ -22,8 +22,8 @@ const SHARPNESS_MENU =
         '</li>' + 
     '</ul>';
 
-//ドロップダウンメニューをわかりやすくするためのトリガー用のhtml
-const DROPDOWN_TRIGGER = '<span class="dropdown_trigger"></span>';
+//ドロップダウンメニューだとわかりやすくするためのトリガー用のhtml
+const MENU_TRIGGER = '<span class="trigger_panel"><span class="trigger"></span></span>';
 
 //斬れ味の色と補正値のマップ
 //物理補正値
@@ -78,18 +78,19 @@ $(function(){
     //
 
     // メニューの追加
-    $(".sharpness").append(SHARPNESS_MENU);
+    $('.sharpness').append(SHARPNESS_MENU);
     
     // メニュートリガーの追加
-    $(".sharpness").append(DROPDOWN_TRIGGER);
+    $('.sharpness').append(MENU_TRIGGER);
 
-    
-
-    //ドロップダウンメニューの動きを設定。
-    $('#sharpness_menu li').hover(function(){
-        $('ul:not(:animated)', this).slideDown();
-    }, function(){
-        $('ul.child', this).slideUp();
+    // 斬れ味リストとトリガーのアニメーション
+    $('.sharpness').click(function(){
+        $('.trigger', this).toggleClass('close');
+        if($('ul.child', this).is(':hidden')){
+            $('ul.child', this).slideDown(300);
+        }else{
+            $('ul.child', this).slideUp(300);
+        }
     });
 
     // 切れ味のドロップダウンリストをクリックすると、
