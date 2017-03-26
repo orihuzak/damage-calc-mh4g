@@ -77,6 +77,7 @@
 <!-- デザインの改良案 -->
 
             <form class="card">
+                <div class="left_block">
                 <input class="weapon_name" type="text" placeholder="武器名を入力">
                 <select class="weapon_types">
                     <option value=480>大剣</option>
@@ -100,19 +101,22 @@
                     <p class="phys_dmg">物理：</p>
                     <p class="ele_dmg">属性：</p>
                 </div>
+                </div>
 
                 <!-- 入力ブロック -->
-                <div class="phys_block">                           
-                    <p>表示力：<input class="attack" type="text" placeholder=100 ></p>
-                    <p>会心率：<input id="affinity" type="text" placeholder=0 ></p>
-                    <p>斬れ味：<span class="sharpness"></span></p> 
-                    <p>物理肉質：<input id="phys_weak" placeholder=100 ></p>
+                <div class="right_block">
+                    <div class="phys_block">                           
+                        <p>表示力：<input class="attack" type="text" placeholder=100 ></p>
+                        <p>会心率：<input id="affinity" type="text" placeholder=0 ></p>
+                        <p>斬れ味：<span class="sharpness"></span></p> 
+                        <p>物理肉質：<input id="phys_weak" placeholder=100 ></p>
                     
-                </div>
-                <div class="ele_block">
-                    <p>属性値：<input id="element" type="text" placeholder=0 ></p> 
-                    <p class="sharpness">斬れ味：</p> 
-                    <p>属性肉質：<input id="ele_weak" type="text" placeholder=100 ></p>
+                    </div>
+                    <div class="ele_block">
+                        <p>属性値：<input id="element" type="text" placeholder=0 ></p> 
+                        <p class="sharpness">斬れ味：</p> 
+                        <p>属性肉質：<input id="ele_weak" type="text" placeholder=100 ></p>
+                    </div>
                 </div>
             </form>
         </main>
