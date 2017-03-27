@@ -8,16 +8,16 @@
 //斬れ味メニューのhtml
 // *class="色"部分はいるのか？
 const SHARPNESS_MENU = 
-    '<ul id="sharpness_menu">' + 
+    '<ul class="sharpness_menu">' + 
         '<li>' +
             '<ul class="child">' +
-                '<li class="red" style="background-color:#FF0000"></li>' +
-                '<li class="orange" style="background-color:#FF9900"></li>' +
-                '<li class="yellow" style="background-color:#FFFF00"></li>' +
-                '<li class="green" style="background-color:#00FF00"></li>' +
-                '<li class="blue" style="background-color:#4488FF"></li>' +
-                '<li class="white" style="background-color:#FFFFFF"></li>' +
-                '<li class="purple" style="background-color:#CC44FF"></li>' +
+                '<li style="background-color:#FF0000"></li>' +
+                '<li style="background-color:#FF9900"></li>' +
+                '<li style="background-color:#FFFF00"></li>' +
+                '<li style="background-color:#00FF00"></li>' +
+                '<li style="background-color:#4488FF"></li>' +
+                '<li style="background-color:#FFFFFF"></li>' +
+                '<li style="background-color:#CC44FF"></li>' +
             '</ul>' + 
         '</li>' + 
     '</ul>';
@@ -84,19 +84,19 @@ $(function(){
     $('.sharpness').append(MENU_TRIGGER);
 
     // 斬れ味リストとトリガーのアニメーション
-    $('.sharpness').click(function(){
-        $('.trigger', this).toggleClass('close');
-        if($('ul.child', this).is(':hidden')){
-            $('ul.child', this).slideDown(300);
+    $('.sharpness_menu,.trigger_panel').click(function(){
+        $('.trigger').toggleClass('close');
+        if($('ul.child').is(':hidden')){
+            $('ul.child').slideDown(300);
         }else{
-            $('ul.child', this).slideUp(300);
+            $('ul.child').slideUp(300);
         }
     });
 
     // 切れ味のドロップダウンリストをクリックすると、
     // その<td>の背景色が変更される。
     $('.child li').on('click', function(){
-        $('.sharpness').css('background-color', $(this).css('background-color'));
+        $('.sharpness_menu').css('background-color', $(this).css('background-color'));
     });
 
     $('.card').change(function(){
