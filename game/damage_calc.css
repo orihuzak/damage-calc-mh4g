@@ -3,42 +3,11 @@
 */
 
 form.card{
-    width: 300;
-    height: 200;
+    width: 220;
+    height: 215;
     margin: 10;
     padding: 10 15 10 15;
     background-color: #ff7;
-}
-
-/*　仮デザインのためのCSS ************************/
-
-form.card p{
-    margin: 0;
-    padding: 0;
-    font-size: 16;
-    font-weight: bold;
-}
-
-form.card input{
-    display: inline-block;
-    width: 50;
-    margin-left: auto;
-    padding: 0;
-    font-size: 14;
-    text-align: right;
-    border-radius: 5%;
-}
-
-form.card input.weapon_name{
-    width: 140;
-    height: 24;
-    margin-bottom: 2;
-    text-align: left;
-}
-
-form.card select.weapon_types{
-    display: block;
-    margin-bottom: 4;
 }
 
 form.card div{
@@ -47,97 +16,133 @@ form.card div{
     vertical-align: top;
 }
 
+form.card p{
+    margin: 0;
+    padding: 0;
+}
+
+form.card input{
+    width: 100%;
+    margin: 0 0 2 0;
+    padding: 0 2 0 0;
+    font-size: 14;
+    text-align: right;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+form.card input:focus{
+    border-color: orange;
+    outline: 0;
+}
+
 form.card div.left_block{
-    background-color: #777;
-    margin-top: 0;
+    /*background-color: #CCC;*/
     display: inline-block;
+    width: 130;
+    height: 100%;
+    margin-right: 2;
 }
 
-form.card div.output_block{
-    background-color: #CCC;
-    display: inline-block;
-    width: 150;
-}
-
-    form.card div.output_block p{
-        font-size: 18;
+    form.card div.left_block input.weapon_name{
+        margin: 0 0 2 0;
+        text-align: left;
+        font-size: 12;
+        height: 25;
     }
 
-form.card div.right_block{
-    background-color: #afa;
+    form.card div.left_block select.weapon_types{
+        margin-top: 2;
+        margin-bottom: 2;
+        height: 20;
+    }
+
+    form.card div.left_block label{
+        /*background-color: #fff;*/
+        display: block;
+        font-size: 13;
+        text-align: left;
+        height: 20;
+        margin-top: 2;
+        border-bottom: 1px dashed turquoise;
+        border-left: 5px solid turquoise;
+    }
+
+    form.card div.left_block output{
+        /* background-color: #ccc; */
+        display: block;
+        text-align: right;
+        height: 30;
+        font-size: 23;
+        padding-right: 10; 
+        /*border-bottom: 1px solid #ccc;*/
+    }
+
+    form.card div.left_block label.sum_dmg_label{
+        height: 22;
+        font-size: 15;
+    }
+
+    form.card div.left_block output.sum_dmg{
+        font-size: 25;
+        height: 35;
+    }
+    
+
+form.card div.input_block{
+    /*background-color: #CCC;*/
     display: inline-block;
-    width: 140;
-    text-align: right;
+    width: 78;
+    margin-left: 2;
+    padding-left: 2;
+    vertical-align: left;
 }
 
-form.card div.phys_block{
-    background-color: #aaf;
-}
-
-form.card div.ele_block{
-    background-color: #faa;
-}
-
-/*********************************/
-
-form.card table, th, td{
-    border-width: 1;
-    border-style: solid;
-    border-color: black;
-    border-collapse: collapse;
-
+form.card div.input_block label{
     font-size: 10;
 }
-
-form.card th, td{
-    width: 40;
-    margin: 0;
-    padding: 0;
-}
-
-form.card th{
-    width: 40;
-    font-weight: bold;
-}
-
-form.card td input{
-    width: 40;
-    height: 20;
-    border-width: 0;
-    margin: 0;
-    padding: 0;
-}
-
-form.card table.element, th, td{
-    border-top: 0;
-}
-
 /*
 ** 斬れ味ドロップダウンメニュー
 */
 
-form.card ul#sharpness_menu{
-    display: inline-block;
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
+form.card p.sharpness{
+    margin: 0 -2 2 0;
+    width: 100%;
+    height: 19;
 }
 
-/* 斬れ味メニューのリスト */
-form.card ul#sharpness_menu li{
+form.card ul.sharpness_menu{
+    display: inline-block;
+    list-style-type: none;
+    width: 73%;
+    height: 17;
+    margin: 0;
+    padding: 0;
+    background-color: #FFF;
+    border: 1px solid #ccc;
+    border-right:none;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+form.card ul.sharpness_menu li{
     float: left;
     position: relative;
     margin: 0;
     padding: 0;
-    width: 20;
-    height: 20;
+    width: 100%;
+    height: 17;
     display: block;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
 }
 
 form.card ul.child{
     display: none;
     position: absolute;
-    margin-top: 20;
+    width: 100%;
+    height: 17;
+    margin: 0;
     padding: 0;
 }
 
@@ -145,9 +150,14 @@ form.card ul.child{
 form.card .trigger_panel{
     position: relative;
     display: inline-block;
-    width: 20;
-    height: 20;
+    width: 24%;
+    height: 17;
+    margin: 0 0 0 0;
     background-color: #666;
+    border: 1px solid #ccc;
+    border-left: none;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
 form.card .trigger_panel:hover{
@@ -159,7 +169,7 @@ form.card .trigger{
     position: absolute;
     top: 50%;
     left: 50%;
-    margin: 0 0 0 -5;
+    margin: 0 0 0 -6;
 }
 
 
