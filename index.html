@@ -2,47 +2,45 @@
 <html lang="ja">
     <head>
         <meta charset="utf-8">
-        <title>orihuzak</title>
+        <title>Kazuhiro</title>
         <script src="js/main.js"></script>
     </head>
 
     <body>
-        <h1>orihuzak</h1>
-        <div class="math">
-            <h2>数学の疑問について書く場所</h2>
-            <h3>なぜ加算よりと乗算を先に計算しなければならないのか。</h3>
-            <p>
-                例えば、<br>
-                式0: 1+2×3<br>
-                <br>
-                乗算を先に計算する場合は、<br>
-                1+(2×3)<br>
-                <br>
-                加算を先に計算する場合は、<br>
-                (1+2)×3<br>
-                と表すことにする。<br>
-                <br>
-                式1: 1+(2×3)<br>
-                式2: (1+2)×3<br>
-                式1と式2のどちらが式0と等しいかが分かればいい。<br>
-                <br>
-                ところで乗算は加算で表すことができる。<br>
-                例えば、<br>
-                1×2 = 1+1 = 2<br>
-                1×3 = 1+1+1 = 3<br>
-                2×2 = 2+2   = 4<br>
-                2×3 = 2+2+2 = 6<br>
-                <br>
-                という感じ。これを各式に適用すると<br>
-                式0: 1+2×3 = 1+2+2+2<br>
-                式1: 1+(2×3) = 1+(2+2+2)<br>
-                式2: (1+2)×3 = (1+2)+(1+2)+(1+2)<br>
-                <br>
-                上の3つの式から<br>
-                1+2×3 = 1+(2×3)<br>
-                1+2×3 ≠ (1+2)×3<br>
-                だとわかる。<br>
-            </p>
+        <h1>Kazuhiroです。</h1>
+        <!-- メニュー -->
+        <ul id="menu">
+            <li><a href="">映画の感想</a></li>
+            <li><a href="game.html">ゲームの感想</a></li>
+            <li><a href="zakki.html">その他の雑記</a></li>
+        </ul>
+        
+        <!-- プロフィール -->
+        <div id="profile">
+            <ul>
+                <li>Kazuhiro</li>
+                <li>arx.solid@gmail.com</li>
+                <li>Tokyo</li>
+                <li>
+                    <a href="https://twitter.com/kaz_uhiro">
+                        @kaz_uhiro
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- update -->
+        <div class="update">
+            更新情報と概要とリンクを載せます。
+        </div>
+
+        <!-- update -->
+        <div class="twitter_tl">
+            ツイッターのタイムラインを載せます。
+        </div>
+
+        <div class="footer">
+            <p>フッターです。</p>
         </div>
     </body>
 </html>
