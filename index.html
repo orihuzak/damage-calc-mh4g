@@ -4,47 +4,74 @@
         <meta charset="utf-8">
         <title>Kazuhiro</title>
         <script src="js/main.js"></script>
+        <link rel="stylesheet" type="text/css" href="style.css">
     </head>
 
     <body>
         <!-- ヘッダー -->
-        <div class="header">
+        <header>
             <h1>Kazuhiroです。</h1>
             <!-- メニュー -->
-            <ul id="menu">
-                <li><a href="">映画の感想</a></li>
-                <li><a href="game.html">ゲームの感想</a></li>
-                <li><a href="zakki.html">その他の雑記</a></li>
-            </ul>
-        </div>
-        
-        <!-- プロフィール -->
-        <div id="profile">
-            <ul>
-                <li>Kazuhiro</li>
-                <li>arx.solid@gmail.com</li>
-                <li>Tokyo</li>
-                <li>
-                    <a href="https://twitter.com/kaz_uhiro">
-                        @kaz_uhiro
-                    </a>
+            <nav class="menu">
+                <ul>
+                    <li><a href="">映画の感想</a></li>
+                    <li><a href="game.html">ゲームの感想</a></li>
+                    <li><a href="zakki.html">その他の雑記</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <ul class="cards">
+                <li class="card">
+                    <time>2017-05-27</time>
+                    <article>
+                        <h3>カードの見出しです。</h3>
+                        <p>本文です。本文です。本文です。本文です。本文です。本文です。本文です。本文です。本文です。本文です。本文です。本文です。本文です。本文です。本文です。本文です。本文です。本文です。本文です。本文です。本文です。本文です。本文です。本文です。</p>
+                        <ul class="tags">
+                            <li>記事のタグです。</li>
+                        </ul>
+                    </article>
+                </li>
+                
+                <!-- プロフィール -->
+                <li class="card">
+                    <time>2017-05-27</time>
+                    <article>
+                        <h3>プロフィール</h3>
+                        <ul>
+                            <li>Kazuhiro</li>
+                            <li>arx.solid@gmail.com</li>
+                            <li>Tokyo</li>
+                            <li>
+                                <a href="https://twitter.com/kaz_uhiro">
+                                    @kaz_uhiro
+                                </a>
+                            </li>
+                        </ul>
+                        <ul class="tags">
+                            <li>プロフィール</li>
+                        </ul>
+                    </article>
                 </li>
             </ul>
-        </div>
 
-        <!-- update -->
-        <div class="update">
-            更新情報と概要とリンクを載せます。
-        </div>
+        </main>
 
-        <!-- update -->
-        <div class="twitter_tl">
+
+        
+
+
+
+
+        <!-- Twitter timeline -->
+        <section class="twitter_tl">
             ツイッターのタイムラインを載せます。
-        </div>
+        </section>
 
         <!-- フッター -->
-        <div class="footer">
+        <footer>
             <p>フッターです。</p>
-        </div>
+        </footer>
     </body>
 </html>

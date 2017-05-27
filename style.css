@@ -1,0 +1,83 @@
+/* 共通の設定 *****************************/
+*{
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    text-align: center;
+}
+
+main{
+    font-size: 0px;
+}
+
+ul{
+    list-style: none;
+}
+
+a{
+    text-decoration: none;
+    color: blue;
+}
+
+a:hover{
+    color: orange;
+}
+
+
+/* ヘッダー ******************************/
+h1{
+}
+
+/* メニュー ******************************/
+nav.menu{
+    text-align: right;
+}
+
+nav.menu li{
+    display: inline-block;
+}
+
+nav.menu li a{
+    padding: 5px 10px;
+    border-bottom: 2px solid #500E17;
+    
+    font-size: 15px;
+    color: #fff;
+    display: block;
+    background: #5F7EB2;
+}
+
+nav.menu li a:hover{
+    border-bottom: 2px solid #D04255;
+}
+
+/* カード ******************************/
+ul.cards li.card{
+    display: inline-grid;
+    width: 300px;
+    height: auto;
+    position: relative;
+    margin-top: 10px;
+    margin-left: 10px;
+
+    font-size: 14px;
+    text-align: left;
+    vertical-align: top;
+    background: yellow;
+}
+
+li.card time{
+    height: 15px;
+}
+
+ul.tags{
+    font-size: 10px;
+    bottom: 0px;
+}
+
+ul.tags li{
+    display: inline-block;
+}
+
