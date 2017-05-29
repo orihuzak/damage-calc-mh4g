@@ -9,7 +9,6 @@ body{
 }
 
 main{
-    font-size: 0px;
 }
 
 ul{
@@ -33,10 +32,13 @@ h1{
 /* メニュー ******************************/
 nav.menu{
     text-align: right;
+    font-size: 0;
 }
 
 nav.menu li{
     display: inline-block;
+    margin-top: 5px;
+    margin-right: 5px;
 }
 
 nav.menu li a{
@@ -54,6 +56,10 @@ nav.menu li a:hover{
 }
 
 /* カード ******************************/
+ul.cards{
+    font-size: 0px;
+}
+
 ul.cards li.card{
     display: inline-grid;
     width: 300px;
@@ -61,6 +67,9 @@ ul.cards li.card{
     position: relative;
     margin-top: 10px;
     margin-left: 10px;
+    padding: 10px 10px 10px 10px;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
 
     font-size: 14px;
     text-align: left;
@@ -69,7 +78,8 @@ ul.cards li.card{
 }
 
 li.card time{
-    height: 15px;
+    /*height: 15px;*/
+    color: gray;
 }
 
 ul.tags{
