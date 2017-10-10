@@ -37,27 +37,35 @@
                     </select>
                 
                     <label class="sum_dmg_label">総合ダメージ</label>
-                    <output class="sum_dmg">100</output>
+                    <output class="sum_dmg" value=0></output>
                     <label class="dmg_label">物理ダメージ</label>
-                    <output class="phys_dmg">100</output>
+                    <output class="phys_dmg" value=0></output>
                     <label class="dmg_label">属性ダメージ</label>
-                    <output class="ele_dmg">100</output>
+                    <output class="ele_dmg" value=0></output>
                 </div>
 
                 <!-- 入力ブロック -->
                 <div class="input_block">
                     <label>攻撃力</label>
-                    <input class="attack" type="text" placeholder=100 >
-                    <label>属性力</label>
-                    <input class="element" type="text" placeholder=0 >
+                    <input class="attack" type="number" value=100 >
+                    <label>属性攻撃力</label>
+                    <input class="element" type="number" value=0 >
                     <label>会心率（％）</label>
-                    <input class="affinity" type="text" placeholder=0 >
+                    <input class="affinity" type="number" value=0 >
                     <label>斬れ味</label>
-                    <p class="sharpness"></p>
+                    <select class="sharpness">
+                        <option>赤</option>
+                        <option>橙</option>
+                        <option>黄</option>
+                        <option>緑</option>
+                        <option>青</option>
+                        <option>白</option>
+                        <option>紫</option>
+                    </select>
                     <label>物理肉質（％）</label>
-                    <input class="phys_weak" placeholder=100 >
+                    <input class="phys_weak" type="number" value=100 >
                     <label>属性肉質（％）</label>
-                    <input class="ele_weak" type="text" placeholder=100 >
+                    <input class="ele_weak" type="number" value=100 >
                 </div>
             </form>
                         <ul class="tags">

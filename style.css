@@ -29,38 +29,12 @@ a:hover{
 h1{
 }
 
-/* メニュー ******************************/
-nav.menu{
-    text-align: right;
-    font-size: 0;
-}
-
-nav.menu li{
-    display: inline-block;
-    margin-top: 5px;
-    margin-right: 5px;
-}
-
-nav.menu li a{
-    padding: 5px 10px;
-    border-bottom: 2px solid #500E17;
-    
-    font-size: 15px;
-    color: #fff;
-    display: block;
-    background: #5F7EB2;
-}
-
-nav.menu li a:hover{
-    border-bottom: 2px solid #D04255;
-}
-
 /* カード ******************************/
-ul.cards{
+.cards{
     font-size: 0px;
 }
 
-ul.cards li.card{
+.card{
     display: inline-grid;
     width: 300px;
     height: auto;
@@ -77,30 +51,21 @@ ul.cards li.card{
     background: yellow;
 }
 
-li.card time{
+.card time{
     /*height: 15px;*/
     color: gray;
 }
 
-ul.tags{
+.tags{
     font-size: 10px;
     bottom: 0px;
 }
 
-ul.tags li{
+.tags li{
     display: inline-block;
 }
 
 /* .simのスタイル *************************************/
-
-.sim{
-    width: 220;
-    height: 215;
-    margin: 10;
-    padding: 10 15 10 15;
-    background-color: #ff7;
-}
-
 .sim div{
     margin: 0;
     padding: 0;
@@ -190,102 +155,7 @@ ul.tags li{
 }
 
 .sim div.input_block label{
+    display: block;
     font-size: 10;
 }
-/*
-** 斬れ味ドロップダウンメニュー
-*/
 
-.sim p.sharpness{
-    margin: 0 -2 2 0;
-    width: 100%;
-    height: 19;
-}
-
-.sim ul.sharpness_menu{
-    display: inline-block;
-    list-style-type: none;
-    width: 73%;
-    height: 17;
-    margin: 0;
-    padding: 0;
-    background-color: #FFF;
-    border: 1px solid #ccc;
-    border-right:none;
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-}
-
-.sim ul.sharpness_menu li{
-    float: left;
-    position: relative;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 17;
-    display: block;
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-}
-
-.sim ul.child{
-    display: none;
-    position: absolute;
-    width: 100%;
-    height: 17;
-    margin: 0;
-    padding: 0;
-}
-
-/* ドロップダウンメニュー用のトリガー */
-.sim .trigger_panel{
-    position: relative;
-    display: inline-block;
-    width: 24%;
-    height: 17;
-    margin: 0 0 0 0;
-    background-color: #666;
-    border: 1px solid #ccc;
-    border-left: none;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-}
-
-.sim .trigger_panel:hover{
-    background-color: #333;
-}
-
-.sim .trigger{
-    display: block;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: 0 0 0 -6;
-}
-
-
-.sim .trigger:before, 
-          .trigger:after{
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    margin: auto;
-    content: "";
-    vertical-align: middle;
-    transition: .3s;
-}
-
-.sim .trigger:before{
-    left: 3;
-    width: 4;
-    height: 4;
-    border-right: 2px solid #FFF;
-    border-bottom: 2px solid #FFF;
-    transform: rotate(45deg);
-}
-
-/* トリガーの回転 */
-.sim .trigger_panel .close:before{
-    transform: rotate(225deg);
-}

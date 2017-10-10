@@ -22,46 +22,25 @@ const WEAPON_TYPES = {
 //斬れ味の色と補正値のマップ
 //物理補正値
 const PHYS_SHARP_DICT = {
-    'rgb(255, 0, 0)'    : 0.5, //赤
-    'rgb(255, 153, 0)'  : 0.75, //橙
-    'rgb(255, 255, 0)'  : 1.0, //黄
-    'rgb(0, 255, 0)'    : 1.05, //緑
-    'rgb(68, 136, 255)' : 1.2, //青
-    'rgb(255, 255, 255)': 1.32, //白
-    'rgb(204, 68, 255)' : 1.45 //紫
+    '赤' : 0.5,
+    '橙' : 0.75,
+    '黄' : 1.0,
+    '緑' : 1.05,
+    '青' : 1.2,
+    '白' : 1.32,
+    '紫' : 1.45
 };
 
 //属性補正値
 const ELE_SHARP_DICT = {
-    'rgb(255, 0, 0)'    : 0.25, //赤
-    'rgb(255, 153, 0)'  : 0.5, //橙
-    'rgb(255, 255, 0)'  : 0.75, //黄
-    'rgb(0, 255, 0)'    : 1.0, //緑
-    'rgb(68, 136, 255)' : 1.0625, //青
-    'rgb(255, 255, 255)': 1.125, //白
-    'rgb(204, 68, 255)' : 1.2 //紫
+    '赤' : 0.25,
+    '橙' : 0.5,
+    '黄' : 0.75,
+    '緑' : 1.0,
+    '青' : 1.0625,
+    '白' : 1.125,
+    '紫' : 1.2
 };
-
-//斬れ味メニューのhtml
-const SHARPNESS_MENU = 
-    '<ul class="sharpness_menu">' + 
-        '<li>' +
-            '<ul class="child">' +
-                '<li style="background-color:#FF0000"></li>' +
-                '<li style="background-color:#FF9900"></li>' +
-                '<li style="background-color:#FFFF00"></li>' +
-                '<li style="background-color:#00FF00"></li>' +
-                '<li style="background-color:#4488FF"></li>' +
-                '<li style="background-color:#FFFFFF"></li>' +
-                '<li style="background-color:#CC44FF"></li>' +
-            '</ul>' + 
-        '</li>' + 
-    '</ul>';
-
-//ドロップダウンメニューだとわかりやすくするためのトリガー用のhtml
-const MENU_TRIGGER = '<span class="trigger_panel"><span class="trigger"></span></span>';
-
-
 
 //
 // Functions
@@ -87,55 +66,30 @@ function ele_dmg_calc(ele, ele_sharp, ele_weak){
 
 // Main
 $(function(){
-    card = $('.card')
-
-    //
-    //斬れ味ドロップダウンメニューの追加
-    //
-
-    // メニューの追加
-    $('.sharpness').append(SHARPNESS_MENU);
-    
-    // メニュートリガーの追加
-    $('.sharpness').append(MENU_TRIGGER);
-
-    // 斬れ味リストとトリガーのアニメーション
-    $('.sharpness_menu,.trigger_panel').click(function(){
-        $('.trigger').toggleClass('close');
-        if($('ul.child').is(':hidden')){
-            $('ul.child').slideDown(300);
-        }else{
-            $('ul.child').slideUp(300);
-        }
-    });
-
-    // 切れ味のドロップダウンリストをクリックすると、
-    // ul.sharpness_menuの背景色が変更される。
-    $('.child li').on('click', function(){
-        $('.sharpness_menu').css('background-color', $(this).css('background-color'));
-    });
-
     // 計算と出力
-    $('.card').on('click blur keydown keyup keypress change', function(){
+    $('.sim').on('click blur keydown keyup keypress change', function(){
+        //呼び出しの確認　あとで消す
+        console.log($('.sharpness option:selected').text());
+
         //物理ダメージの計算
         phys_dmg = phys_dmg_calc($('.attack').val(),
-                                 WEAPON_TYPES[$('select.weapon_types option:selected').text()],
+                                 WEAPON_TYPES[$('.weapon_types option:selected').text()],
                                  $('.affinity').val(),
-                                 PHYS_SHARP_DICT[$('.sharpness_menu').css('background-color')],
+                                 PHYS_SHARP_DICT[$('.sharpness option:selected').text()],
                                  $('.phys_weak').val());
 
         // 属性ダメージの計算
         ele_dmg = ele_dmg_calc($('.element').val(), 
-                               ELE_SHARP_DICT[$('.sharpness_menu').css('background-color')],
+                               ELE_SHARP_DICT[$('.sharpness option:selected').text()],
                                $('.ele_weak').val());
         
         //計算結果の出力
         // 物理と属性ダメは、表示ために小数点第2位までで四捨五入
-        $('.phys_dmg').text(to_2_decimal_places(phys_dmg));
-        $('.ele_dmg').text(to_2_decimal_places(ele_dmg));
+        $('.phys_dmg').val(to_2_decimal_places(phys_dmg));
+        $('.ele_dmg').val(to_2_decimal_places(ele_dmg));
 
         //物理ダメと属性ダメを合算後に小数点以下を切り捨て
-        $('.sum_dmg').text(Math.floor(phys_dmg + ele_dmg));
+        $('.sum_dmg').val(Math.floor(phys_dmg + ele_dmg));
     });
 });
 
