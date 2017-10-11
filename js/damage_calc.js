@@ -1,6 +1,12 @@
 //ダメージ計算ページのjs
 //jsのtextには''を使う。html内は""を使う。
 
+/*** 用語
+倍率: magnification→magn
+係数: coefficient→coef
+***/
+
+
 //
 // Constants
 //
@@ -46,15 +52,20 @@ const ELE_SHARP_DICT = {
 // Functions
 //
 
-//小数点第２位までに丸める
+// 小数点第２位までに丸める
 function to_2_decimal_places(n){
     return Math.round(n * 100) / 100;
 }
 
+// 武器倍率の計算
+function weapon_magn(atk, weapon_coef){
+    return (atk / weapon_coef);
+}
+
 // 物理ダメージ計算
-// (攻撃力/武器係数) * 会心期待値 * 斬れ味 * (物理肉質/100)
-function phys_dmg_calc(atk, type_coef, affi, phys_sharp, phys_weak){
-    return (atk / type_coef) * (1.0 + 0.25 * affi / 100.0) *          phys_sharp * (phys_weak / 100);
+// 武器倍率 * 会心期待値 * 斬れ味 * (物理肉質/100)
+function phys_dmg_calc(atk, weapon_coef, affi, phys_sharp, phys_weak){
+    return weapon_magn(atk, weapon_coef) * (1.0 + 0.25 * affi / 100.0) * phys_sharp * (phys_weak / 100);
 }
 
 // 属性ダメージ計算
@@ -68,9 +79,6 @@ function ele_dmg_calc(ele, ele_sharp, ele_weak){
 $(function(){
     // 計算と出力
     $('.sim').on('click blur keydown keyup keypress change', function(){
-        //呼び出しの確認　あとで消す
-        console.log($('.sharpness option:selected').text());
-
         //物理ダメージの計算
         phys_dmg = phys_dmg_calc($('.attack').val(),
                                  WEAPON_TYPES[$('.weapon_types option:selected').text()],

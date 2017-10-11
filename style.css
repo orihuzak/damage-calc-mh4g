@@ -8,9 +8,6 @@ body{
     text-align: center;
 }
 
-main{
-}
-
 ul{
     list-style: none;
 }
@@ -66,65 +63,51 @@ h1{
 }
 
 /* .simのスタイル *************************************/
-.sim div{
-    margin: 0;
-    padding: 0;
-    vertical-align: top;
+.sim label{
+    display: block;
 }
 
-.sim p{
-    margin: 0;
-    padding: 0;
+
+
+/* .inputセクションのスタイル **************************/
+.input{
+    /*background-color: #CCC;*/
+    width: 130;
+    margin-right: 2;
+    vertical-align: left;
 }
 
-.sim input{
-    width: 100%;
-    margin: 0 0 2 0;
-    padding: 0 2 0 0;
+.input input{
+    display: block;
     font-size: 14;
     text-align: right;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
 
-.sim input:focus{
+.input input:focus{
     border-color: orange;
     outline: 0;
 }
 
-.sim div.left_block{
-    /*background-color: #CCC;*/
-    display: inline-block;
-    width: 130;
-    height: 100%;
-    margin-right: 2;
+.input input.weapon_name{
+    text-align: left;
+    padding-left: 5px;
+} 
+
+/* .resultセクションのスタイル **************************/
+.result label{
+    /*background-color: #fff;*/
+    display: block;
+    font-size: 13;
+    text-align: left;
+    height: 20;
+    margin-top: 10px;
+    border-bottom: 1px dashed turquoise;
+    border-left: 5px solid turquoise;
 }
 
-    .sim div.left_block input.weapon_name{
-        margin: 0 0 2 0;
-        text-align: left;
-        font-size: 12;
-        height: 25;
-    }
-
-    .sim div.left_block select.weapon_types{
-        margin-top: 2;
-        margin-bottom: 2;
-        height: 20;
-    }
-
-    .sim div.left_block label{
-        /*background-color: #fff;*/
-        display: block;
-        font-size: 13;
-        text-align: left;
-        height: 20;
-        margin-top: 2;
-        border-bottom: 1px dashed turquoise;
-        border-left: 5px solid turquoise;
-    }
-
-    .sim div.left_block output{
+    .result output{
         /* background-color: #ccc; */
         display: block;
         text-align: right;
@@ -134,28 +117,12 @@ h1{
         /*border-bottom: 1px solid #ccc;*/
     }
 
-    .sim div.left_block label.sum_dmg_label{
+    .result label.sum_dmg_label{
         height: 22;
         font-size: 15;
     }
 
-    .sim div.left_block output.sum_dmg{
+    .result output.sum_dmg{
         font-size: 25;
         height: 35;
     }
-    
-
-.sim div.input_block{
-    /*background-color: #CCC;*/
-    display: inline-block;
-    width: 78;
-    margin-left: 2;
-    padding-left: 2;
-    vertical-align: left;
-}
-
-.sim div.input_block label{
-    display: block;
-    font-size: 10;
-}
-

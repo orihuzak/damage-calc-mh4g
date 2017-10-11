@@ -20,57 +20,52 @@
                     <article>
                         <h3>ダメージ計算</h3>
                         <form class="sim">
-                <!-- 左ブロック -->
-                <div class="left_block">
-                    <input class="weapon_name" type="text" placeholder="武器名を入力">
-                    <select class="weapon_types">
-                        <option>大剣</option>
-                        <option>太刀</option>
-                        <option>片手剣</option>
-                        <option>双剣</option>
-                        <option>ハンマー</option>
-                        <option>狩猟笛</option>
-                        <option>スラッシュアックス</option>
-                        <option>チャージアックス</option>
-                        <option>ランス</option>
-                        <option>ガンランス</option>
-                    </select>
-                
-                    <label class="sum_dmg_label">総合ダメージ</label>
-                    <output class="sum_dmg" value=0></output>
-                    <label class="dmg_label">物理ダメージ</label>
-                    <output class="phys_dmg" value=0></output>
-                    <label class="dmg_label">属性ダメージ</label>
-                    <output class="ele_dmg" value=0></output>
-                </div>
-
-                <!-- 入力ブロック -->
-                <div class="input_block">
-                    <label>攻撃力</label>
-                    <input class="attack" type="number" value=100 >
-                    <label>属性攻撃力</label>
-                    <input class="element" type="number" value=0 >
-                    <label>会心率（％）</label>
-                    <input class="affinity" type="number" value=0 >
-                    <label>斬れ味</label>
-                    <select class="sharpness">
-                        <option>赤</option>
-                        <option>橙</option>
-                        <option>黄</option>
-                        <option>緑</option>
-                        <option>青</option>
-                        <option>白</option>
-                        <option>紫</option>
-                    </select>
-                    <label>物理肉質（％）</label>
-                    <input class="phys_weak" type="number" value=100 >
-                    <label>属性肉質（％）</label>
-                    <input class="ele_weak" type="number" value=100 >
-                </div>
-            </form>
-                        <ul class="tags">
-                            <li>サンプルのタグ</li>
-                        </ul>
+                            <!-- 入力ブロック -->
+                            <section class="input">
+                                <label>武器種</label>
+                                <select class="weapon_types">
+                                    <option>大剣</option>
+                                    <option>太刀</option>
+                                    <option>片手剣</option>
+                                    <option>双剣</option>
+                                    <option>ハンマー</option>
+                                    <option>狩猟笛</option>
+                                    <option>スラッシュアックス</option>
+                                    <option>チャージアックス</option>
+                                    <option>ランス</option>
+                                    <option>ガンランス</option>
+                                </select>
+                                <input class="weapon_name" type="text" placeholder="武器名を入力">
+                                <label>攻撃力</label>
+                                <input class="attack" type="number" value=100 >
+                                <label>属性攻撃力</label>
+                                <input class="element" type="number" value=0 >
+                                <label>会心率（％）</label>
+                                <input class="affinity" type="number" value=0 >
+                                <label>斬れ味</label>
+                                <select class="sharpness">
+                                    <option>赤</option>
+                                    <option>橙</option>
+                                    <option>黄</option>
+                                    <option>緑</option>
+                                    <option>青</option>
+                                    <option>白</option>
+                                    <option>紫</option>
+                                </select>
+                                <label>物理肉質（％）</label>
+                                <input class="phys_weak" type="number" value=100 >
+                                <label>属性肉質（％）</label>
+                                <input class="ele_weak" type="number" value=100 >
+                            </section>
+                            <section class="result">
+                                <label class="sum_dmg_label">総合ダメージ</label>
+                                <output class="sum_dmg" value=0></output>
+                                <label class="dmg_label">物理ダメージ</label>
+                                <output class="phys_dmg" value=0></output>
+                                <label class="dmg_label">属性ダメージ</label>
+                                <output class="ele_dmg" value=0></output>
+                            </section>
+                        </form>
                     </article>
                 </li>
                 
@@ -95,12 +90,6 @@
             </ul>
 
         </main>
-
-
-        
-
-
-
 
         <!-- Twitter timeline -->
         <section class="twitter_tl">
