@@ -6,6 +6,7 @@
 
 body{
     text-align: center;
+    background-color: #222;
 }
 
 ul{
@@ -45,7 +46,7 @@ h1{
     font-size: 14px;
     text-align: left;
     vertical-align: top;
-    background: yellow;
+    background-color: yellow;
 }
 
 .card time{
@@ -96,33 +97,7 @@ h1{
 } 
 
 /* .resultセクションのスタイル **************************/
-.result label{
-    /*background-color: #fff;*/
-    display: block;
-    font-size: 13;
-    text-align: left;
-    height: 20;
-    margin-top: 10px;
-    border-bottom: 1px dashed turquoise;
-    border-left: 5px solid turquoise;
+.result th,td{
+    border: 1px solid #333;
+    border-collapse: collapse;
 }
-
-    .result output{
-        /* background-color: #ccc; */
-        display: block;
-        text-align: right;
-        height: 30;
-        font-size: 23;
-        padding-right: 10; 
-        /*border-bottom: 1px solid #ccc;*/
-    }
-
-    .result label.sum_dmg_label{
-        height: 22;
-        font-size: 15;
-    }
-
-    .result output.sum_dmg{
-        font-size: 25;
-        height: 35;
-    }

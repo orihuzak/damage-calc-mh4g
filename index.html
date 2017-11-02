@@ -4,14 +4,13 @@
         <meta charset="utf-8">
         <title>ダメージ計算</title>
         <link rel="stylesheet" type="text/css" href="style.css">
-        <script src="http://code.jquery.com/jquery-3.2.0.min.js"></script>
+        <script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
         <script type="text/javascript" src="js/damage_calc.js"></script>
     </head>
 
     <body>
         <!-- ヘッダー -->
         <header>
-            <h1>ダメージ計算</h1>
         </header>
 
         <main>
@@ -53,18 +52,23 @@
                                     <option>紫</option>
                                 </select>
                                 <label>物理肉質（％）</label>
-                                <input class="phys_weak" type="number" value=100 >
+                                <input class="phys_weak" type="number" value=50 >
                                 <label>属性肉質（％）</label>
-                                <input class="ele_weak" type="number" value=100 >
+                                <input class="ele_weak" type="number" value=50 >
+                                <label>全体防御率（％）</label>
+                                <input class="defense_rate" type="number" value=100>
                             </section>
-                            <section class="result">
-                                <label class="sum_dmg_label">総合ダメージ</label>
-                                <output class="sum_dmg" value=0></output>
-                                <label class="dmg_label">物理ダメージ</label>
-                                <output class="phys_dmg" value=0></output>
-                                <label class="dmg_label">属性ダメージ</label>
-                                <output class="ele_dmg" value=0></output>
-                            </section>
+                            <button class="calc">計算</button>
+                            <table class="result">   
+                                <thead>
+                                    <tr>
+                                        <th>モーション名</th>
+                                        <th>ダメージ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
                         </form>
                     </article>
                 </li>
