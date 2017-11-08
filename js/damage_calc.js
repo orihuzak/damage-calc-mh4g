@@ -13,6 +13,60 @@
 // Constants
 //
 
+// card html
+var card_html = 
+'<li class="card">' + 
+    '<form class="sim">' +
+        '<section class="input">' +
+            '<label>武器種</label>' +
+            '<select class="weapon_types">' +                           
+                '<option>大剣</option>' +
+                '<option>太刀</option>' +
+                '<option>片手剣</option>' +
+                '<option>双剣</option>' +
+                '<option>ハンマー</option>' +
+                '<option>狩猟笛</option>' +
+                '<option>スラッシュアックス</option>' +
+                '<option>チャージアックス</option>' +
+                '<option>ランス</option>' +
+                '<option>ガンランス</option>' +
+            '</select>' +
+            '<input class="weapon_name" type="text" placeholder="武器名を入力">' +
+            '<label>攻撃力</label>' +
+            '<input class="attack" type="number" value=100 >' +
+            '<label>属性攻撃力</label>' +
+            '<input class="element" type="number" value=0 >' +
+            '<label>会心率（％）</label>' +
+            '<input class="affinity" type="number" value=0 >' +
+            '<label>斬れ味</label>' +
+            '<select class="sharpness">' +
+                '<option>赤</option>' +
+                '<option>橙</option>' +
+                '<option>黄</option>' +
+                '<option>緑</option>' +
+                '<option>青</option>' +
+                '<option>白</option>' +
+                '<option>紫</option>' +
+            '</select>' +
+            '<label>物理肉質（％）</label>' +
+            '<input class="phys_weak" type="number" value=50 >' +
+            '<label>属性肉質（％）</label>' +
+            '<input class="ele_weak" type="number" value=50 >' +
+            '<label>全体防御率（％）</label>' +
+            '<input class="defense_rate" type="number" value=100>' +
+        '</section>' +
+        '<button class="calc">計算</button>' +
+        '<table class="result">' +  
+            '<thead>' +
+                '<tr><th>モーション名</th><th>ダメージ</th></tr>' +
+            '</thead>' +
+            '<tbody>' +
+            '</tbody>' +
+        '</table>' +
+    '</form>' +
+'</li>';
+                
+
 //武器種と武器係数
 const WEAPON_COEF_DICT = {
     '大剣': 4.8,
@@ -40,7 +94,7 @@ const WEAPON_COEF_DICT = {
  *  盾突き・チャージ後斬り返し: 属性値*2.5
  *  属性強化状態の榴弾ビン 1.3倍
  *  属性強化状態の強属性ビン 1.35倍 */
-const CB_MOTION_VALUE = {
+const CB_MOTION_DICT = {
     '【剣】突進斬り': [22, 1, 0, 0, 0],
     '【剣】牽制斬り': [14, 1, 0, 0, 0],
     '【剣】チャージ後斬り返し': [17, 1, 0.02, 2.5, 1],
@@ -107,13 +161,6 @@ const ELE_SHARP_DICT = {
 //
 // Functions
 //
-
-/** 小数点第２位までに丸める */
-function to_2_decimal_places(n){
-    return Math.round(n * 100) / 100;
-}
-
-
 /** 武器倍率の計算
  * (表示攻撃力 / 武器係数) */
 function calc_weapon_magn(atk, weapon_coef){
@@ -167,7 +214,8 @@ function calc_sum_damage(defense_rate){
  *               属性ダメージ,              
  *               通常ビン爆発ダメージ,
  *               属性強化状態のビンダメージ]} */
-function calc_cb_damage(motion_dict, phials_type, weapon_magn, ele_magn,                        affinity, phys_sharp_magn, ele_sharp_magn,                              phys_weak, ele_weak, defense_rate){
+function calc_cb_damage(motion_dict, phials_type, weapon_magn, ele_magn,
+                        affinity, phys_sharp_magn, ele_sharp_magn,              phys_weak, ele_weak, defense_rate){
     let damage_dict = {};
     
     // 榴弾ビンと強属性ビンそれぞれの変数を設定
@@ -287,67 +335,99 @@ function calc_phials_damage(magn, phials_coef, num_of_explosions){
  *  モーション名|ダメージ（武器毎の強化状態のダメージ）
  *  〇〇斬り   |〇〇
  *  という感じで出力させる。*/
-function output_result(dict){
-    $('.result tbody').empty();
+function output_result(clicked_place, dict){
+    let result_place = clicked_place.next().children('.result tbody');
+    result_place.empty();
     for(motion in dict){
-        $('.result tbody').append('<tr>' + 
-                            '<td>' + motion + '</td>' +
-                            '<td>' + dict[motion][0] + 
-                            '(' + dict[motion][1] + ')' + '</td>' 
-                            + '</tr>');
+        result_place.append(
+            '<tr>' + 
+            '<td>' + motion + '</td>' +
+            '<td>' + dict[motion][0] + '(' + dict[motion][1] + ')' + '</td>' + 
+            '</tr>');
     }   
 }
+
+/* イベント ************************************************************/
 
 
 // Main
 //ページが読み込まれたら動作
 $(function(){
+    var card_id = 0;
     var motion_dict = {};
     var weapon_type;
+
+    // 「カードを追加ボタン」が押されたら発動
+    function click_add_card(){
+        let card = $(card_html);
+        card.attr('id', card_id);
+        // 新しいカードを追加
+        $('.cards').append(card);
+        // カードの中にあるボタンにイベントを設定
+        $('#' + card_id + ' .weapon_types').on('change', select_weapon_type);
+        $('#' + card_id + ' .calc').on('click', click_calc_botton);
+        // カードidを更新
+        card_id += 1;
+        console.log(card);
+        return false;
+    }
+
     // 武器種が変更されたら動く
-    $('.weapon_types').change(function(){
+    function select_weapon_type(){
+        console.log('武器種を変更');
         // 武器種依存のhtmlを削除
-        $('.phials_types').remove();
+        $(this).nextAll('.phials_types').remove();
         // 武器種を取得
-        weapon_type = $('.weapon_types option:selected').text();
-        if (weapon_type == 'チャージアックス'){
-            // チャージアックスの場合
-            // ビン選択htmlを追加
-            $('.weapon_name').after(PHIALS_TYPE_HTML);
-            // モーションデータベースを取得
-            motion_dict = CB_MOTION_VALUE;
-        };
-    });
-    
+        weapon_type = $('option:selected', this).text();
+        console.log(weapon_type);
+        switch(weapon_type){
+            case 'チャージアックス':
+                // 武器名の次にビン選択htmlを追加
+                $(this).next().after(PHIALS_TYPE_HTML);
+                // モーションデータベースを取得
+                motion_dict = CB_MOTION_DICT;
+                return false;
+        }
+
+        return false;
+    }
 
     // 計算ボタンが押されたら働く
-    $('.calc').click(function(){
+    function click_calc_botton(){
+        console.log('計算ボタン');
+        let input_section = $(this).prev();
         // 入力値を取得
         // 武器倍率を取得
-        weapon_magn = calc_weapon_magn($('.attack').val(),                                             WEAPON_COEF_DICT[weapon_type]);
+        weapon_magn = calc_weapon_magn(
+            input_section.children('.attack').val(),
+            WEAPON_COEF_DICT[weapon_type]);
         // 属性倍率を取得
-        ele_magn = calc_ele_magn($('.element').val());
+        ele_magn = calc_ele_magn(input_section.children('.element').val());
         // 会心率を取得
-        affinity = $('.affinity').val();
+        affinity = input_section.children('.affinity').val();
         // 斬れ味物理補正値を取得
-        phys_sharp_magn = PHYS_SHARP_DICT[$('.sharpness                                   option:selected').text()];
+        phys_sharp_magn = PHYS_SHARP_DICT[
+            input_section.children('.sharpness').find('option:selected').text()
+        ];
         //斬れ味属性補正値を取得
-        ele_sharp_magn = ELE_SHARP_DICT[$('.sharpness option:selected').text()];
+        ele_sharp_magn = ELE_SHARP_DICT[
+            input_section.children('.sharpness').find('option:selected').text()
+        ];
         // 物理肉質を取得
-        phys_weak = $('.phys_weak').val();
+        phys_weak = input_section.children('.phys_weak').val();
         // 属性肉質を取得
-        ele_weak = $('.ele_weak').val();
+        ele_weak = input_section.children('.ele_weak').val();
         // 防御率の取得
-        defense_rate = $('.defense_rate').val();
-        
+        defense_rate = input_section.children('.defense_rate').val();
+        let clicked_place = $(this);
         // 武器別に計算をする
         switch(weapon_type){
             case 'チャージアックス':
                 // ビンタイプを取得
-                phials_type = $('.phials_types option:selected').text();
+                phials_type = input_section.children('.phials_types').find('option:selected').text();
                 //ダメージ計算
                 sum_damage_dict = calc_cb_damage(motion_dict,
-                                                 phials_type,                                                            weapon_magn,
+                                                 phials_type,                   weapon_magn,
                                                  ele_magn,
                                                  affinity,
                                                  phys_sharp_magn,
@@ -355,18 +435,18 @@ $(function(){
                                                  phys_weak,
                                                  ele_weak,
                                                  defense_rate);
+                console.log(sum_damage_dict);
                 //計算結果の出力
-                output_result(sum_damage_dict);
+                output_result(clicked_place, sum_damage_dict);
                 break;
         }; 
-        
-        //output_result(damage);
-        // 物理と属性ダメは、表示ために小数点第2位までで四捨五入
-        //$('.phys_dmg').val(to_2_decimal_places(phys_dmg));
-        //$('.ele_dmg').val(to_2_decimal_places(ele_dmg));
-
-        //物理ダメと属性ダメを合算後に小数点以下を切り捨て
-        //$('.sum_dmg').val(Math.floor(phys_dmg + ele_dmg));
         return false;
-    });
+    }
+
+
+    // カードのクリックイベントを設定    
+    $('.add_card').on('click', click_add_card);
+    // 最初のカードを追加
+    $('.add_card').click();
 });
+

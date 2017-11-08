@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
     <head>
         <meta charset="utf-8">
@@ -15,94 +15,21 @@
 
         <main>
             <ul class="cards">
-                <li class="card">
-                    <article>
-                        <h3>ダメージ計算</h3>
-                        <form class="sim">
-                            <!-- 入力ブロック -->
-                            <section class="input">
-                                <label>武器種</label>
-                                <select class="weapon_types">
-                                    <option>大剣</option>
-                                    <option>太刀</option>
-                                    <option>片手剣</option>
-                                    <option>双剣</option>
-                                    <option>ハンマー</option>
-                                    <option>狩猟笛</option>
-                                    <option>スラッシュアックス</option>
-                                    <option>チャージアックス</option>
-                                    <option>ランス</option>
-                                    <option>ガンランス</option>
-                                </select>
-                                <input class="weapon_name" type="text" placeholder="武器名を入力">
-                                <label>攻撃力</label>
-                                <input class="attack" type="number" value=100 >
-                                <label>属性攻撃力</label>
-                                <input class="element" type="number" value=0 >
-                                <label>会心率（％）</label>
-                                <input class="affinity" type="number" value=0 >
-                                <label>斬れ味</label>
-                                <select class="sharpness">
-                                    <option>赤</option>
-                                    <option>橙</option>
-                                    <option>黄</option>
-                                    <option>緑</option>
-                                    <option>青</option>
-                                    <option>白</option>
-                                    <option>紫</option>
-                                </select>
-                                <label>物理肉質（％）</label>
-                                <input class="phys_weak" type="number" value=50 >
-                                <label>属性肉質（％）</label>
-                                <input class="ele_weak" type="number" value=50 >
-                                <label>全体防御率（％）</label>
-                                <input class="defense_rate" type="number" value=100>
-                            </section>
-                            <button class="calc">計算</button>
-                            <table class="result">   
-                                <thead>
-                                    <tr>
-                                        <th>モーション名</th>
-                                        <th>ダメージ</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </form>
-                    </article>
-                </li>
-                
-                <!-- プロフィール -->
-                <li class="card">
-                    <article>
-                        <h3>プロフィール</h3>
-                        <ul>
-                            <li>Kazuhiro</li>
-                            <li>arx.solid@gmail.com</li>
-                            <li>
-                                <a href="https://twitter.com/kaz_uhiro">
-                                    @kaz_uhiro
-                                </a>
-                            </li>
-                        </ul>
-                        <ul class="tags">
-                            <li>プロフィール</li>
-                        </ul>
-                    </article>
-                </li>
             </ul>
-
+            <button class="add_card">カードを追加</button> 
         </main>
-
-        <!-- Twitter timeline -->
-        <section class="twitter_tl">
-            ツイッターのタイムラインを載せます。
-        </section>
 
         <!-- フッター -->
         <footer>
-            <p>フッターです。</p>
+                <ul>
+                    <li>Kazuhiro</li>
+                    <li>arx.solid@gmail.com</li>
+                    <li>
+                        <a href="https://twitter.com/kaz_uhiro?lang=ja">
+                        @kaz_uhiro
+                        </a>
+                    </li>
+                </ul>
         </footer>
     </body>
 </html>
