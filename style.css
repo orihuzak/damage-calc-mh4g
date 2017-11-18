@@ -24,8 +24,7 @@ a:hover{
 
 
 /* ヘッダー ******************************/
-h1{
-}
+
 
 /* カード ******************************/
 .cards{
@@ -36,68 +35,79 @@ h1{
     display: inline-grid;
     width: 300px;
     height: auto;
-    position: relative;
     margin-top: 10px;
     margin-left: 10px;
-    padding: 10px 10px 10px 10px;
-    border-right: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
-
+    padding: 10px;
     font-size: 14px;
-    text-align: left;
-    vertical-align: top;
-    background-color: yellow;
+    vertical-align: middle;
+    color: white;
 }
 
-.card time{
-    /*height: 15px;*/
-    color: gray;
-}
-
-.tags{
-    font-size: 10px;
-    bottom: 0px;
-}
-
-.tags li{
-    display: inline-block;
-}
-
-/* .simのスタイル *************************************/
-.sim label{
+/* .inputセクションのスタイル ****************************************************/
+section.input{
     display: block;
+    font-size: 12px;
 }
 
+    .input section{
+        float: left;
+        width: 50%;
+    }
 
+    .input div{
+        text-align: right;
+    }
 
-/* .inputセクションのスタイル **************************/
-.input{
-    /*background-color: #CCC;*/
-    width: 130;
-    margin-right: 2;
-    vertical-align: left;
-}
+    .input label{
+        width: 60%;
+        text-align: left;
+        float: left;
+    }
 
-.input input{
-    display: block;
-    font-size: 14;
-    text-align: right;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
+    .input input, select{
+        width: 35%;
+        text-align: right;
+        margin-right: 5px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
 
-.input input:focus{
-    border-color: orange;
-    outline: 0;
-}
+    .weapon input:focus, select:focus{
+        border-color: orange;
+        outline: none;
+    }
 
-.input input.weapon_name{
-    text-align: left;
-    padding-left: 5px;
-} 
+    /* weaponセクション ********************************************************/
+    section.weapon{
+    }
+
+        .weapon .weapon_name{
+            width: 90%;
+            text-align: left;
+            padding-left: 5px;
+        }
+
+    /* .skillsセクション *******************************************************/
+    section.skills{
+    }
+        
+        
 
 /* .resultセクションのスタイル **************************/
+
+button{
+    width: 80px;
+}
+
 .result th,td{
     border: 1px solid #333;
+}
+
+.result{
     border-collapse: collapse;
+}
+
+.result td{
+    text-align: left;
+    font-size: 12px;
 }

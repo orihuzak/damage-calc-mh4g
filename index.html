@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang=ja>
     <head>
-        <meta charset="utf-8">
+        <meta charset=utf-8>
         <title>ダメージ計算</title>
-        <link rel="stylesheet" type="text/css" href="style.css">
-        <script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
-        <script type="text/javascript" src="js/damage_calc.js"></script>
+        <link rel=stylesheet type=text/css href=style.css>
+        <script src=http://code.jquery.com/jquery-3.2.1.min.js></script>
+        <script type=text/javascript src=js/damage_calc.js></script>
     </head>
 
     <body>
@@ -14,9 +14,245 @@
         </header>
 
         <main>
-            <ul class="cards">
+            <ul class=cards>
+                <li class=card id=0>
+                    <section class=input>
+                        <section class=weapon>
+                            <div>
+                                <label>武器種</label>
+                                <select class=weapon_types>
+                                    <option>大剣</option>
+                                    <option>太刀</option>
+                                    <option>片手剣</option>
+                                    <option>双剣</option>
+                                    <option>ハンマー</option> 
+                                    <option>狩猟笛</option> 
+                                    <option>スラッシュアックス</option> 
+                                    <option>チャージアックス</option> 
+                                    <option>ランス</option> 
+                                    <option>ガンランス</option> 
+                                </select> 
+                            </div>
+                            <div class=cob>
+                                <label>中腹ヒット</label>
+                                <select class=center_of_blade>
+                                    <option value=1>なし</option>
+                                    <option value=1.05>あり</option>
+                                </select>
+                            </div>
+                            <div class=p_type hidden>
+                                <label>ビンタイプ</label>
+                                <select class=phials_types>
+                                    <option>榴弾ビン</option>
+                                    <option>強属性ビン</option>
+                                </select>
+                            </div>
+                            <div>
+                                <input class=weapon_name type=text placeholder=武器名を入力>
+                            </div>
+                            <div>
+                                <label>攻撃力</label>
+                                <input class=attack type=number value=100> 
+                            </div> 
+                            <div> 
+                                <label>属性攻撃力</label> 
+                                <input class=element type=number value=100> 
+                            </div> 
+                            <div> 
+                                <label>会心率（％）</label> 
+                                <input class=affinity type=number value=10> 
+                            </div> 
+                            <div> 
+                                <label>斬れ味</label> 
+                                <select class=sharpness>
+                                    <option>赤</option>
+                                    <option>橙</option> 
+                                    <option>黄</option> 
+                                    <option>緑</option> 
+                                    <option>青</option> 
+                                    <option>白</option> 
+                                    <option>紫</option> 
+                                </select> 
+                            </div>
+                            <div>
+                                <label>肉質（％）</label>
+                                <input class=phys_weak type=number value=50>
+                            </div>
+                            <div>
+                                <label>耐属性（％）</label>
+                                <input class=ele_weak type=number value=20>
+                            </div>
+                            <div>
+                                <label>防御率（％）</label>
+                                <input class=defense_rate type=number value=100>
+                            </div>
+                        </section>
+                        <section class=skills>
+                            <div>
+                                <label>極限強化</label>
+                                <select class=honing>
+                                    <option value=0>なし</option>
+                                    <option value=20>あり</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>攻撃力UP</label> 
+                                <select class=atk_up> 
+                                    <option value=0>なし</option> 
+                                    <option value=10>小</option> 
+                                    <option value=15>中</option> 
+                                    <option value=20>大</option> 
+                                    <option value=25>超</option> 
+                                </select> 
+                            </div>
+                            <div>
+                                <label>フルチャージ</label>
+                                <select class=peak_performance>
+                                    <option value=0>なし</option>
+                                    <option value=20>あり</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>挑戦者</label>
+                                <select class=challenger>
+                                    <option value=0,0>なし</option>
+                                    <option value=10,10>＋１</option>
+                                    <option value=25,20>＋２</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>火事場</label>
+                                <select class=adrenaline>
+                                    <option value=1>なし</option>
+                                    <option value=1.3>＋２</option>
+                                    <option value=1.35>ネコの火事場力</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>不屈</label>
+                                <select class=fortify>
+                                    <option value=1>なし</option>
+                                    <option value=1.1>1死</option>
+                                    <option value=1.2>2死</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>砲術</label>
+                                <select class=artillery>
+                                    <option value=1,1,1>なし</option>
+                                    <option value=1.1,1.15,1.3>師</option>
+                                    <option value=1.2,1.3,1.35>王</option>
+                                    <option value=1.3,1.4,1.4>マスター</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>ネコの砲撃術</label>
+                                <select class=felyne_bomb>
+                                    <option value=1,1>なし</option>
+                                    <option value=1.1,1.15>あり</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>達人</label>
+                                <select class=expert>
+                                    <option value=0>なし</option>
+                                    <option value=10>＋１</option>
+                                    <option value=15>＋２</option>
+                                    <option value=20>＋３</option>
+                                    <option value=30>マスター</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>力の解放</label>
+                                <select class=latent_power>
+                                    <option value=0>なし</option>
+                                    <option value=30>＋１</option>
+                                    <option value=50>＋２</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>狂竜症克服</label>
+                                <select class=antivirus>
+                                    <option value=0>なし</option>
+                                    <option value=15>克服</option>
+                                    <option value=30>無我の境地</option>
+                                </select>
+                            </div>
+                            <div> 
+                                <label>単属性強化</label> 
+                                <select class=ind_ele_up> 
+                                    <option value=1,0>なし</option> 
+                                    <option value=1.05,40>＋１</option> 
+                                    <option value=1.1,60>＋２</option> 
+                                    <option value=1.15,90>＋３</option> 
+                                </select> 
+                            </div> 
+                            <div> 
+                                <label>全属性強化</label> 
+                                <select class=ele_up> 
+                                    <option value=1>なし</option>
+                                    <option value=1.1>あり</option>
+                                </select> 
+                            </div>
+                            <div>
+                                <label>会心撃【属性】</label>
+                                <select class=crit_element>
+                                    <option value=0>なし</option>
+                                    <option value=1>あり</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>痛撃</label>
+                                <select class=weakness_exploit>
+                                    <option value=0>なし</option>
+                                    <option value=5>あり</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>匠</label>
+                                <select class=handicraft>
+                                    <option value=0>なし</option>
+                                    <option value=1>あり</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>抜刀会心</label>
+                                <select class=critical_draw>
+                                    <option value=0>なし</option>
+                                    <option value=100>あり</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>抜刀減気</label>
+                                <select class=punish_draw>
+                                    <option value=0>なし</option>
+                                    <option value=5>あり</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>属性解放</label>
+                                <select class=awaken>
+                                    <option value=0>なし</option>
+                                    <option value=1>あり</option>
+                                </select>
+                            </div>
+
+                        </section>
+                    </section>
+                    <button class=calc>計算</button>
+                    <button class=add_card>カードを追加</button>
+                    <table class=result>  
+                        <thead>
+                            <tr>
+                                <th>モーション名</th>
+                                <th>ダメージ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </li>
             </ul>
-            <button class="add_card">カードを追加</button> 
         </main>
 
         <!-- フッター -->
@@ -25,7 +261,7 @@
                     <li>Kazuhiro</li>
                     <li>arx.solid@gmail.com</li>
                     <li>
-                        <a href="https://twitter.com/kaz_uhiro?lang=ja">
+                        <a href=https://twitter.com/kaz_uhiro?lang=ja>
                         @kaz_uhiro
                         </a>
                     </li>
