@@ -188,6 +188,25 @@ const GL_SHELL_TYPES = {
 }
 
 
+/** ハンマー 
+ *  {モーション名: [モーション値, ヒット数]} */
+const HAMMER_DICT = {
+    '[抜刀]振り上げ': [20, 1],
+    '横振り': [15, 1],
+    '縦振り': [42, 1],
+    '縦振り連打': [20, 1],
+    'アッパー': [90, 1],
+    '溜めI': [25, 1],
+    '溜めI追加攻撃': [20, 1],
+    '溜めII': [40, 1],
+    '溜めIII': [91, 2], // 15 + 76
+    '回転攻撃': [[20, 10], 6], // 20+10*n nはヒット数、最大6
+    'ぶんまわし': [60, 1],
+    'ジャンプ攻撃': [42, 1],
+    'ジャンプ溜めI': [65, 1],
+    'ジャンプ溜めII': [70, 1],
+    'ジャンプ溜めIII': [80, 1]
+}
 
  /** チャージアックス
   *  [モーション倍率, ヒット数, 榴弾爆発係数, 強属性爆発係数, 爆発回数] */
@@ -831,6 +850,39 @@ $(function(){
                 }
                 break;
             
+            case 'ハンマー':
+                for(m in HAMMER_DICT){
+                    if(m == '回転攻撃'){
+                        // 回転攻撃は1回転~6回転目まで１個ずつ計算
+                        let mv = HAMMER_DICT[m][0][0];
+                        for(let i = 1; i < HAMMER_DICT[m][1]+1; i++){
+                            console.log(i, mv);
+                            damage_dict[m+i] = [];
+                            // 物理ダメ
+                            damage_dict[m+i].push(
+                                mul(weapon_magn, mv / 100, affi_exp, 
+                                    phys_sharp_magn, phys_weak));
+                            // 属性ダメ
+                            damage_dict[m+i].push(
+                                mul(ele_magn, ele_sharp_magn, i,
+                                    ele_weak, crit_ele_exp));
+                            mv += HAMMER_DICT[m][0][1];
+                            
+                        }
+                    }else{
+                        damage_dict[m] = [];
+                        // 物理ダメ
+                        damage_dict[m].push(
+                            mul(weapon_magn, HAMMER_DICT[m][0]/100, affi_exp, 
+                                phys_sharp_magn, phys_weak));
+                        // 属性ダメ
+                        damage_dict[m].push(
+                            mul(ele_magn, ele_sharp_magn, HAMMER_DICT[m][1],
+                                ele_weak, crit_ele_exp));
+                    }
+                }
+                break;
+
             case 'ランス':
                 // 未実装 切断と打撃肉質のうち大きい方を計算に使う
                 for(m in LANCE_DICT){
@@ -874,7 +926,6 @@ $(function(){
                         break;
                 }
 
-                console.log(artillery_magn);
                 /** 砲撃ダメージの計算 
                  *  切捨(砲撃の基本ダメ * 切捨(切捨(砲撃術 * 猫の砲撃術) * 砲撃タイプ倍率)) + 砲撃の火ダメ
                  *  （未確定）砲撃の火ダメージ: 砲撃基本火ダメ * (未対応)耐火属性
