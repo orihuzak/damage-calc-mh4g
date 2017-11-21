@@ -72,21 +72,102 @@ const GS_DICT = {
 }
 
 
-/** チャージアックスのビン爆発係数
- *  榴弾ビン: 武器倍率*0.05
- *  高出力榴弾ビン: 武器倍率*0.10
- *  超高出力榴弾ビン: (武器倍率*0.335)*ビンの本数
- *  榴弾ビンのスタン値: 30（属性強化状態は40）
- *  強属性ビン: 属性値*3
- *  高出力強属性ビン: 属性値*4.5
- *  超高出力強属性ビン: (属性値*13.5)*ビンの本数
- *  盾突き・チャージ後斬り返し: 属性値*2.5
- *  属性強化状態の榴弾ビン 1.3倍
- *  属性強化状態の強属性ビン 1.35倍 */
+/** 太刀 
+ *  {モーション名: [モーション値, ヒット数]}
+ *  錬気ゲージ点滅: 斬れ味*1.13
+ *  白ゲージ: モーション値*1.05
+ *  黄ゲージ: モーション値*1.1
+ *  赤ゲージ: モーション値*1.3 */
+const LS_DICT = {
+    '踏込斬り': [26, 1],
+    '縦斬り': [23, 1],
+    '突き': [14, 1],
+    '斬り上げ': [18, 1],
+    '斬り下がり・左右移動斬り': [24, 1],
+    '気刃斬り1（錬気不足）': [16, 1],
+    '気刃斬り1': [28, 1],
+    '気刃斬り2': [32, 1],
+    '気刃斬り3': [60, 3], //12+14+34
+    '気刃大回転斬り': [42, 1],
+    '気刃踏込斬り(錬気不足)': [18, 1],
+    '気刃踏込斬り': [30, 1],
+    'ジャンプ斬り': [26, 1],
+    'ジャンプ気刃斬り': [30, 1],
+    'ジャンプ気刃２連斬り': [12+36, 2]
+}
 
-/* チャージアックス：（CB）のモーション名とモーション倍率のマップ
- * [モーション倍率, ヒット数, 榴弾ビン爆発係数, 属性ビン爆発係数, ビン爆発回数]*/
- 
+/** 片手剣
+ * {モーション名: [モーション値, ヒット数]} */
+const SnS_DICT = {
+    '【抜刀】突進斬り': [18, 1],
+    '斬り上げ': [14, 1],
+    '斬り下ろし': [14, 1],
+    '横斬り': [13, 1],
+    '剣盾コンボ': [30, 2], // 10+20 気絶値 15 減気値15
+    '水平斬り': [21, 1],
+    '斬り返し': [19, 1],
+    '盾攻撃': [8, 1],
+    'バックナックル': [16, 1],
+    'ガード攻撃': [14, 1],
+    '溜め斬り': [57, 2], // 20 + 37 気絶値 15 減気値25
+    'ジャンプ斬り': [20, 1],
+    'ジャンプ突進斬り': [20, 1],
+    'ジャンプ斬り上げ': [18, 1]
+}
+
+/** 双剣 
+ *  {モーション名:[0モーション値配列, 1ヒット数, 2鬼人化フラグ, 3両手モーションフラグ]} 
+ *  モーション値にかけ算を含むものは両手攻撃 
+ *  鬼人化フラグ: 通常状態のみ:0, 鬼人化でも使える:1 鬼人化専用:2
+ *  両手モーションフラグ: 通常:0, 両手:1 */
+const DB_DICT = {
+    '[抜刀]斬り払い': [[7,7,7,7], 4, 1, 1], // 28 32
+    '鬼人突進連斬':[[7,7,7,7,9,9], 6, 2, 1], // 46 52
+    '斬り上げ': [[18], 1, 1, 0], // 20
+    '二段斬り': [[8,12], 2, 0, 0], // 20 
+    '斬り返し': [[7,10], 2, 0, 0], // 17
+    '車輪斬り': [[10,12,12], 3, 1, 1], // 34 37
+    '六連斬り': [[4,8,4,8,11,11], 6, 2, 1], // 46 50 鬼人化専用
+    '右二連斬り': [[7,10], 2, 0, 0], // 17
+    '左二連斬り': [[9,12], 2, 0, 0], // 21
+    '回転斬りα': [[16,6,8], 3, 1, 0], // 30 33
+    '回転斬りβ': [[18,6,10], 3, 1, 0], // 34 37
+    '鬼人連斬': [[8,8,8,8,6,6,20,20], 6, 0, 1], // 72 
+    '乱舞': [[29,4,4,4,4,4,4,4,4,18,18], 11, 2, 1], // 97 105鬼人化専用
+    'ジャンプ二連斬り': [[10,13], 2, 1, 0], // 23 25
+    '空中回転乱舞': [[12,15,15,12], 4, 1, 0], // 54 60
+    '回転乱舞フィニッシュ': [[23,23], 2, 1, 0] // 46 52
+}
+
+/** ランス
+ *  {モーション名:モーション値}
+ *  攻撃属性: 切断
+ *  未実装 特徴:切断と打撃のうち高い方の肉質を計算に使う */
+const LANCE_DICT = {
+    '[抜刀]抜槍突き': 27,
+    '中段突き１・２': 20,
+    '中段突き３': 27,
+    '上段突き１・２': 22,
+    '上段突き３': 27,
+    'ガード突き': 20,
+    'なぎ払い': 20,
+    '盾攻撃': 14, // 気絶値 27, 減気値27
+    'ジャンプ突き': 30,
+    '突進': 16,
+    'フィニッシュ突き': 50,
+    '突進ジャンプ突き': 50,
+    '振り向き攻撃': 50,
+    'キャンセル突き': 22,
+    'カウンター突き': 50
+}
+
+/** ガンランス */
+const GL_DICT = {
+    
+}
+
+ /** チャージアックス
+  *  [モーション倍率, ヒット数, 榴弾爆発係数, 属性爆発係数, 爆発回数] */
 const CB_DICT = {
     '【剣】突進斬り': [22, 1, 0, 0, 0],
     '【剣】牽制斬り': [14, 1, 0, 0, 0],
@@ -115,13 +196,6 @@ const CB_DICT = {
     '【斧】高出力属性解放斬り（ビン無）': [40, 1, 0, 0, 0],
     '【斧】超高出力属性解放斬り（ビン無）':[17+90, 2, 0, 0, 0]
 };
-
-const PHIALS_TYPE_HTML = '<div>\
-                            <select class=phials_types>\
-                            <option>榴弾ビン</option>\
-                            <option>強属性ビン</option>\
-                            </select>\
-                          </div>';
 
 
 //斬れ味の色と補正値のマップ
@@ -195,6 +269,18 @@ function mul_array(x){
     return y;
 }
 
+/** 配列の各要素に引数を乗算して返す
+ *  arguments:
+ *      x: Array
+ *      y: Number */
+function mul_elements(x, y){
+    let i;
+    for(i = 0; i < x.length; i++){
+        x[i] *= y;
+    }
+    return x;
+}
+
 
 /** 武器倍率の計算
  * (表示攻撃力 / 武器係数) */
@@ -214,23 +300,6 @@ function calc_affi_exp(affi, magn=1.25){
     return (1.0 + (magn - 1.0) * affi / 100);
 }
 
-/** 合計ダメージの計算
- *  arguments:
- *      defense_rate,
- *      phys_dmg,
- *      ele_dmg,
- *      others
- *  端数切捨て（端数切捨て(物理ダメージ + 属性ダメージ) * 防御率 / 100) */
-function calc_sum_damage(){
-    var sum_dmg = 0,
-        i;
-    for(i = 1; i < arguments.length; i++){
-        sum_dmg += arguments[i];
-    }
-    return Math.floor(Math.floor(sum_dmg) * arguments[0]);
-}
-
-
 /** 計算結果のoutput
  *  モーション名|ダメージ（武器毎の強化状態のダメージ）
  *  〇〇斬り   |〇〇
@@ -238,11 +307,11 @@ function calc_sum_damage(){
 function output_result(clicked_place, dict){
     let result_place = clicked_place.nextAll().children('.result tbody');
     result_place.empty();
-    for(motion in dict){
+    for(k in dict){
         result_place.append(
             '<tr>' + 
-            '<td>' + motion + '</td>' +
-            '<td>' + dict[motion] + '</td>' +
+            '<td>' + k + '</td>' +
+            '<td>' + dict[k] + '</td>' +
             '</tr>');
     }   
 }
@@ -292,19 +361,32 @@ $(function(){
         console.log('武器種を変更');
         weapon_class = $(this).parents().find('.weapon');
         
-        // 武器種依存のhtmlを削除
+        // 武器種依存のhtmlを隠す
         weapon_class.find('.cob').hide();
         weapon_class.find('.p_type').hide();
+        weapon_class.find('.boost_mode').hide();
+        weapon_class.find('.sb_full').hide();
+        weapon_class.find('.sb_color').hide();
+        weapon_class.find('.demon_mode').hide();
         // 武器種ごとに処理
         switch($('option:selected', this).text()){
             case '大剣':
-            case '太刀':
                 // 中腹ヒットhtmlを表示
                 weapon_class.find('.cob').show();
                 break;
+            case '太刀':
+                // 中腹ヒットhtmlを表示
+                weapon_class.find('.cob').show();
+                weapon_class.find('.sb_full').show();
+                weapon_class.find('.sb_color').show();
+                break;
             case 'チャージアックス':
-                // 武器名の次にビン選択htmlを追加
+                // ビン選択と属性強化状態のselect
                 weapon_class.find('.p_type').show();
+                weapon_class.find('.boost_mode').show();
+                break;
+            case '双剣':
+                weapon_class.find('.demon_mode').show();
                 break;
         }
 
@@ -508,7 +590,14 @@ $(function(){
         }
         
         /* その他スキル *********************************************************/
-        // あとでやる
+        /** 未実装スキル
+         *  匠
+         *  抜刀会心
+         *  抜刀減気
+         *  属性解放
+         *  薬・護符・爪
+         *  演奏効果
+         */
 
         // 加算スキルを武器倍率に加算
         weapon_magn += sum_array(sum_skills);
@@ -526,15 +615,15 @@ $(function(){
         ele_weak /= 100;
         defense_rate /= 100;
 
-        // damage_dict = {モーション名: [物理ダメージ, 属性ダメージ]}
+        // damage_dict = {モーション名: [物理ダメージ, 属性ダメージ, etc...]}
         let damage_dict = {};
-        // sum_damage_dict = {モーション名: 合計ダメージ}
-        let sum_damage_dict = {};
+        
         // 武器種別に計算をする
         switch(weapon_type){
             case '大剣':
-                // 中腹ヒット倍率を取得
-                let center_of_blade =  Number(input_section.find('.center_of_blade option:selected').val());
+                // 中腹ヒット倍率を斬れ味補正にかける
+                phys_sharp_magn *= Number(input_section
+                    .find('.center_of_blade option:selected').val());
                 for(motion in GS_DICT){
                     damage_dict[motion] = [];
             
@@ -576,174 +665,276 @@ $(function(){
             
                     // 物理ダメージ計算
                     damage_dict[motion].push(
-                        mul(weapon_magn, motion_val, center_of_blade, affi_exp,     phys_sharp_magn, phys_weak));
+                        mul(weapon_magn, motion_val, affi_exp,     phys_sharp_magn, phys_weak));
             
                     // 属性ダメージ計算
                     damage_dict[motion].push(
                         mul(element, ele_sharp_magn, ele_weak, crit_ele_exp));
                 }
+                break;
+
+            case '太刀':
+                // 斬れ味に乗算 中腹ヒットと錬気ゲージ点滅
+                phys_sharp_magn *= Number(input_section
+                .find('.center_of_blade option:selected').val());
+                phys_sharp_magn *= Number(input_section
+                    .find('.sb_full select option:selected').val());
                 
-                // 物理と属性を加算
-                // sum_damage_dict = {モーション名: 合計ダメージ}
-                for(m in damage_dict){
-                    // 合計ダメージを計算
-                    sum_damage_dict[m] = Math.floor(
-                        Math.floor(sum_array(damage_dict[m])) * defense_rate);
+                // 錬気ゲージ色倍率 モーションに乗算（端数切捨）
+                let sb_color = Number(input_section
+                    .find('.sb_color select option:selected').val());
+                
+                // モーションごとにダメージを計算
+                for(m in LS_DICT){
+                    damage_dict[m] = [];
+                    // 錬気ゲージ色倍率をモーションに掛ける
+                    let motion_val = Math.floor(LS_DICT[m][0] * sb_color) / 100;
+
+                    // 物理ダメ計算
+                    damage_dict[m].push(
+                        mul(weapon_magn, motion_val, affi_exp, 
+                            phys_sharp_magn, phys_weak));
+
+                    // 属性ダメ計算
+                    damage_dict[m].push(
+                        mul(ele_magn, ele_sharp_magn, LS_DICT[m][1], ele_weak, crit_ele_exp));
+                }
+                break;
+            
+            case '片手剣':
+                // 片手剣は常時は斬れ味補正 *1.06
+                phys_sharp_magn *= 1.06;
+                for(m in SnS_DICT){
+                    damage_dict[m] = [];
+                    let motion_val = SnS_DICT[m][0] / 100;
+
+                    // 溜め斬りは属性値 * 2
+                    let element;
+                    if(m == '溜め斬り'){
+                        element = ele_magn * 2;
+                    }else{
+                        element = ele_magn;
+                    }
+                    
+
+                    // 物理ダメージ
+                    damage_dict[m].push(
+                        mul(weapon_magn, motion_val, affi_exp, 
+                            phys_sharp_magn, phys_weak));
+
+                    // 属性ダメージ
+                    damage_dict[m].push(
+                        mul(element, ele_sharp_magn, SnS_DICT[m][1], ele_weak, crit_ele_exp));
+                }
+                break;
+            
+            case '双剣':
+                // 鬼人化時: モーション値*1.15（端数切捨て）(鬼人強化では変化なし)
+                // 両手攻撃: 属性値*0.7 (モーション値に乗算を含むもの)
+                let demon = input_section
+                    .find('.demon_mode select option:selected').val();
+                let demon_flag = input_section
+                    .find('.demon_mode select option:selected').text();
+                
+                switch(demon_flag){
+                    // 鬼人化状態のダメージ
+                    case 'あり':
+                        for(m in DB_DICT){
+                            damage_dict[m] = [];
+                            let element;
+                            // 鬼人化専用と鬼人化共用のモーションに*1.15(切捨)
+                            if ((DB_DICT[m][2] == 1) || (DB_DICT[m][2] == 2)){
+                                let m_arr = [],
+                                    i;
+                                for(i = 0; i < DB_DICT[m][0].length; i++){
+                                    m_arr.push(Math.floor(DB_DICT[m][0][i] * 1.15));
+                                }
+                                let motion_val = sum_array(m_arr) / 100;
+                                console.log(m, sum_array(DB_DICT[m][0]), motion_val);
+                                // 物理
+                                damage_dict[m].push(
+                                    mul(weapon_magn, motion_val, affi_exp,
+                                        phys_sharp_magn, phys_weak));
+                                // 属性 両手モーションなら属性値*0.7
+                                if(DB_DICT[m][3] == 1){
+                                    element = ele_magn * 0.7;
+                                }else{
+                                    element = ele_magn;
+                                }
+                                damage_dict[m].push(
+                                    mul(element, ele_sharp_magn, DB_DICT[m][1],     ele_weak, crit_ele_exp));
+                            }
+                        }
+                        break;
+                    case 'なし':
+                        for(m in DB_DICT){
+                            damage_dict[m] = [];
+                            let element;
+                            let motion_val = sum_array(DB_DICT[m][0]) / 100;
+                            // 通常状態のみと鬼人化共用のモーションだけ
+                            if ((DB_DICT[m][2] == 0) || (DB_DICT[m][2] == 1)){
+                                damage_dict[m].push(
+                                    mul(weapon_magn, motion_val, affi_exp,
+                                        phys_sharp_magn, phys_weak));
+                                // 属性 両手モーションは属性値*0.7
+                                if(DB_DICT[m][3] == 1){
+                                    element = ele_magn * 0.7;
+                                }else{
+                                    element = ele_magn;
+                                }
+                                damage_dict[m].push(
+                                    mul(element, ele_sharp_magn, DB_DICT[m][1],     ele_weak, crit_ele_exp));
+                            }
+                        }
+                        break;
+                }
+                break;
+            
+            case 'ランス':
+                // 未実装 切断と打撃肉質のうち大きい方を計算に使う
+                for(m in LANCE_DICT){
+                    damage_dict[m] = [];
+                    let motion_val = LANCE_DICT[m] / 100;
+                    // 物理
+                    damage_dict[m].push(
+                        mul(weapon_magn, motion_val, affi_exp, 
+                            phys_sharp_magn, phys_weak));
+                    // 属性
+                    damage_dict[m].push(
+                        mul(ele_magn, ele_sharp_magn, ele_weak, crit_ele_magn));
                 }
                 break;
             case 'チャージアックス':
-                /** {モーション名:[通常ダメージ, 属性強化状態のダメージ, 属性ダメージ,                    通常ビン爆発ダメージ, 属性強化状態のビンダメージ]} */
+                /** ビン爆発ダメージ計算
+                 *  (武器倍率 * 榴弾or強属性ビン係数) * 爆発回数 
+                 *  {モーション名:[物理ダメージ, 属性ダメージ, ビン爆発ダメージ]} */
                 // ビンタイプを取得
                 let phials_type = $(this).prev()
                     .find('.phials_types option:selected').text();
-                // 榴弾ビンと強属性ビンそれぞれの変数を設定
-                if(phials_type == '榴弾ビン'){
-                    basic_magn = weapon_magn * artillery_magn;
-                    phials_coef_address = 2;
-                    boost_mode_magn = 1.3;
-                }else{
-                    basic_magn = ele_magn;
-                    phials_coef_address = 3;
-                    boost_mode_magn = 1.35;
-                };
-            
-                // モーションdictを１つずつ計算する。
-                for(motion in CB_DICT){
-                    damage_dict[motion] = [];
-                    // 物理ダメージの計算
-                    // damage_map[motion]の0要素目に格納
-                    damage_dict[motion].push(mul(weapon_magn,
-                                                CB_DICT[motion][0] / 100,
-                                                affi_exp,
-                                                phys_sharp_magn,
-                                                phys_weak));
-                    
-                    // 属性強化状態の物理ダメージ計算
-                    // 超高出力と盾突き以外の剣モーションを除く
-                    // damage_map[motion]の1要素目に格納
-                    if(motion.match(/超高出力/) || motion.match(/【剣】/) && !motion.match(/盾突き/)){
-                        damage_dict[motion].push(0);
-                    }else{
-                        damage_dict[motion].push(
-                            mul(weapon_magn,                                                    (CB_DICT[motion][0] / 100) * 1.2,
-                                affi_exp,
-                                phys_sharp_magn,
-                                phys_weak));
-                    };
-            
-                    // 属性ダメージの計算
-                    // damage_dict[motion]の2要素目に格納
-                    damage_dict[motion].push(
-                        mul(ele_magn, ele_sharp_magn, ele_weak, CB_DICT[motion][1],     
-                            crit_ele_exp));
-            
-                    /** ビン爆発のダメージ計算
-                     *  (武器倍率 * 榴弾or強属性ビン係数) * 爆発回数 */
-                    
-                    // 通常状態のビン爆発のダメージを計算
-                    // 盾突き・チャージ後切り返しは除く
-                    // damage_dict[motion]の3要素目に格納
-                    switch(phials_type){
-                        case '榴弾ビン':
-                            if(motion.match(/盾突き/) || motion.match(/チャージ後斬り返し/)){
-                                damage_dict[motion].push(0);
+                let boost_mode = Number(input_section
+                    .find('.boost_mode select option:selected').val());
+
+                // 属性強化状態かどうかで処理を分ける
+                switch(input_section
+                    .find('.boost_mode select option:selected').text()){
+                    case 'なし':
+                        // 非属性強化状態
+                        for(m in CB_DICT){
+                            damage_dict[m] = [];
+                            let motion_val = CB_DICT[m][0] / 100;
+                            
+                            // 武器ダメージ
+                            if(m.match(/超高出力/)){
+                                // 超高出力なら0
+                                damage_dict[m].push(0);
+                                damage_dict[m].push(0);
                             }else{
-                                damage_dict[motion].push(
-                                    mul(basic_magn,
-                                        CB_DICT[motion][phials_coef_address],
-                                        CB_DICT[motion][4]));
+                                // 物理ダメージ
+                                damage_dict[m].push(
+                                    mul(weapon_magn, motion_val, affi_exp, 
+                                        phys_sharp_magn, phys_weak));
+                                
+                                // 属性ダメージ
+                                damage_dict[m].push(
+                                    mul(ele_magn, ele_sharp_magn, ele_weak,         CB_DICT[m][1], crit_ele_exp));
                             }
-                            break;
-                        case '強属性ビン':
-                            if(motion.match(/盾突き/) || motion.match(/チャージ後斬り返し/)){
-                                damage_dict[motion].push(0);
+                            
+                            //ビンダメージ
+                            switch(phials_type){
+                                case '榴弾ビン':
+                                    if (m.match(/盾突き/)
+                                        || m.match(/チャージ後斬り返し/)){
+                                        // 盾突きとチャージ後斬り返しは0
+                                        damage_dict[m].push(0);
+                                    }else{
+                                        damage_dict[m].push(
+                                            mul(weapon_magn, CB_DICT[m][2],
+                                                CB_DICT[m][4], artillery_magn));
+                                    }
+                                    break;
+                                case '強属性ビン':
+                                    if (m.match(/盾突き/)
+                                        || m.match(/チャージ後斬り返し/)){
+                                        damage_dict[m].push(0);
+                                    }else{
+                                        damage_dict[m].push(
+                                            mul(ele_magn, CB_DICT[m][3],
+                                                CB_DICT[m][4], ele_weak));
+                                    }
+                                    break;
+                            }
+                        }
+                        break;
+
+                    case 'あり':
+                        // 属性強化状態の処理
+                        for(m in CB_DICT){
+                            damage_dict[m] = [];
+                            let motion_val;
+                            if (m.match(/超高出力/) || m.match(/【剣】/) && !m.match(/盾突き/)){
+                                // 超高出力と、盾突きを除く剣モーションは属性強化倍率を掛けない
+                                motion_val = CB_DICT[m][0] / 100;
                             }else{
-                                damage_dict[motion].push(
-                                    mul(basic_magn,
-                                        CB_DICT[motion][phials_coef_address],
-                                        CB_DICT[motion][4],
-                                        ele_weak));
+                                motion_val = 
+                                    Math.floor(CB_DICT[m][0] * boost_mode) / 100;
                             }
-                    }
-            
-                    // 属性強化状態のビン爆発ダメージ
-                    // damage_dict[motion]の4要素目に格納
-                    switch(phials_type){
-                        case '榴弾ビン':
-                            if(motion.match(/超高出力/)){
-                                damage_dict[motion].push(0);
-                            }else if(motion.match(/盾突き/) 
-                                    || motion.match(/チャージ後斬り返し/)){
-                                // 盾突きとチャージ後切り返しはboost_mode_magnを掛けない
-                                damage_dict[motion].push(
-                                    mul(basic_magn,
-                                        CB_DICT[motion][phials_coef_address],
-                                        CB_DICT[motion][4]));
-                            }else{
-                                damage_dict[motion].push(
-                                    mul(basic_magn,
-                                        CB_DICT[motion][phials_coef_address] * boost_mode_magn,
-                                        CB_DICT[motion][4]));
+
+                            // 物理ダメージ
+                            damage_dict[m].push(
+                                mul(weapon_magn, motion_val, affi_exp,
+                                    phys_sharp_magn, phys_weak));
+
+                            // 属性ダメージ
+                            damage_dict[m].push(
+                                mul(ele_magn, ele_sharp_magn, ele_weak, 
+                                    CB_DICT[m][1], crit_ele_exp));
+                            
+                            // 属性強化状態のビン爆発ダメージ
+                            // damage_dict[motion]の4要素目に格納
+                            switch(phials_type){
+                                case '榴弾ビン':
+                                    if (m.match(/盾突き/) 
+                                        || m.match(/チャージ後斬り返し/)){
+                                        // 盾突きとチャージ後切り返しはboost_mode_magnを掛けない
+                                        damage_dict[m].push(
+                                            mul(weapon_magn, CB_DICT[m][2],
+                                                CB_DICT[m][4]));
+                                    }else{
+                                        damage_dict[m].push(
+                                            mul(weapon_magn,
+                                                CB_DICT[m][2] * 1.3,
+                                                CB_DICT[m][4]));
+                                    }
+                                    break;
+                                case '強属性ビン':
+                                    if (m.match(/盾突き/)
+                                        || m.match(/チャージ後斬り返し/)){
+                                        // 盾突きとチャージ後切り返しはboost_mode_magnを掛けない
+                                        damage_dict[m].push(
+                                            mul(ele_magn, CB_DICT[m][3],
+                                                CB_DICT[m][4], ele_weak));
+                                    }else{
+                                        damage_dict[m].push(
+                                            mul(ele_magn, CB_DICT[m][3] * 1.35,
+                                                CB_DICT[m][4], ele_weak));
+                                    }
+                                    break;
                             }
-                            break;
-                        case '強属性ビン':
-                            if(motion.match(/超高出力/)){
-                                damage_dict[motion].push(0);
-                            }else if(motion.match(/盾突き/)
-                                    || motion.match(/チャージ後斬り返し/)){
-                                // 盾突きとチャージ後切り返しはboost_mode_magnを掛けない
-                                damage_dict[motion].push(
-                                    mul(basic_magn,
-                                        CB_DICT[motion][phials_coef_address],
-                                        CB_DICT[motion][4],
-                                        ele_weak)
-                                    );
-                            }else{
-                                damage_dict[motion].push(
-                                    mul(basic_magn,
-                                        CB_DICT[motion][phials_coef_address] * boost_mode_magn,
-                                        CB_DICT[motion][4],
-                                        ele_weak)
-                                    );
-                            }
-                            break;
-                    }
-                };
-            
-            
-                // 各ダメージを加算
-                for(damage in damage_dict){
-                    sum_damage_dict[damage] = [];
-                    // 通常状態のダメージを加算（通常物理 + 属性 + ビン）
-                    sum_damage_dict[damage].push(
-                        calc_sum_damage(
-                            defense_rate,
-                            damage_dict[damage][0],
-                            damage_dict[damage][2],
-                            damage_dict[damage][3]));
-                    // 属性強化状態のダメージを加算（属強物理 + 属性 + 属強ビン）
-                    if(!damage_dict[damage][1] == 0){
-                        // 属性強化状態のダメージが0でないもの
-                        sum_damage_dict[damage].push(
-                            calc_sum_damage(
-                                defense_rate,
-                                damage_dict[damage][1],
-                                damage_dict[damage][2], 
-                                damage_dict[damage][4]));
-                    }else if(damage.match(/チャージ後斬り返し/)){
-                        // チャージ後切り返しは(通常物理 + 属性 + 属強ビン)
-                        sum_damage_dict[damage].push(
-                            calc_sum_damage(
-                                defense_rate,
-                                damage_dict[damage][0],
-                                damage_dict[damage][2], 
-                                damage_dict[damage][4]));
-                    }else{
-                        sum_damage_dict[damage].push(0);
-                    };
-                };
+                        }
+                        break;
+                }
                 break;
         }
+
+        // 合計ダメージの計算
+        // sum_damage_dict = {モーション名: 合計ダメージ}
+        let sum_damage_dict = {};
+        for(m in damage_dict){
+            // 端数切捨(端数切捨(物理+属性+etc) * 防御率)
+            sum_damage_dict[m] = Math.floor(
+                Math.floor(sum_array(damage_dict[m])) * defense_rate);
+        }
+
         //計算結果の出力
         output_result($(this), sum_damage_dict);
         return false;

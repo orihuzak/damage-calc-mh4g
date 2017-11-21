@@ -2,7 +2,7 @@
 <html lang=ja>
     <head>
         <meta charset=utf-8>
-        <title>ダメージ計算</title>
+        <title>ダメージ計算forMH4G</title>
         <link rel=stylesheet type=text/css href=style.css>
         <script src=http://code.jquery.com/jquery-3.2.1.min.js></script>
         <script type=text/javascript src=js/damage_calc.js></script>
@@ -33,6 +33,7 @@
                                     <option>ガンランス</option> 
                                 </select> 
                             </div>
+                            <!-- 大剣 -->
                             <div class=cob>
                                 <label>中腹ヒット</label>
                                 <select class=center_of_blade>
@@ -40,11 +41,44 @@
                                     <option value=1.05>あり</option>
                                 </select>
                             </div>
+                            <!-- 太刀 -->
+                            <div class=sb_full hidden>
+                                <label>錬気ゲージ点滅</label>
+                                <select>
+                                    <option value=1>なし</option>
+                                    <option value=1.13>あり</option>
+                                </select>
+                            </div>
+                            <div class=sb_color hidden>
+                                <label>錬気ゲージ色</label>
+                                <select>
+                                    <option value=1>なし</option>
+                                    <option value=1.05>白</option>
+                                    <option value=1.1>黄</option>
+                                    <option value=1.3>赤</option>
+                                </select>
+                            </div>
+                            <!-- チャージアックス -->
                             <div class=p_type hidden>
                                 <label>ビンタイプ</label>
                                 <select class=phials_types>
                                     <option>榴弾ビン</option>
                                     <option>強属性ビン</option>
+                                </select>
+                            </div>
+                            <div class=boost_mode hidden>
+                                <label>属性強化</label>
+                                <select>
+                                    <option value=1>なし</option>
+                                    <option value=1.2>あり</option>
+                                </select>
+                            </div>
+                            <!-- 双剣 -->
+                            <div class=demon_mode hidden>
+                                <label>鬼人化</label>
+                                <select>
+                                    <option>なし</option>
+                                    <option>あり</option>
                                 </select>
                             </div>
                             <div>
@@ -259,12 +293,6 @@
         <footer>
                 <ul>
                     <li>Kazuhiro</li>
-                    <li>arx.solid@gmail.com</li>
-                    <li>
-                        <a href=https://twitter.com/kaz_uhiro?lang=ja>
-                        @kaz_uhiro
-                        </a>
-                    </li>
                 </ul>
         </footer>
     </body>
