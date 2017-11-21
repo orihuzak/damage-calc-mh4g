@@ -19,17 +19,15 @@
  ***/
 
 /*** 計算式
- * 武器倍率（補正）= (表示攻撃力 / 武器係数) + (攻撃UPスキル + 護符・爪 + 食事・鬼人薬 + 種・丸薬 + 太刀錬気) * 笛演奏効果 * 火事場力
+ * 武器倍率（補正）= ((表示攻撃力 / 武器係数) + (攻撃UPスキル + 護符・爪 + 食事・鬼人薬 + 種・丸薬 + 太刀錬気)) * 笛演奏効果 * 火事場力
  * 物理ダメージ = 武器倍率 * (モーション値 / 100) * 会心期待値 * 斬れ味 * (肉質 / 100)
  * 属性ダメージ = 属性倍率 * 斬れ味 * (耐属性 / 100) * ヒット数
  * 合計ダメージ = (物理ダメージ + 属性ダメージ) ＊端数切捨
  * 最終ダメージ = (合計ダメージ * 防御率) ＊端数切捨
 ***/
 
-//
-// Constants
-//
-                
+
+/* Constants ******************************************************************/
 
 //武器種と武器係数
 const WEAPON_COEF_DICT = {
@@ -46,8 +44,7 @@ const WEAPON_COEF_DICT = {
 };
 
 
-/** 大剣 
- * */
+/** 大剣 */
 const GS_DICT = {
     '縦斬り': 48,
     '斬り上げ': 46,
@@ -163,11 +160,37 @@ const LANCE_DICT = {
 
 /** ガンランス */
 const GL_DICT = {
-    
+    '[抜刀]踏み込み突き上げ': 32,
+    '砲撃派生突き上げ': 30,
+    '斬り上げ': 28,
+    '上方突き': 18,
+    '水平突き': 24,
+    '叩きつけ': 40,
+    'ジャンプ叩きつけ': 44,
+    'ジャンプ突き': 25,
+    '砲撃': 0,
+    '溜め砲撃': 0,
+    'フルバースト': 0,
+    '竜撃砲': 0
 }
 
+/** ガンランスの砲撃ダメージ
+ *  {砲撃タイプ: [[Lv1ダメ, 火ダメ], [Lv2ダメ, 火ダメ], ...]} */
+const GL_SHELL_TYPES = {
+    '通常': [[10, 4], [14, 5], [18, 6], [21, 7], [24, 8]],
+    '放射': [[15, 9], [21, 11], [28, 14], [32, 16], [36, 18]],
+    '拡散': [[20, 6], [30, 8], [40, 10], [44, 11], [48, 12]],
+    '竜撃砲': [[[30,30,30,30], [10,10,10,10]],
+              [[35,35,35,35], [11,11,11,11]], 
+              [[40,40,40,40], [12,12,12,12]],
+              [[45,45,45,45], [13,13,13,13]],
+              [[50,50,50,50], [14,14,14,14]]]
+}
+
+
+
  /** チャージアックス
-  *  [モーション倍率, ヒット数, 榴弾爆発係数, 属性爆発係数, 爆発回数] */
+  *  [モーション倍率, ヒット数, 榴弾爆発係数, 強属性爆発係数, 爆発回数] */
 const CB_DICT = {
     '【剣】突進斬り': [22, 1, 0, 0, 0],
     '【剣】牽制斬り': [14, 1, 0, 0, 0],
@@ -221,13 +244,22 @@ const ELE_SHARP_DICT = {
     '紫' : 1.2
 };
 
-//
-// Functions
-//
+
+/* Functions ******************************************************************/
 
 /** １の位を切り下げ */
 function truncate_ones_place(x){
     return Math.floor(x/10) * 10;
+}
+
+/** 少数第y位より下を切り捨て
+ *  x: 切り捨てられる値
+ *  y: 残す位 default=1
+ *  例:1.234
+ *     yを指定しなければ少数第一位までになる     
+ *     1.23 にしたいときは y=2 */
+function truncate_decimal_place(x, y=1){
+    return Math.floor(x*10**y) / 10**y; 
 }
 
 /** 引数を全て加算して返す */
@@ -368,6 +400,8 @@ $(function(){
         weapon_class.find('.sb_full').hide();
         weapon_class.find('.sb_color').hide();
         weapon_class.find('.demon_mode').hide();
+        weapon_class.find('.shell_types').hide();
+        weapon_class.find('.shelling_lv').hide();
         // 武器種ごとに処理
         switch($('option:selected', this).text()){
             case '大剣':
@@ -387,6 +421,10 @@ $(function(){
                 break;
             case '双剣':
                 weapon_class.find('.demon_mode').show();
+                break;
+            case 'ガンランス':
+                weapon_class.find('.shell_types').show();
+                weapon_class.find('.shelling_lv').show();
                 break;
         }
 
@@ -487,7 +525,10 @@ $(function(){
         let artillery_magn = 1;
         switch (weapon_type){
             case 'ガンランス':
-                artillery_magn *= Number(artillery[0]) * Number(felyne_bomb[0]);
+                // 砲撃術 * 猫砲撃 少数第2位以下を切り捨てる
+                artillery_magn *= 
+                    truncate_decimal_place(
+                        Number(artillery[0]) * Number(felyne_bomb[0]));
                 break;
             case 'チャージアックス':
                 if(!(artillery_txt == 'なし') && felyne_bomb_txt == 'なし'){
@@ -804,6 +845,108 @@ $(function(){
                         mul(ele_magn, ele_sharp_magn, ele_weak, crit_ele_magn));
                 }
                 break;
+            case 'ガンランス':
+                // 砲撃タイプを取得
+                let shell_type = input_section
+                    .find('.shell_types select option:selected').text();
+                // 砲撃レベルを取得
+                let lv = Number(input_section
+                    .find('.shelling_lv select option:selected').val());
+                
+                // 砲撃タイプ毎に各砲撃の倍率を設定
+                // charged shelling, full burst, wyvern's fire
+                let cs, fb, wf; 
+                switch(shell_type){
+                    case '通常':
+                        cs = 1.2;
+                        fb = 1.1;
+                        wf = 1.0;
+                        break;
+                    case '放射':
+                        cs = 1.2;
+                        fb = 1;
+                        wf = 1.2;
+                        break;
+                    case '拡散':
+                        cs = 1.44;
+                        fb = 0.9;
+                        wf = 1;
+                        break;
+                }
+
+                console.log(artillery_magn);
+                /** 砲撃ダメージの計算 
+                 *  切捨(砲撃の基本ダメ * 切捨(切捨(砲撃術 * 猫の砲撃術) * 砲撃タイプ倍率)) + 砲撃の火ダメ
+                 *  （未確定）砲撃の火ダメージ: 砲撃基本火ダメ * (未対応)耐火属性
+                 *  各乗算で端数切り捨て */
+                for(m in GL_DICT){
+                    switch (m){
+                        case '砲撃':
+                            damage_dict[m] = [];
+                            damage_dict[m].push(
+                                Math.floor(
+                                    GL_SHELL_TYPES[shell_type][lv][0]
+                                    * artillery_magn)
+                                + (GL_SHELL_TYPES[shell_type][lv][1]
+                                    * ele_weak));
+                            
+                            break;
+                        case '溜め砲撃':
+                            damage_dict[m] = [];
+                            damage_dict[m].push(
+                                Math.floor(Math.floor(
+                                    GL_SHELL_TYPES[shell_type][lv][0]
+                                    * artillery_magn)
+                                * cs)
+                                + GL_SHELL_TYPES[shell_type][lv][1]
+                                    * ele_weak);
+                            break;
+                        case 'フルバースト':
+                            // フルバーストの装填数1~6(6は装填数UP)まで計算する
+                            for(let i = 1; i < 7; i++){
+                                damage_dict[m+i] = [];
+                                damage_dict[m+i].push((
+                                    Math.floor(Math.floor(
+                                        GL_SHELL_TYPES[shell_type][lv][0]
+                                        * artillery_magn)
+                                    * fb)
+                                    + (GL_SHELL_TYPES[shell_type][lv][1])
+                                        * ele_weak)
+                                    * i);
+                            }
+                            break;
+                        case '竜撃砲':
+                            damage_dict[m] = [];
+                            let d = 0,
+                                fd = 0;
+                            for(let i = 0; i < 4; i++){
+                                // 砲撃基本ダメージの計算
+                                d += (Math.floor(Math.floor(
+                                    GL_SHELL_TYPES['竜撃砲'][lv][0][i]
+                                    * artillery_magn)
+                                * wf));
+                                // 砲撃火属性ダメージの計算
+                                fd += (GL_SHELL_TYPES['竜撃砲'][lv][1][i]
+                                        * ele_weak);
+                            }
+                            damage_dict[m].push(d+fd);
+                            break;
+                        default:
+                            damage_dict[m] = [];
+                            // 物理
+                            damage_dict[m].push(
+                                mul(weapon_magn, GL_DICT[m] / 100, affi_exp, 
+                                    phys_sharp_magn, phys_weak));
+                            
+                            // 属性
+                            damage_dict[m].push(
+                                mul(ele_magn, ele_sharp_magn, 
+                                    ele_weak, crit_ele_magn));
+                            break;
+                    }
+                }
+                break;
+
             case 'チャージアックス':
                 /** ビン爆発ダメージ計算
                  *  (武器倍率 * 榴弾or強属性ビン係数) * 爆発回数 
