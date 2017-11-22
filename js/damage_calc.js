@@ -538,6 +538,10 @@ $(function(){
 
         // 不屈（倍率系スキル）
         mul_skills.push(Number(input_section.find('.fortify option:selected').val()));
+
+        // 演奏攻撃力UP
+        mul_skills.push(
+            Number(input_section.find('.hh_atk option:selected').val()));
         
         
         /** 砲術
@@ -600,43 +604,34 @@ $(function(){
         // 狂竜症克服
         affinity += Number(
             input_section.find('.antivirus option:selected').val());
+        
+        // 演奏会心UP
+        affinity += 
+            Number(input_section.find('.hh_affi option:selected').val());
 
 
         /* 属性スキル **********************************************************/
+        // 表示属性値に乗算 倍率の上限は1.2
+        // 単属性強化
+        let ind_e_up = 
+            input_section.find('.ind_ele_up option:selected').val().split(',');
         
-        // 単属性強化と全属性強化
-        let ind_e_text = 
-        input_section.find('.ind_ele_up option:selected').text();
-        let e_text = input_section.find('.ele_up option:selected').text();
-        if(ind_e_text == 'なし' && e_text == 'なし'){
-            // なし, なしの場合
-            ;   // 何もしない
-        }else if(!(ind_e_text == 'なし') && e_text == 'なし'){
-            // 全属性強化だけなしの場合
-            let ind_ele_up = input_section
-                .find('.ind_ele_up option:selected').val().split(',');
-            ele_val = truncate_ones_place(
-                ele_val * ind_ele_up[0] + Number(ind_ele_up[1]));
-        }else if(ind_e_text == 'なし' && e_text == 'あり'){
-            // なし, ありの場合
-            let ele_up = input_section.find('.ele_up option:selected').val();
-            ele_val = truncate_ones_place(ele_val * ele_up);
+        // 全属性強化
+        let e_up = 
+            Number(input_section.find('.ele_up option:selected').val());
+        
+        // 狩猟笛旋律 属性攻撃力強化
+        let hh_e_up = 
+            Number(input_section.find('.hh_ele option:selected').val());
 
-        }else if(ind_e_text == '+1' && e_text == 'あり'){
-            // +1, ありの場合
-            ele_val = truncate_ones_place(ele_val * 1.15 + 40);
-        }else if(ind_e_text == '+2' && e_text == 'あり'){
-            // +2, ありの場合
-            ele_val = truncate_ones_place(ele_val * 1.20 + 60);
-        }else if(ind_e_text == '+3' && e_text == 'あり'){
-            // +3, ありの場合
-            ele_val = truncate_ones_place(ele_val * 1.20 + 90);
-        }
+        let element_up = Number(ind_e_up[0]) * e_up * hh_e_up;
+        // element_upが1.2を超えたら1.2にする
+        if(element_up > 1.2){element_up = 1.2}
+        ele_val = 
+            truncate_ones_place(ele_val * element_up) + Number(ind_e_up[1]);
         
         
-        /** 会心撃【属性】 
-         *  
-        */
+        /** 会心撃【属性】*/
         let crit_ele_magn = 1;
         if (input_section.find('.crit_element option:selected').val() == '1'){
             // 会心撃【属性】がありの場合
@@ -666,7 +661,7 @@ $(function(){
             //肉質が45%以上なら肉質を+5%
             phys_weak += weakness_exp;
         }
-        
+
         /* その他スキル *********************************************************/
         /** 未実装スキル
          *  匠
@@ -674,7 +669,6 @@ $(function(){
          *  抜刀減気
          *  属性解放
          *  薬・護符・爪
-         *  演奏効果
          */
 
         // 加算スキルを武器倍率に加算
