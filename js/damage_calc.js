@@ -29,7 +29,7 @@
 
 /* Constants ******************************************************************/
 
-//武器種と武器係数
+//武器係数
 const WEAPON_COEF_DICT = {
     '大剣': 4.8,
     '太刀': 3.3,
@@ -37,10 +37,11 @@ const WEAPON_COEF_DICT = {
     '双剣': 1.4,
     'ハンマー': 5.2,
     '狩猟笛': 5.2,
+    'ランス': 2.3,
+    'ガンランス': 2.3,
     'スラッシュアックス': 5.4,
     'チャージアックス': 3.6,
-    'ランス': 2.3,
-    'ガンランス': 2.3
+    '操虫棍': 3.1
 };
 
 
@@ -225,6 +226,33 @@ const GL_SHELL_TYPES = {
               [[45,45,45,45], [13,13,13,13]],
               [[50,50,50,50], [14,14,14,14]]]
 }
+
+/** 操虫棍 Insect Glaive
+ *  {モーション名:[[通常モーション値], 通常ヒット数, 赤エキスフラグ]}
+ *  赤エキスフラグ: 赤エキス時に存在するモーションかどうか。0なら不在, 1なら存在*/
+const IG_DICT = {
+    '突き': [[15], 1, 0],
+    '突き（赤）': [[18, 12], 2, 1],
+    'なぎ払い': [[36], 1, 0],
+    'なぎ払い（赤）': [[18, 30], 2, 1],
+    'なぎ払い斬り上げ派生時（赤）': [[18, 30, 28], 3, 1],
+    '[抜刀]飛び込み斬り': [[28], 1, 1],
+    '回転斬り': [[20], 1, 1],
+    '叩きつけ': [[30], 1, 0], // 赤エキス時は飛燕斬り
+    '飛燕斬り（赤）':[[24, 38], 2, 1],
+    '連続斬り上げ': [[26, 20], 2, 0],
+    '連続斬り上げ（赤）':[[28, 16, 18], 3, 1],
+    'けさ斬り': [[24], 1, 0],
+    'けさ斬り（赤）': [[16, 26], 2, 1],
+    '二段斬り': [[18, 24], 2, 0],
+    '二段斬り（赤）':[[16, 14, 28], 3, 1],
+    '印当て': [[12], 1, 1],
+    'ジャンプ斬り': [[24], 1, 0],
+    'ジャンプ斬り（赤）':[[20, 10], 2, 1],
+    '猟虫': [[45], 1, 1],
+    '虫回転攻撃': [[80], 1, 1]  // 属性補正1.5倍
+}
+
 
  /** チャージアックス
   *  [モーション倍率, ヒット数, 榴弾爆発係数, 強属性爆発係数, 爆発回数] */
@@ -439,6 +467,7 @@ $(function(){
         weapon_class.find('.demon_mode').hide();
         weapon_class.find('.shell_types').hide();
         weapon_class.find('.shelling_lv').hide();
+        weapon_class.find('.essences').hide();
         // 武器種ごとに処理
         switch($('option:selected', this).text()){
             case '大剣':
@@ -462,6 +491,9 @@ $(function(){
             case 'ガンランス':
                 weapon_class.find('.shell_types').show();
                 weapon_class.find('.shelling_lv').show();
+                break;
+            case '操虫棍':
+                weapon_class.find('.essences').show();
                 break;
         }
 
@@ -531,7 +563,7 @@ $(function(){
         affinity += Number(challenger[1]);
 
 
-        /* 乗算スキル **********************************************************/
+        /* 乗算スキル 武器倍率に乗算するスキル *************************************/
         let mul_skills = [];
         // 火事場力（倍率系スキル）
         mul_skills.push(Number(input_section.find('.adrenaline option:selected').val()));
@@ -1020,6 +1052,35 @@ $(function(){
                     }
                 }
                 break;
+            case '操虫棍':
+                // 赤白エキス モーション値*1.2 
+                // 赤白橙エキス モーション値*1.25
+                let essences = Number(input_section.find('.essences select option:selected').val());
+                if(essences > 1){
+                    // エキスが選択された時は赤エキス時に存在するモーションだけ計算
+                    for(m in IG_DICT){
+                        damage_dict[m] = [];
+                        if(IG_DICT[m][2]){
+                            // 物理
+                            damage_dict[m].push(
+                                mul(weapon_magn, essences, sum_array(IG_DICT[m][0]) / 100, affi_exp, phys_sharp_magn, phys_weak));
+                            // 属性
+                            damage_dict[m].push(
+                                mul(ele_magn, ele_sharp_magn, IG_DICT[m][1], ele_weak, crit_ele_magn));
+                        }
+                    }
+                }else{
+                    for(m in IG_DICT){
+                        damage_dict[m] = [];
+                        // 物理
+                        damage_dict[m].push(
+                            mul(weapon_magn, sum_array(IG_DICT[m][0])/100, affi_exp,phys_sharp_magn, phys_weak));
+                        // 属性
+                        damage_dict[m].push(
+                            mul(ele_magn, ele_sharp_magn, IG_DICT[m][1], ele_weak, crit_ele_magn));
+                    }}
+                break;
+
 
             case 'チャージアックス':
                 /** ビン爆発ダメージ計算
