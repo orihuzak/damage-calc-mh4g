@@ -41,7 +41,7 @@ const WEAPON_COEF_DICT = {
     'ガンランス': 2.3,
     'スラッシュアックス': 5.4,
     'チャージアックス': 3.6,
-    '操虫棍': 3.1
+    '操虫棍': 3.1,
 };
 
 
@@ -253,6 +253,27 @@ const IG_DICT = {
     '虫回転攻撃': [[80], 1, 1]  // 属性補正1.5倍
 }
 
+/** スラッシュアックス SA Switch Axe
+ *  {モーション名: [0:[モーション値], 1:ヒット数]} */
+const SA_DICT = {
+    '斧:抜刀:横斬り':[[23], 1],
+    '斧:縦斬り':[[40], 1],
+    '斧:斬り上げ':[[28], 1],
+    '斧:振りまわし(回数分)':[[24], 1], // 振り回しのヒット回数は上限がないからどうしよ
+    '斧:なぎ払いフィニッシュ':[[57], 1],
+    '斧:突進斬り':[[19], 1],
+    '斧:変形斬り':[[30], 1],
+    '剣:変形斬り':[[23], 1],
+    '剣:抜刀:縦斬り':[[30], 1],
+    '剣:斬り上げ':[[25], 1],
+    '剣:横切り':[[25], 1],
+    '剣:二連斬り':[[28, 36], 2],
+    '剣:属性解放突き':[[28], 1],
+    '剣:属性解放継続':[[13,13,13,13,13,13], 6], // 1~6ヒットで計算する
+    '剣:属性解放任意フィニッシュ':[[50], 1],
+    '剣:属性解放フィニッシュ':[[80], 1],
+    '剣:ジャンプ斬り':[[30], 1]
+}
 
  /** チャージアックス
   *  [モーション倍率, ヒット数, 榴弾爆発係数, 強属性爆発係数, 爆発回数] */
@@ -385,11 +406,6 @@ function calc_weapon_magn(atk, weapon_coef){
     return atk / weapon_coef;
 }
 
-/** 属性倍率の計算
- *  (表示属性値 / 10) */
-function calc_ele_magn(ele){ return ele / 10; }
-
-
 /** 会心期待値の計算
  ** (1.0 + (会心倍率 - 1.0) * 会心率 / 100.0)
  ** 引数magnを指定すれば会心時の倍率を変えられる */
@@ -468,6 +484,7 @@ $(function(){
         weapon_class.find('.shell_types').hide();
         weapon_class.find('.shelling_lv').hide();
         weapon_class.find('.essences').hide();
+        weapon_class.find('.sa_p_types').hide();
         // 武器種ごとに処理
         switch($('option:selected', this).text()){
             case '大剣':
@@ -479,6 +496,9 @@ $(function(){
                 weapon_class.find('.cob').show();
                 weapon_class.find('.sb_full').show();
                 weapon_class.find('.sb_color').show();
+                break;
+            case 'スラッシュアックス':
+                weapon_class.find('.sa_p_types').show();
                 break;
             case 'チャージアックス':
                 // ビン選択と属性強化状態のselect
@@ -708,7 +728,7 @@ $(function(){
         // 乗算スキルを武器倍率に乗算
         weapon_magn *= mul_array(mul_skills);
         // 属性倍率を計算
-        let ele_magn = calc_ele_magn(ele_val);
+        let ele_magn = ele_val / 10;
         // 会心期待値を計算
         let affi_exp = calc_affi_exp(affinity);
         // 属性会心期待値の計算
@@ -819,7 +839,6 @@ $(function(){
                     }else{
                         element = ele_magn;
                     }
-                    
 
                     // 物理ダメージ
                     damage_dict[m].push(
@@ -1052,36 +1071,50 @@ $(function(){
                     }
                 }
                 break;
-            case '操虫棍':
-                // 赤白エキス モーション値*1.2 
-                // 赤白橙エキス モーション値*1.25
-                let essences = Number(input_section.find('.essences select option:selected').val());
-                if(essences > 1){
-                    // エキスが選択された時は赤エキス時に存在するモーションだけ計算
-                    for(m in IG_DICT){
-                        damage_dict[m] = [];
-                        if(IG_DICT[m][2]){
-                            // 物理
-                            damage_dict[m].push(
-                                mul(weapon_magn, essences, sum_array(IG_DICT[m][0]) / 100, affi_exp, phys_sharp_magn, phys_weak));
-                            // 属性
-                            damage_dict[m].push(
-                                mul(ele_magn, ele_sharp_magn, IG_DICT[m][1], ele_weak, crit_ele_magn));
+            
+
+            case 'スラッシュアックス':
+                // 強撃と強属性ビン以外は未対応
+                // ビンタイプを取得
+                let phial = Number(input_section
+                    .find('.sa_p_types select option:selected').val());
+                if(phial==1.2){
+                    // 強撃ビンの場合
+                    for(m in SA_DICT){
+                        damage_dict[m]=[];
+                        // phailをかけて端数を切り捨てたモーション値を格納
+                        let m_arr = []; 
+                        // 各モーション値に強撃ビン倍率をかけ、端数を切捨て
+                        for(let i = 0; i < SA_DICT[m][0].length; i++){
+                            m_arr.push(Math.floor(SA_DICT[m][0][i]) * phial);
                         }
+
+                        // 物理
+                        damage_dict[m].push(
+                            mul(weapon_magn, sum_array(m_arr) / 100, affi_exp,
+                                phys_sharp_magn, phys_weak));
+                        // 属性
+                        damage_dict[m].push(
+                            mul(ele_magn, phial, ele_weak, ele_sharp_magn, crit_ele_exp, SA_DICT[m][1]));
                     }
+                      
                 }else{
-                    for(m in IG_DICT){
+                    // 強属性ビン
+                    ele_magn = Math.floor(ele_magn * phial);
+                    for(m in SA_DICT){
                         damage_dict[m] = [];
                         // 物理
                         damage_dict[m].push(
-                            mul(weapon_magn, sum_array(IG_DICT[m][0])/100, affi_exp,phys_sharp_magn, phys_weak));
-                        // 属性
+                            mul(weapon_magn, sum_array(SA_DICT[m][0]) / 100,
+                                affi_exp, phys_sharp_magn, phys_weak));
+                        //属性
                         damage_dict[m].push(
-                            mul(ele_magn, ele_sharp_magn, IG_DICT[m][1], ele_weak, crit_ele_magn));
-                    }}
+                            mul(ele_magn, phial, ele_weak, ele_sharp_magn, crit_ele_exp, SA_DICT[m][1]));
+                    }
+                }
                 break;
 
-
+            
             case 'チャージアックス':
                 /** ビン爆発ダメージ計算
                  *  (武器倍率 * 榴弾or強属性ビン係数) * 爆発回数 
@@ -1201,7 +1234,40 @@ $(function(){
                         }
                         break;
                 }
+                break;    
+            
+
+            case '操虫棍':
+                // 赤白エキス モーション値*1.2 
+                // 赤白橙エキス モーション値*1.25
+                let essences = Number(input_section.find('.essences select option:selected').val());
+                if(essences > 1){
+                    // エキスが選択された時は赤エキス時に存在するモーションだけ計算
+                    for(m in IG_DICT){
+                        damage_dict[m] = [];
+                        if(IG_DICT[m][2]){
+                            // 物理
+                            damage_dict[m].push(
+                                mul(weapon_magn, essences, sum_array(IG_DICT[m][0]) / 100, affi_exp, phys_sharp_magn, phys_weak));
+                            // 属性
+                            damage_dict[m].push(
+                                mul(ele_magn, ele_sharp_magn, IG_DICT[m][1], ele_weak, crit_ele_magn));
+                        }
+                    }
+                }else{
+                    for(m in IG_DICT){
+                        damage_dict[m] = [];
+                        // 物理
+                        damage_dict[m].push(
+                            mul(weapon_magn, sum_array(IG_DICT[m][0])/100, affi_exp,phys_sharp_magn, phys_weak));
+                        // 属性
+                        damage_dict[m].push(
+                            mul(ele_magn, ele_sharp_magn, IG_DICT[m][1], ele_weak, crit_ele_magn));
+                    }}
                 break;
+
+
+            
         }
 
         // 合計ダメージの計算
