@@ -1279,5 +1279,9 @@ $(function(){
     $('#0 .calc').on('click', click_calc_botton);   
     $('#0 .add_card').on('click', click_add_card);
     $('#0 .skills select').on('change', select_skills);
+
+
+    console.log($('.weapon_name').load('weapon_data.html option'));
+
 });
 
