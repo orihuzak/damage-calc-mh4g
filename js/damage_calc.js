@@ -569,7 +569,23 @@ $(function(){
 
     // 属性セレクト.ele_type selectが選択されたら動く
     function select_ele_type(){
-        
+        let ele_type = $('option:selected', this).val(),
+            wtype = 
+                $(this).parents().find('.weapon_types option:selected').text()
+        // .weapon_name select の子要素を削除
+        $(this).parents().find('.weapon_name select').empty()
+        console.log(ele_type)
+        // 新しい子要素を追加
+        $.getJSON('weapon_data.json', function(data){
+            for(let i = 0; i < data[wtype].length; i++){
+                // 指定されたele_typeの武器を武器selectに入れる
+                if (data[wtype][i]["ele_type"] == ele_type){
+                    let option = $('<option>')
+                    option.text(data[wtype][i]["name"])
+                    select.append(option)
+                }
+            }
+        })
     }
 
     // スキルが選ばれたらlabelの文字色を変える
