@@ -1,0 +1,28 @@
+{
+    "チャージアックス":[
+        { 
+            "name": "精鋭討伐隊盾斧",
+            "atk": 252, "ele_type": "無", "ele_val": 0, "affi": 0, 
+            "phials": "榴弾", "sharp": "黄", "sharp+": "緑","slots": 0 
+        },
+        {
+            "name": "精鋭討伐隊盾斧改",
+            "atk": 324, "ele_type": "無", "ele_val": 0, "affi": 0,
+            "phials": "榴弾", "sharp": "緑", "sharp+": "緑", "slots": 0
+        },
+        {
+            "name": "近衛隊専用盾斧",
+            "atk": 360, "ele_type": "無", "ele_val": 0, "affi": 0,
+            "phials": "榴弾", "sharp": "緑", "sharp+": "緑", "slots": 0
+        },
+        {
+            "name": "カイゼルべアラー",
+            "atk": 432, "ele_type": "無", "ele_val": 0, "affi": 0,
+            "phials": "榴弾", "sharp": "緑", "sharp+": "緑", "slots": 0
+        },
+        {
+            "name": "ブラックガード",
+            "atk": 432, "ele_type": "(麻)", "ele_val": 100, "affi": 0, "phials": "榴弾", "sharp": "緑", "sharp+": "緑", "slots": 0
+        }
+    ]
+}

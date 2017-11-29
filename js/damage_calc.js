@@ -463,9 +463,20 @@ $(function(){
     // 武器種が変更されたら動く
     function select_weapon_type(){
         console.log('武器種を変更');
-        weapon_class = $(this).parents().find('.weapon');
+        let weapon_type = $('option:selected', this).text(),
+            weapon_class = $(this).parents().find('.weapon')
+            select = weapon_class.find('.weapon_name select')
         
-        // 武器種依存のhtmlを隠す
+        // 武器名selectに武器名を追加
+        $.getJSON('weapon_data.json', function(data){
+            for(let i = 0; i < data[weapon_type].length; i++){
+                let option = $('<option>')
+                option.text(data[weapon_type][i]["name"])
+                select.append(option)
+            }
+        })
+        
+        // 武器種に依存するhtmlを隠す
         weapon_class.find('.cob').hide();
         weapon_class.find('.p_type').hide();
         weapon_class.find('.boost_mode').hide();
@@ -476,8 +487,9 @@ $(function(){
         weapon_class.find('.shelling_lv').hide();
         weapon_class.find('.essences').hide();
         weapon_class.find('.sa_p_types').hide();
+
         // 武器種ごとに処理
-        switch($('option:selected', this).text()){
+        switch(weapon_type){
             case '大剣':
                 // 中腹ヒットhtmlを表示
                 weapon_class.find('.cob').show();
@@ -495,6 +507,9 @@ $(function(){
                 // ビン選択と属性強化状態のselect
                 weapon_class.find('.p_type').show();
                 weapon_class.find('.boost_mode').show();
+
+                
+
                 break;
             case '双剣':
                 weapon_class.find('.demon_mode').show();
@@ -1280,8 +1295,23 @@ $(function(){
     $('#0 .add_card').on('click', click_add_card);
     $('#0 .skills select').on('change', select_skills);
 
+    /*
+    // weapon_data.jsonから武器データを取得
+    var weapons = {}
 
-    console.log($('.weapon_name').load('weapon_data.html option'));
+    $.getJSON('weapon_data.json', function(data){
+        $.each(data, function(key, val){
+            for(let i = 0; i < val.length; i++){
+                if(val[i]["ele_type"].match(/\(/)){
+                    console.log('これ')
+                    console.log(val[i])
+                }
+            }
+        })
+        weapons = data;  
+    })
+    console.log(weapons["チャージアックス"])
+    */
 
 });
 
