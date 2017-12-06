@@ -461,13 +461,15 @@ $(function(){
         return false
     }
 
-    // 武器種が変更されたら動く
+    /** 武器種が変更されたら動く 
+     *  input_sect: section .input */
     function select_weapon_type(){
         console.log('武器種を変更')
         let weapon_type = $('option:selected', this).text(),
-            weapon_class = $(this).parents().find('.weapon')
-            select = weapon_class.find('.weapon_name select')
-        
+            input_sect = $(this).parents().find('.input')
+            select = input_sect.find('.weapon_name select')
+        // 既存の.weapon_name optionを削除
+        select.empty()
         // 武器名selectに武器名を追加
         $.getJSON('weapon_data.json', function(data){
             for(let i = 0; i < data[weapon_type].length; i++){
@@ -478,46 +480,46 @@ $(function(){
         })
         
         // 武器種に依存するhtmlを隠す
-        weapon_class.find('.cob').hide()
-        weapon_class.find('.p_type').hide()
-        weapon_class.find('.boost_mode').hide()
-        weapon_class.find('.sb_full').hide()
-        weapon_class.find('.sb_color').hide()
-        weapon_class.find('.demon_mode').hide()
-        weapon_class.find('.shell_types').hide()
-        weapon_class.find('.shelling_lv').hide()
-        weapon_class.find('.essences').hide()
-        weapon_class.find('.sa_p_types').hide()
+        input_sect.find('.cob').hide()
+        input_sect.find('.p_type').hide()
+        input_sect.find('.boost_mode').hide()
+        input_sect.find('.sb_full').hide()
+        input_sect.find('.sb_color').hide()
+        input_sect.find('.demon_mode').hide()
+        input_sect.find('.shell_types').hide()
+        input_sect.find('.shelling_lv').hide()
+        input_sect.find('.essences').hide()
+        input_sect.find('.sa_p_types').hide()
 
         // 武器種ごとに処理
         switch(weapon_type){
             case '大剣':
                 // 中腹ヒットhtmlを表示
-                weapon_class.find('.cob').show()
+                input_sect.find('.cob').show()
                 break
             case '太刀':
                 // 中腹ヒットhtmlを表示
-                weapon_class.find('.cob').show()
-                weapon_class.find('.sb_full').show()
-                weapon_class.find('.sb_color').show()
+                input_sect.find('.cob').show()
+                input_sect.find('.sb_full').show()
+                input_sect.find('.sb_color').show()
                 break
             case 'スラッシュアックス':
-                weapon_class.find('.sa_p_types').show()
+                input_sect.find('.sa_p_types').show()
                 break
             case 'チャージアックス':
                 // ビン選択と属性強化状態のselect
-                weapon_class.find('.p_type').show()
-                weapon_class.find('.boost_mode').show()
+                input_sect.find('.p_type').show()
+                input_sect.find('.boost_mode').show()
                 break
             case '双剣':
-                weapon_class.find('.demon_mode').show()
+                input_sect.find('.demon_mode').show()
                 break
             case 'ガンランス':
-                weapon_class.find('.shell_types').show()
-                weapon_class.find('.shelling_lv').show()
+                input_sect.find('.shell_types').show()
+                input_sect.find('.shelling_lv').show()
                 break
             case '操虫棍':
-                weapon_class.find('.essences').show()
+                input_sect.find('.essences').show()
                 break
         }
 
@@ -639,7 +641,7 @@ $(function(){
     // 計算ボタンが押されたら働く
     function click_calc_botton(){
         console.log('計算ボタン')
-        let input_section = $(this).prev()
+        let input_section = $(this).parents().find('.input')
         // 入力値を取得
         // 武器種を取得
         let weapon_type = 

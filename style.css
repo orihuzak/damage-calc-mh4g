@@ -1,25 +1,25 @@
 /* 共通の設定 *****************************/
-*{
+* {
     margin: 0;
     padding: 0;
 }
 
-body{
+body {
     text-align: center;
     background-color: #222;
     color: white;
 }
 
-ul{
+ul {
     list-style: none;
 }
 
-a{
+a {
     text-decoration: none;
     color: blue;
 }
 
-a:hover{
+a:hover {
     color: orange;
 }
 
@@ -28,80 +28,122 @@ a:hover{
 
 
 /* カード ******************************/
-.cards{
-    font-size: 0px;
+.cards {
 }
 
-.card{
+.card {
     display: inline-grid;
     width: 300px;
     height: auto;
-    margin-top: 10px;
-    margin-left: 10px;
+    margin: 10px 0 0 10px;
     padding: 10px;
     font-size: 14px;
     vertical-align: middle;
+    background-color: darkorange;
 }
 
+
 /* .inputセクションのスタイル ****************************************************/
-section.input{
+.input {
     display: block;
     font-size: 12px;
 }
 
-    .input section{
-        float: left;
-        width: 50%;
-    }
-
-    .input div{
+    .input div {
         text-align: right;
     }
 
-    .input label{
-        width: 60%;
+    .input label {
         text-align: left;
         float: left;
     }
 
-    .input input, select{
-        width: 35%;
-        text-align: right;
-        margin-right: 5px;
+    .input input,
+    .input select {
         border-radius: 5px;
         border: 1px solid #ccc;
     }
 
-    .weapon input:focus, select:focus{
-        border-color: orange;
-        outline: none;
+    .input input{
+        text-align: right;
     }
 
-    /* weaponセクション ********************************************************/
-    section.weapon{
+    .input select{
+        text-align: left;
     }
+
+    /* .weaponセクション *******************************************************/
+    .weapon {
+        overflow: auto;
+    }
+
+    /* .select_weaponセクション ************************************************/
+    .select_weapon {
+        width: 50%;
+        float: left;
+        background-color: gray;
+    }
+
+        .select_weapon div {
+            text-align: left;
+        }
+
+        .select_weapon label {
+            width: 100%;
+        }
+
+        .select_weapon input,
+        .select_weapon select {
+            width: 90%;
+        }
+    
+
+    /* .weapon_dataセクション **************************************************/
+    .weapon_data {
+        width: 50%;
+        float: left;
+        background-color: darkcyan;
+    }
+
+        .weapon_data input,
+        .weapon_data select {
+            width: 45%;
+        }
+
+        .weapon_data input:focus, select:focus {
+            border-color: orange;
+            outline: none;
+        }
 
     /* .skillsセクション *******************************************************/
-    section.skills{
+    .skills {
+        display: block;
+        background-color: lightgreen;
+        overflow: auto;
     }
-        
+
+    .skills div{
+        float: left;
+    }
+
+    /* .monster_dataセクション *************************************************/
         
 
 /* .resultセクションのスタイル **************************/
 
-button{
+button {
     width: 80px;
 }
 
-.result th,td{
+.result th,td {
     border: 1px solid #333;
 }
 
-.result{
+.result {
     border-collapse: collapse;
 }
 
-.result td{
+.result td {
     text-align: left;
     font-size: 12px;
 }
