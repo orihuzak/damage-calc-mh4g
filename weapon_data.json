@@ -2,27 +2,35 @@
     "チャージアックス":[
         { 
             "name": "精鋭討伐隊盾斧",
-            "atk": 252, "ele_type": "無", "ele_val": 0, "affi": 0, 
-            "phials": "榴弾", "sharp": "黄", "sharp+": "緑","slots": 0 
+            "atk": 252, "ele_type": "無", "ele_val": 0, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "phials": "榴弾", "sharp": "黄", "sharp+": "緑","slots": 0 
         },
         {
             "name": "精鋭討伐隊盾斧改",
-            "atk": 324, "ele_type": "無", "ele_val": 0, "affi": 0,
-            "phials": "榴弾", "sharp": "緑", "sharp+": "緑", "slots": 0
+            "atk": 324, "ele_type": "無", "ele_val": 0, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "phials": "榴弾", "sharp": "緑", "sharp+": "緑", "slots": 0
         },
         {
             "name": "近衛隊専用盾斧",
-            "atk": 360, "ele_type": "無", "ele_val": 0, "affi": 0,
-            "phials": "榴弾", "sharp": "緑", "sharp+": "緑", "slots": 0
+            "atk": 360, "ele_type": "無", "ele_val": 0, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "phials": "榴弾", "sharp": "緑", "sharp+": "緑", "slots": 0
         },
         {
             "name": "カイゼルべアラー",
-            "atk": 432, "ele_type": "無", "ele_val": 0, "affi": 0,
-            "phials": "榴弾", "sharp": "緑", "sharp+": "緑", "slots": 0
+            "atk": 432, "ele_type": "無", "ele_val": 0, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "phials": "榴弾", "sharp": "緑", "sharp+": "緑", "slots": 0
         },
         {
             "name": "ブラックガード",
-            "atk": 432, "ele_type": "(麻)", "ele_val": 100, "affi": 0, "phials": "榴弾", "sharp": "緑", "sharp+": "緑", "slots": 0
+            "atk": 540, "ele_type": "無", "ele_val": 0, "awake_ele_type": "麻", "awake_ele_val": 100, "affi": 0, "phials": "榴弾", "sharp": "緑", "sharp+": "青", "slots": 1
+        },
+        {
+            "name": "ブラックフルガード",
+            "atk": 612, "ele_type": "無", "ele_val": 0, "awake_ele_type": "麻", "awake_ele_val": 120, "affi": 0, "phials": "榴弾", "sharp": "青", "sharp+": "白", "slots": 3
+        },
+        {
+            "name": "ブラックフルガード改",
+            "atk": 792, "ele_type": "無", "ele_val": 0, "awake_ele_type": "麻", "awake_ele_val": 190, "affi": 0, "phials": "榴弾", "sharp": "青", "sharp+": "白", "slots": 3
+        },
+        {
+            "name": "シュヴァルツァスクード",
+            "atk": 936, "ele_type": "無", "ele_val": 0, "awake_ele_type": "麻", "awake_ele_val": 240, "affi": 0, "phials": "榴弾", "sharp": "白", "sharp+": "紫", "slots": 3
         }
     ]
 }
