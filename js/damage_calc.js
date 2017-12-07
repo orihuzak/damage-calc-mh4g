@@ -435,9 +435,9 @@ $(function(){
         let card = $(this).parents('.card').clone()
         let input_section = $(this).prevAll('.input')
         // セレクトボックスの値だけcloneしたカードに設定
-        card.find('.weapon_types').val(
-            input_section.children('.weapon_types')
-                .find('option:selected').text())
+        card.find('.weapon_types select').val(
+            input_section.children('.weapon_types select option:selected')
+                .text())
         card.find('.sharpness').val(
             input_section.children('.sharpness')
             .find('option:selected').text())
@@ -450,7 +450,8 @@ $(function(){
         
         
         // 新しいカードにイベントを設定
-        $('#' + card_id + ' .weapon_types').on('change', select_weapon_type)
+        $('#' + card_id + ' .weapon_types select')
+            .on('change', set_weapon_select)
         $('#' + card_id + ' .weapon_name select').on('change', select_weapon)
         $('#' + card_id + ' .ele_type select').on('change', select_ele_type)
         $('#' + card_id + ' .sharp_plus select').on('change', update_sharpness)
@@ -462,96 +463,138 @@ $(function(){
         return false
     }
 
-    /** 武器種が変更されたら動く 
-     *  input_sect: section .input */
-    function select_weapon_type(){
+    /** 武器種が変更されたら、選択された武器種の武器を武器名selectに入れる 
+     *  section: section .weapon
+     *  type: weapon_type */
+    function set_weapon_select(){
         console.log('武器種を変更')
-        let weapon_type = $('option:selected', this).text(),
-            input_sect = $(this).parents().find('.input')
-            select = input_sect.find('.weapon_name select')
+        let type = $('option:selected', this).text(),
+            section = $(this).parents().find('.weapon')
+            select = section.find('.weapon_name select')
+            ele_type = section.find('.ele_type select option:selected').val()
+            awake = Number($(this).parents()
+                .find('.awaken select option:selected').val())
+        
         // 既存の.weapon_name optionを削除
         select.empty()
+        
         // 武器名selectに武器名を追加
         $.getJSON('weapon_data.json', function(data){
-            for(let i = 0; i < data[weapon_type].length; i++){
-                let option = $('<option>')
-                option.text(data[weapon_type][i]["name"])
-                select.append(option)
+            if(ele_type){
+                // 属性指定あり
+                if(awake){
+                    // 属性解放スキルがONなら'ele_type'か'awake_ele_type'が ele_typeと同じなら追加する
+                    for(let w in data[type]){
+                        if(ele_type == data[type][w]['ele_type']
+                           || ele_type == data[type][w]['awake_ele_type']){
+                            let option = $('<option>')
+                            option.text(w)
+                            select.append(option)
+                        }
+                    }
+                }else{
+                    // 属性解放スキルがOFFなら'ele_type'とele_typeが同じものだけ追加
+                    for(let w in data[type]){
+                        if(ele_type == data[type][w]['ele_type']){
+                            let option = $('<option>')
+                            option.text(w)
+                            select.append(option)
+                        }
+                    }
+                }
+            }else{
+                // 属性指定なし
+                console.log('指定なし')
+                for(let w in data[type]){
+                    let option = $('<option>')
+                    option.text(w)
+                    select.append(option)
+                }
             }
+            
         })
         
         // 武器種に依存するhtmlを隠す
-        input_sect.find('.cob').hide()
-        input_sect.find('.p_type').hide()
-        input_sect.find('.boost_mode').hide()
-        input_sect.find('.sb_full').hide()
-        input_sect.find('.sb_color').hide()
-        input_sect.find('.demon_mode').hide()
-        input_sect.find('.shell_types').hide()
-        input_sect.find('.shelling_lv').hide()
-        input_sect.find('.essences').hide()
-        input_sect.find('.sa_p_types').hide()
+        section.find('.cob').hide()
+        section.find('.p_type').hide()
+        section.find('.boost_mode').hide()
+        section.find('.sb_full').hide()
+        section.find('.sb_color').hide()
+        section.find('.demon_mode').hide()
+        section.find('.shell_types').hide()
+        section.find('.shelling_lv').hide()
+        section.find('.essences').hide()
+        section.find('.sa_p_types').hide()
 
         // 武器種ごとに処理
-        switch(weapon_type){
+        switch(type){
             case '大剣':
                 // 中腹ヒットhtmlを表示
-                input_sect.find('.cob').show()
+                section.find('.cob').show()
                 break
             case '太刀':
                 // 中腹ヒットhtmlを表示
-                input_sect.find('.cob').show()
-                input_sect.find('.sb_full').show()
-                input_sect.find('.sb_color').show()
+                section.find('.cob').show()
+                section.find('.sb_full').show()
+                section.find('.sb_color').show()
                 break
             case 'スラッシュアックス':
-                input_sect.find('.sa_p_types').show()
+                section.find('.sa_p_types').show()
                 break
             case 'チャージアックス':
                 // ビン選択と属性強化状態のselect
-                input_sect.find('.p_type').show()
-                input_sect.find('.boost_mode').show()
+                section.find('.p_type').show()
+                section.find('.boost_mode').show()
                 break
             case '双剣':
-                input_sect.find('.demon_mode').show()
+                section.find('.demon_mode').show()
                 break
             case 'ガンランス':
-                input_sect.find('.shell_types').show()
-                input_sect.find('.shelling_lv').show()
+                section.find('.shell_types').show()
+                section.find('.shelling_lv').show()
                 break
             case '操虫棍':
-                input_sect.find('.essences').show()
+                section.find('.essences').show()
                 break
         }
 
         return false
     }
 
-    // 属性セレクト.ele_type selectが選択されたら動く
+    /** 属性セレクト.ele_type selectが選択されたら、
+     *  選択された属性の武器を武器名セレクトに出力
+     * 
+     */
     function select_ele_type(){
         // section .input と 属性タイプ と 武器種を取得
-        let awaken = Number($(this).parents().find('.awaken').val()),
+        let awaken = Number(
+                $(this).parents().find('.awaken select option:selected').val()),
             ele_type = $('option:selected', this).val(),
-            w_type =
-                $(this).parents().find('.weapon_types option:selected').text()
+            type = $(this).parents()
+                .find('.weapon_types select option:selected').text()
+        
         // .weapon_name select の子要素を削除
         $(this).parents().find('.weapon_name select').empty()
+
         // 新しい子要素を追加
         $.getJSON('weapon_data.json', function(data){
-            for(let i = 0; i < data[w_type].length; i++){
-                let option = $('<option>')
-                if (awaken){
-                    // 属性解放スキルがonの時
+            if (awaken){
+                // 属性解放スキルがonの時
+                for(let w in data[type]){
                     // "ele_type"か"awake_ele_type"のどちらかがele_typeなら武器名を武器selectへ
-                    if(data[w_type][i]["ele_type"] == ele_type
-                       || data[w_type][i]["awake_ele_type"] == ele_type){
-                        option.text(data[w_type][i]["name"])
+                    if(ele_type == data[type][w]['ele_type']
+                    || ele_type ==  data[type][w]['awake_ele_type']){
+                        let option = $('<option>')
+                        option.text(w)
                         select.append(option)
                     }
-                }else{
+                }
+            }else{
+                for(let w in data[type]){
                     // 属性解放スキルがoffの時 指定されたele_typeの武器名をselectへ
-                    if (data[w_type][i]["ele_type"] == ele_type){
-                        option.text(data[w_type][i]["name"])
+                    if (ele_type == data[type][w]['ele_type']){
+                        let option = $('<option>')
+                        option.text(w)
                         select.append(option)
                     }
                 }
@@ -565,78 +608,67 @@ $(function(){
      *  awaken: 属性解放フラグ
      *  sharp_plus: 匠スキルフラグ
      *  section: section .weapon
-     *  w_type: weapon_type */
+     *  type: weapon_type */
     function select_weapon(){
-        let awaken = Number(
-                $(this).parents().find('.awaken option:selected').val()),
-            sharp_plus = Number($(this).parents()
-                .find('.sharp_plus select option:selected').val()),
-            section = $(this).parents().find('.weapon'),
-            // 武器種を取得
-            w_type = 
-                $(this).parents().find('.weapon_types option:selected').text(),
-            // 武器の名前を取得
-            name = $('option:selected', this).text()
+        let input_sect = $(this).parents().find('.input'),
+            type = input_sect
+                .find('.weapon_types select option:selected').text(),
+            name = $('option:selected', this).text(),
+            ele_type = 'ele_type',
+            ele_val =  'ele_val',
+            sharp = 'sharp'
+
+        // 属性解放スキル
+        if(Number(input_sect.find('.awaken select option:selected').val())){
+            // ONなら'awake_' + ele_type & ele_val
+            ele_type = 'awake_' + ele_type
+            ele_val = 'awake_' + ele_val
+        }
+        // 匠スキル
+        if(Number(input_sect.find('.sharp_plus select option:selected').val())){
+            // ONなら sharp + '+'
+            sharp + '+'
+        }
+        
         // 武器種と武器名から各武器データを取得し、inputに入力
         $.getJSON('weapon_data.json', function(data){
-            // 武器種が見つかればfor文を実行 武器データが完成すればif文はいらない
-            if(data[w_type]){
-                for(let i = 0; i < data[w_type].length; i++){
-                    if(data[w_type][i]['name'] == name){
-                        let ele_type, ele_val, sharp
-                        // 属性解放がonならele_typeとele_valはawake_...の値を使う
-                        if(awaken){
-                            ele_type = data[w_type][i]['awake_ele_type']
-                            ele_val = data[w_type][i]['awake_ele_val']
-                        }else{
-                            ele_type = data[w_type][i]['ele_type']
-                            ele_val = data[w_type][i]['ele_val']
-                        }
-                        // 匠スキルがonならsharpはsharp+を使う
-                        if(sharp_plus){
-                            sharp = data[w_type][i]['sharp+']
-                        }else{
-                            sharp = data[w_type][i]['sharp']
-                        }
+            // 表示攻撃力
+            input_sect.find('.attack input').val(data[type][name]['atk'])
+            // 属性種
+            input_sect.find('.ele_type select').val(data[type][name][ele_type])
 
-                        // 特殊属性のダメージ計算には未対応なので、ele_typeが特殊属性ならele_valを0にする。対応したら消しましょう。
-                        if(ele_type == ('麻'||'毒'||'眠'||'爆')){
-                            ele_val = 0
-                        }
+            // 特殊属性のダメージ計算には未対応なので、ele_typeが特殊属性ならele_valを0にする。対応したら消しましょう。
+            if(data[type][name][ele_type] == ('麻'||'毒'||'眠'||'爆')){
+                // 表示属性値
+                input_sect.find('.element input').val(0)
+            }else{
+                // 表示属性値
+                input_sect.find('.element input').val(data[type][name][ele_val])
+            }
+            // 斬れ味
+            input_sect.find('.sharpness select').val(data[type][name][sharp])
+            // 会心率
+            input_sect.find('.affinity input').val(data[type][name]['affi'])
 
-                        // 表示攻撃力
-                        section.find('.attack').val(data[w_type][i]['atk'])
-                        // 属性種
-                        section.find('.ele_type select').val(ele_type)
-                        // 表示属性値
-                        section.find('.element').val(ele_val)
-                        // 会心率
-                        section.find('.affinity').val(data[w_type][i]['affi'])
-                        // 斬れ味
-                        section.find('.sharpness').val(sharp)
-    
-                        // 武器種毎の処理
-                        switch(w_type){
-                            case 'チャージアックス':
-                                section.find('.p_type select')
-                                    .val(data[w_type][i]['phials'])
-                                break
-                        }
-                    }
-                }
+            // 武器種毎の処理
+            switch(type){
+                case 'チャージアックス':
+                    input_sect.find('.p_type select')
+                        .val(data[type][name]['phials'])
+                    break
             }
         })
     }
 
     /** 匠スキルが変更されたら斬れ味を変える
-     *  w_type: weapon_type
-     *  w_name: weapon_name */ 
+     *  type: weapon_type
+     *  name: weapon_name */ 
     function update_sharpness(){
         let sharp,
             sharp_key = 'sharp',
             weapon_sect = $(this).parents().find('.weapon'),
-            w_type = weapon_sect.find('.weapon_types option:selected').text(),
-            w_name = weapon_sect.find('.weapon_name option:selected').text()
+            type = weapon_sect.find('.weapon_types select option:selected').text(),
+            name = weapon_sect.find('.weapon_name option:selected').text()
         
         // 匠スキルがONかOFFか調べ、ONならsharp_keyに'+'を追加
         if(Number($('option:selected', this).val())){
@@ -644,12 +676,7 @@ $(function(){
         }
 
         $.getJSON('weapon_data.json', function(data){
-            for(let i = 0; i < data[w_type].length; i++){
-                if(data[w_type][i]['name'] == w_name){
-                    sharp = data[w_type][i][sharp_key]
-                }
-            }
-            weapon_sect.find('.sharpness').val(sharp)
+            weapon_sect.find('.sharpness select').val(data[type][name][sharp_key])
         })
     }
 
@@ -671,7 +698,7 @@ $(function(){
         // 入力値を取得
         // 武器種を取得
         let weapon_type = 
-            input_section.find('.weapon_types option:selected').text()
+            input_section.find('.weapon_types select option:selected').text()
         // 武器倍率を取得
         let weapon_magn = calc_weapon_magn(
             input_section.find('.attack').val(),
@@ -1418,7 +1445,7 @@ $(function(){
     }
 
     // 最初のカードにイベントを設定
-    $('#0 .weapon_types').on('change', select_weapon_type)
+    $('#0 .weapon_types select').on('change', set_weapon_select)
     $('#0 .weapon_name select').on('change', select_weapon)
     $('#0 .ele_type select').on('change', select_ele_type)
     $('#0 .sharp_plus select').on('change', update_sharpness)

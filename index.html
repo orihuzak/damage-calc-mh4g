@@ -11,9 +11,9 @@
             <section class=input>
                 <section class=weapon>
                     <section class=select_weapon>
-                        <div>
+                        <div class=weapon_types>
                             <label>武器種</label>
-                            <select class=weapon_types>
+                            <select>
                                 <option>大剣</option>
                                 <option>太刀</option>
                                 <option>片手剣</option>
@@ -30,6 +30,7 @@
                         <div class=ele_type>
                             <label>属性</label>
                             <select>
+                                <option value="">指定なし</option>
                                 <option value=無>無</option>
                                 <option value=火>火</option>
                                 <option value=水>水</option>
@@ -133,21 +134,21 @@
                                 <option value=1.25>赤白橙</option>
                             </select>
                         </div>
-                        <div>
+                        <div class=attack>
                             <label>攻撃力</label>
-                            <input class=attack type=number value=100> 
+                            <input type=number value=100> 
                         </div> 
-                        <div> 
+                        <div class=element>
                             <label>属性攻撃力</label> 
-                            <input class=element type=number value=100> 
+                            <input type=number value=100> 
                         </div> 
-                        <div> 
+                        <div class=affinity> 
                             <label>会心率（％）</label>
-                            <input class=affinity type=number value=10> 
+                            <input type=number value=10> 
                         </div> 
-                        <div> 
+                        <div class=sharpness> 
                             <label>斬れ味</label> 
-                            <select class=sharpness>
+                            <select>
                                 <option value=赤>赤</option>
                                 <option value=橙>橙</option> 
                                 <option value=黄>黄</option> 
@@ -162,9 +163,9 @@
                 <!-- スキル -->
                 <section class=skills>
                     <section class=other_skills>
-                        <div>
+                        <div class=awaken>
                             <label>属性解放</label>
-                            <select class=awaken>
+                            <select>
                                 <option value=0>なし</option>
                                 <option value=1>あり</option>
                             </select>
