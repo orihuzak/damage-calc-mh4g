@@ -2,7 +2,7 @@
     "チャージアックス":[
         { 
             "name": "精鋭討伐隊盾斧",
-            "atk": 252, "ele_type": "無", "ele_val": 0, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "phials": "榴弾", "sharp": "黄", "sharp+": "緑","slots": 0 
+            "atk": 252, "ele_type": "無", "ele_val": 0, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "phials": "榴弾", "sharp": "黄", "sharp+": "緑", "slots": 0 
         },
         {
             "name": "精鋭討伐隊盾斧改",

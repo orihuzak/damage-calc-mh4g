@@ -453,6 +453,7 @@ $(function(){
         $('#' + card_id + ' .weapon_types').on('change', select_weapon_type)
         $('#' + card_id + ' .weapon_name select').on('change', select_weapon)
         $('#' + card_id + ' .ele_type select').on('change', select_ele_type)
+        $('#' + card_id + ' .sharp_plus select').on('change', update_sharpness)
         $('#' + card_id + ' .skills select').on('change', select_skills)
         $('#' + card_id + ' .calc').on('click', click_calc_botton)   
         $('#' + card_id + ' .add_card').on('click', click_add_card)
@@ -568,8 +569,8 @@ $(function(){
     function select_weapon(){
         let awaken = Number(
                 $(this).parents().find('.awaken option:selected').val()),
-            sharp_plus = Number(
-                $(this).parents().find('.sharp_plus option:selected').val()),
+            sharp_plus = Number($(this).parents()
+                .find('.sharp_plus select option:selected').val()),
             section = $(this).parents().find('.weapon'),
             // 武器種を取得
             w_type = 
@@ -624,6 +625,31 @@ $(function(){
                     }
                 }
             }
+        })
+    }
+
+    /** 匠スキルが変更されたら斬れ味を変える
+     *  w_type: weapon_type
+     *  w_name: weapon_name */ 
+    function update_sharpness(){
+        let sharp,
+            sharp_key = 'sharp',
+            weapon_sect = $(this).parents().find('.weapon'),
+            w_type = weapon_sect.find('.weapon_types option:selected').text(),
+            w_name = weapon_sect.find('.weapon_name option:selected').text()
+        
+        // 匠スキルがONかOFFか調べ、ONならsharp_keyに'+'を追加
+        if(Number($('option:selected', this).val())){
+            sharp_key += '+'
+        }
+
+        $.getJSON('weapon_data.json', function(data){
+            for(let i = 0; i < data[w_type].length; i++){
+                if(data[w_type][i]['name'] == w_name){
+                    sharp = data[w_type][i][sharp_key]
+                }
+            }
+            weapon_sect.find('.sharpness').val(sharp)
         })
     }
 
@@ -1395,6 +1421,7 @@ $(function(){
     $('#0 .weapon_types').on('change', select_weapon_type)
     $('#0 .weapon_name select').on('change', select_weapon)
     $('#0 .ele_type select').on('change', select_ele_type)
+    $('#0 .sharp_plus select').on('change', update_sharpness)
     $('#0 .calc').on('click', click_calc_botton)   
     $('#0 .add_card').on('click', click_add_card)
     $('#0 .skills select').on('change', select_skills)
