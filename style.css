@@ -39,7 +39,6 @@ a:hover {
     padding: 10px;
     font-size: 14px;
     vertical-align: middle;
-    background-color: darkorange;
 }
 
 
@@ -51,6 +50,7 @@ a:hover {
 
     .input div {
         text-align: right;
+        padding: 0 0 0 5px;
     }
 
     .input label {
@@ -81,7 +81,6 @@ a:hover {
     .select_weapon {
         width: 50%;
         float: left;
-        background-color: gray;
     }
 
         .select_weapon div {
@@ -102,7 +101,6 @@ a:hover {
     .weapon_data {
         width: 50%;
         float: left;
-        background-color: darkcyan;
     }
 
         .weapon_data input,
@@ -117,14 +115,22 @@ a:hover {
 
     /* .skillsセクション *******************************************************/
     .skills {
-        display: block;
-        background-color: lightgreen;
-        overflow: auto;
     }
+    
+        .skills section {
+            border-top: 1px solid darkgray;
+            margin-top: 3px;
+            padding-top: 1px;
+            overflow: auto;
+        }
 
-    .skills div{
-        float: left;
-    }
+        .skills div {
+            width: 48%;
+            float: left;
+        }
+
+        .skills select {
+        }
 
     /* .monster_dataセクション *************************************************/
         
