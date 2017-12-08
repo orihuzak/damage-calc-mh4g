@@ -455,6 +455,7 @@ $(function(){
         $('#' + card_id + ' .weapon_name select').on('change', select_weapon)
         $('#' + card_id + ' .ele_type select').on('change', select_ele_type)
         $('#' + card_id + ' .sharp_plus select').on('change', update_sharpness)
+        $('#' + card_id + ' .awaken select').on('change', update_element)
         $('#' + card_id + ' .skills select').on('change', select_skills)
         $('#' + card_id + ' .calc').on('click', click_calc_botton)   
         $('#' + card_id + ' .add_card').on('click', click_add_card)
@@ -504,7 +505,6 @@ $(function(){
                 }
             }else{
                 // 属性指定なし
-                console.log('指定なし')
                 for(let w in data[type]){
                     let option = $('<option>')
                     option.text(w)
@@ -667,7 +667,8 @@ $(function(){
         let sharp,
             sharp_key = 'sharp',
             weapon_sect = $(this).parents().find('.weapon'),
-            type = weapon_sect.find('.weapon_types select option:selected').text(),
+            type = 
+                weapon_sect.find('.weapon_types select option:selected').text(),
             name = weapon_sect.find('.weapon_name option:selected').text()
         
         // 匠スキルがONかOFFか調べ、ONならsharp_keyに'+'を追加
@@ -680,6 +681,34 @@ $(function(){
         })
     }
 
+    /** 属性解放スキルが選択されたら、属性を更新する */
+    function update_element(){
+        let ele_type = 'ele_type',
+            ele_val = 'ele_val',
+            section = $(this).parents().find('.input'),
+            type = section.find('.weapon_types select option:selected').text(),
+            name = section.find('.weapon_name option:selected').text()
+        
+        if(Number($('option:selected', this).val())){
+            ele_type = 'awake_' + ele_type
+            ele_val = 'awake_' + ele_val
+        }
+
+        $.getJSON('weapon_data.json', function(data){
+            if(data[type][name][ele_type]){
+                section.find('.ele_type select').val(data[type][name][ele_type])
+                // 特殊属性のダメージ計算には未対応なので、ele_typeが特殊属性ならele_valを0にする。対応したら消しましょう。
+                if(data[type][name][ele_type] == ('麻'||'毒'||'眠'||'爆')){
+                    // 表示属性値
+                    section.find('.element input').val(0)
+                }else{
+                    // 表示属性値
+                    section.find('.element input').val(data[type][name][ele_val])
+                }
+            }
+            
+        })
+    }
 
     // スキルが選ばれたらlabelの文字色を変える
     function select_skills(){
@@ -852,8 +881,10 @@ $(function(){
                 case 'ライトボウガン':
                 case 'ヘヴィボウガン':
                     crit_ele_magn = 1.3
+                    break
                 default:
                     crit_ele_magn = 1.25
+                    break
             }
         }
         
@@ -1449,6 +1480,7 @@ $(function(){
     $('#0 .weapon_name select').on('change', select_weapon)
     $('#0 .ele_type select').on('change', select_ele_type)
     $('#0 .sharp_plus select').on('change', update_sharpness)
+    $('#0 .awaken select').on('change', update_element)
     $('#0 .calc').on('click', click_calc_botton)   
     $('#0 .add_card').on('click', click_add_card)
     $('#0 .skills select').on('change', select_skills)
