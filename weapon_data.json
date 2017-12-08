@@ -23,6 +23,75 @@
         },
         "シュヴァルツスクード": {
             "atk": 936, "ele_type": "無", "ele_val": 0, "awake_ele_type": "麻", "awake_ele_val": 240, "affi": 0, "phials": "榴弾", "sharp": "白", "sharp+": "紫", "slots": 3
+        },
+        "衛士隊正式盾斧": {
+            "atk": 576, "ele_type": "雷", "ele_val": 240, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 5, "phials": "強属性", "sharp": "緑", "sharp+": "青", "slots": 1
+        },
+        "衛士隊正式盾斧改": {
+            "atk": 612, "ele_type": "雷", "ele_val": 340, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 10, "phials": "強属性", "sharp": "青", "sharp+": "白", "slots": 2
+        },
+        "ノブレスオブリージュ": {
+            "atk": 648, "ele_type": "雷", "ele_val": 370, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 15, "phials": "強属性", "sharp": "青", "sharp+": "白", "slots": 2
+        },
+        "騎士団隊証盾斧": {
+            "atk": 864, "ele_type": "雷", "ele_val": 380, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 15, "phials": "強属性", "sharp": "白", "sharp+": "白", "slots": 2
+        },
+        "ディヴァルキューレ": {
+            "atk": 936, "ele_type": "雷", "ele_val": 390, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 15, "phials": "強属性", "sharp": "白", "sharp+": "紫", "slots": 2
+        },
+        "ディア＝ルテミス": {
+            "atk": 396, "ele_type": "火", "ele_val": 150, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "phials": "強属性", "sharp": "緑", "sharp+": "緑", "slots": 0
+        },
+        "ディア＝ルテミア": {
+            "atk": 432, "ele_type": "火", "ele_val": 220, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "phials": "強属性", "sharp": "緑", "sharp+": "緑", "slots": 1
+        },
+        "ディア＝ヘカテル": {
+            "atk": 504, "ele_type": "火", "ele_val": 330, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "phials": "強属性", "sharp": "緑", "sharp+": "青", "slots": 1
+        },
+        "ディア＝ヘカテリア": {
+            "atk": 540, "ele_type": "火", "ele_val": 360, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "phials": "強属性", "sharp": "青", "sharp+": "白", "slots": 2
+        },
+        "ディア＝ロゼ": {
+            "atk": 792, "ele_type": "火", "ele_val": 380, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "phials": "強属性", "sharp": "青", "sharp+": "白", "slots": 2
+        },
+        "ディア＝ロゼッタ": {
+            "atk": 828, "ele_type": "火", "ele_val": 400, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "phials": "強属性", "sharp": "白", "sharp+": "白", "slots": 2
+        },
+        "ルナ＝エストオレ": {
+            "atk": 936, "ele_type": "火", "ele_val": 420, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "phials": "強属性", "sharp": "白", "sharp+": "紫", "slots": 2
+        },
+        "桜剣蒼盾【燕】": {
+            "atk": 864, "ele_type": "毒", "ele_val": 320, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "phials": "榴弾", "sharp": "白", "sharp+": "白", "slots": 2
+        },
+       "桜剣蒼盾【雲雀】": {
+            "atk": 972, "ele_type": "毒", "ele_val": 380, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "phials": "榴弾", "sharp": "白", "sharp+": "紫", "slots": 2
+       },
+       "炎斧アクセリオン": {
+            "atk": 504, "ele_type": "火", "ele_val": 100, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 5, "phials": "榴弾", "sharp": "緑", "sharp+": "緑", "slots": 0
+        },
+        "焔斧ハルバリオン": {
+            "atk": 576, "ele_type": "火", "ele_val": 160, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 10, "phials": "榴弾", "sharp": "青", "sharp+": "青", "slots": 0
+        },
+        "紅蓮斧ユニオリオン": {
+            "atk": 612, "ele_type": "火", "ele_val": 200, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 10, "phials": "榴弾", "sharp": "青", "sharp+": "青", "slots": 0
+        },
+        "業火斧ヘルメスレイ": {
+            "atk": 648, "ele_type": "火", "ele_val": 220, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 15, "phials": "榴弾", "sharp": "白", "sharp+": "白", "slots": 0
+        },
+        "烈日斧ヘルメスイクサ": {
+            "atk": 684, "ele_type": "火", "ele_val": 240, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 15, "phials": "榴弾", "sharp": "白", "sharp+": "白", "slots": 0
+        },
+        "煌炎斧ヘルメスノヴァ": {
+            "atk": 864, "ele_type": "火", "ele_val": 260, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 15, "phials": "榴弾", "sharp": "白", "sharp+": "白", "slots": 0
+        },
+        "繚乱の盾斧": {
+            "atk": 936, "ele_type": "火", "ele_val": 280, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 20, "phials": "榴弾", "sharp": "白", "sharp+": "紫", "slots": 0
+        },
+        "金華朧銀の盾斧": {
+            "atk": 972, "ele_type": "火", "ele_val": 320, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 20, "phials": "榴弾", "sharp": "白", "sharp+": "紫", "slots": 0
+        },
+        "シールドスクアーロ": {
+            "atk": 468, "ele_type": "氷", "ele_val": 150, "awake_ele_type": 0, "awake_ele_val": 0, "affi": -20, "phials": "強属性", "sharp": "緑", "sharp+": "緑", "slots": 1
         }
     }
 }

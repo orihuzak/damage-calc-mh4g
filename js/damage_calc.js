@@ -433,13 +433,13 @@ $(function(){
         // .cardを追加する時
         // 呼んだカードのコピーを作成
         let card = $(this).parents('.card').clone()
-        let input_section = $(this).prevAll('.input')
+        let section = $(this).prevAll('.input')
         // セレクトボックスの値だけcloneしたカードに設定
         card.find('.weapon_types select').val(
-            input_section.children('.weapon_types select option:selected')
+            section.children('.weapon_types select option:selected')
                 .text())
         card.find('.sharpness').val(
-            input_section.children('.sharpness')
+            section.children('.sharpness')
             .find('option:selected').text())
         // 呼んだカードのidを記憶
         let called_id = card.attr('id')
@@ -452,10 +452,14 @@ $(function(){
         // 新しいカードにイベントを設定
         $('#' + card_id + ' .weapon_types select')
             .on('change', set_weapon_select)
-        $('#' + card_id + ' .weapon_name select').on('change', select_weapon)
-        $('#' + card_id + ' .ele_type select').on('change', select_ele_type)
-        $('#' + card_id + ' .sharp_plus select').on('change', update_sharpness)
-        $('#' + card_id + ' .awaken select').on('change', update_element)
+        $('#' + card_id + ' .weapon_name select')
+            .on('change', input_weapon_data)
+        $('#' + card_id + ' .ele_type select')
+            .on('change', select_ele_type)
+        $('#' + card_id + ' .sharp_plus select')
+            .on('change', update_sharpness)
+        $('#' + card_id + ' .awaken select')
+            .on('change', update_element)
         $('#' + card_id + ' .skills select').on('change', select_skills)
         $('#' + card_id + ' .calc').on('click', click_calc_botton)   
         $('#' + card_id + ' .add_card').on('click', click_add_card)
@@ -487,7 +491,8 @@ $(function(){
                     // 属性解放スキルがONなら'ele_type'か'awake_ele_type'が ele_typeと同じなら追加する
                     for(let w in data[type]){
                         if(ele_type == data[type][w]['ele_type']
-                           || ele_type == data[type][w]['awake_ele_type']){
+                           || ele_type
+                                == data[type][w]['awake_ele_type']){
                             let option = $('<option>')
                             option.text(w)
                             select.append(option)
@@ -578,25 +583,35 @@ $(function(){
 
         // 新しい子要素を追加
         $.getJSON('weapon_data.json', function(data){
-            if (awaken){
-                // 属性解放スキルがonの時
-                for(let w in data[type]){
-                    // "ele_type"か"awake_ele_type"のどちらかがele_typeなら武器名を武器selectへ
-                    if(ele_type == data[type][w]['ele_type']
-                    || ele_type ==  data[type][w]['awake_ele_type']){
-                        let option = $('<option>')
-                        option.text(w)
-                        select.append(option)
+            if (ele_type){
+                // ele_typeが指定された場合
+                if (awaken){
+                    // 属性解放スキルがonの時
+                    for(let w in data[type]){
+                        // "ele_type"か"awake_ele_type"のどちらかがele_typeなら武器名を武器selectへ
+                        if(ele_type == data[type][w]['ele_type']
+                        || ele_type ==  data[type][w]['awake_ele_type']){
+                            let option = $('<option>')
+                            option.text(w)
+                            select.append(option)
+                        }
+                    }
+                }else{
+                    for(let w in data[type]){
+                        // 属性解放スキルがoffの時 指定されたele_typeの武器名をselectへ
+                        if (ele_type == data[type][w]['ele_type']){
+                            let option = $('<option>')
+                            option.text(w)
+                            select.append(option)
+                        }
                     }
                 }
             }else{
+                // 指定されなかった場合 該当武器種の全武器を出力
                 for(let w in data[type]){
-                    // 属性解放スキルがoffの時 指定されたele_typeの武器名をselectへ
-                    if (ele_type == data[type][w]['ele_type']){
-                        let option = $('<option>')
-                        option.text(w)
-                        select.append(option)
-                    }
+                    let option = $('<option>')
+                    option.text(w)
+                    select.append(option)
                 }
             }
         })
@@ -609,7 +624,7 @@ $(function(){
      *  sharp_plus: 匠スキルフラグ
      *  section: section .weapon
      *  type: weapon_type */
-    function select_weapon(){
+    function input_weapon_data(){
         let input_sect = $(this).parents().find('.input'),
             type = input_sect
                 .find('.weapon_types select option:selected').text(),
@@ -633,7 +648,8 @@ $(function(){
         // 武器種と武器名から各武器データを取得し、inputに入力
         $.getJSON('weapon_data.json', function(data){
             // 表示攻撃力
-            input_sect.find('.attack input').val(data[type][name]['atk'])
+            input_sect.find('.attack input')
+                .val(data[type][name]['atk'])
             // 属性種
             input_sect.find('.ele_type select').val(data[type][name][ele_type])
 
@@ -723,52 +739,53 @@ $(function(){
     // 計算ボタンが押されたら働く
     function click_calc_botton(){
         console.log('計算ボタン')
-        let input_section = $(this).parents().find('.input')
+        // section .input
+        let section = $(this).parents().find('.input')
         // 入力値を取得
         // 武器種を取得
         let weapon_type = 
-            input_section.find('.weapon_types select option:selected').text()
+            section.find('.weapon_types select option:selected').text()
         // 武器倍率を取得
         let weapon_magn = calc_weapon_magn(
-            input_section.find('.attack').val(),
+            section.find('.attack input').val(),
             WEAPON_COEF_DICT[weapon_type])
         // 属性倍率を取得
-        let ele_val = Number(input_section.find('.element').val())
+        let ele_val = Number(section.find('.element input').val())
         // 会心率を取得
-        let affinity = Number(input_section.find('.affinity').val())
+        let affinity = Number(section.find('.affinity input').val())
         // 斬れ味物理補正値を取得
         let phys_sharp_magn = PHYS_SHARP_DICT[
-            input_section.find('.sharpness option:selected').text()
+            section.find('.sharpness select option:selected').val()
         ]
         //斬れ味属性補正値を取得
         let ele_sharp_magn = ELE_SHARP_DICT[
-            input_section.find('.sharpness option:selected').text()
+            section.find('.sharpness select option:selected').val()
         ]
 
         // 物理肉質を取得
-        let phys_weak = Number(input_section.find('.phys_weak').val())
+        let phys_weak = Number(section.find('.phys_weak').val())
         // 耐属性を取得
-        let ele_weak = Number(input_section.find('.ele_weak').val())
+        let ele_weak = Number(section.find('.ele_weak').val())
         // 防御率の取得
-        let defense_rate = Number(input_section.find('.defense_rate').val())
+        let defense_rate = Number(section.find('.defense_rate').val())
 
 
         /* 加算スキル（武器倍率に加算するスキル）************************************/
         let sum_skills = []
         // 極限強化・攻撃
         sum_skills.push(Number(
-            input_section.find('.honing option:selected').val()))
+            section.find('.honing option:selected').val()))
 
         // 攻撃up
         sum_skills.push(Number(
-            input_section.find('.atk_up option:selected').val()))
+            section.find('.atk_up option:selected').val()))
 
         // 無傷（フルチャージ）
         sum_skills.push(Number(
-            input_section.find('.peak_performance option:selected').val()))
+            section.find('.peak_performance option:selected').val()))
 
         // 闘魂（挑戦者）
-        let challenger = input_section.find('.challenger option:selected').val().split(',')
+        let challenger = section.find('.challenger option:selected').val().split(',')
         sum_skills.push(Number(challenger[0]))
         affinity += Number(challenger[1])
 
@@ -776,14 +793,14 @@ $(function(){
         /* 乗算スキル 武器倍率に乗算するスキル *************************************/
         let mul_skills = []
         // 火事場力（倍率系スキル）
-        mul_skills.push(Number(input_section.find('.adrenaline option:selected').val()))
+        mul_skills.push(Number(section.find('.adrenaline option:selected').val()))
 
         // 不屈（倍率系スキル）
-        mul_skills.push(Number(input_section.find('.fortify option:selected').val()))
+        mul_skills.push(Number(section.find('.fortify option:selected').val()))
 
         // 演奏攻撃力UP
         mul_skills.push(
-            Number(input_section.find('.hh_atk option:selected').val()))
+            Number(section.find('.hh_atk option:selected').val()))
         
         
         /** 砲術
@@ -797,13 +814,13 @@ $(function(){
          * チャージアックス: 1.15
          * チャージアックスの場合は砲術師+ネコ砲術で1.4が上限 */
         let artillery_txt = 
-            input_section.find('.artillery option:selected').text()
+            section.find('.artillery option:selected').text()
         let artillery = 
-            input_section.find('.artillery option:selected').val().split(',')
+            section.find('.artillery option:selected').val().split(',')
         let felyne_bomb_txt = 
-            input_section.find('.felyne_bomb option:selected').text()
+            section.find('.felyne_bomb option:selected').text()
         let felyne_bomb = 
-            input_section.find('.felyne_bomb option:selected').val().split(',')
+            section.find('.felyne_bomb option:selected').val().split(',')
         
         let artillery_magn = 1
         switch (weapon_type){
@@ -827,36 +844,36 @@ $(function(){
     
         /* 会心率UPスキル *******************************************************/
         // 達人
-        affinity += Number(input_section.find('.expert option:selected').val())
+        affinity += Number(section.find('.expert option:selected').val())
         
         /** 力の解放
          *  +1: +30
          *  +2: +50*/
         affinity += Number(
-            input_section.find('.latent_power option:selected').val())
+            section.find('.latent_power option:selected').val())
         
         // 狂竜症克服
         affinity += Number(
-            input_section.find('.antivirus option:selected').val())
+            section.find('.antivirus option:selected').val())
         
         // 演奏会心UP
         affinity += 
-            Number(input_section.find('.hh_affi option:selected').val())
+            Number(section.find('.hh_affi option:selected').val())
 
 
         /* 属性スキル **********************************************************/
         // 表示属性値に乗算 倍率の上限は1.2
         // 単属性強化
         let ind_e_up = 
-            input_section.find('.ind_ele_up option:selected').val().split(',')
+            section.find('.ind_ele_up option:selected').val().split(',')
         
         // 全属性強化
         let e_up = 
-            Number(input_section.find('.ele_up option:selected').val())
+            Number(section.find('.ele_up option:selected').val())
         
         // 狩猟笛旋律 属性攻撃力強化
         let hh_e_up = 
-            Number(input_section.find('.hh_ele option:selected').val())
+            Number(section.find('.hh_ele option:selected').val())
 
         let element_up = Number(ind_e_up[0]) * e_up * hh_e_up
         // element_upが1.2を超えたら1.2にする
@@ -867,7 +884,7 @@ $(function(){
         
         /** 会心撃【属性】*/
         let crit_ele_magn = 1
-        if (input_section.find('.crit_element option:selected').val() == '1'){
+        if (section.find('.crit_element option:selected').val() == '1'){
             // 会心撃【属性】がありの場合
             switch (weapon_type){
                 case '大剣':
@@ -892,7 +909,7 @@ $(function(){
         /* 敵パラメータ補正スキル ************************************************/
         // 痛撃 （肉質へ加算）
         let weakness_exp = Number(
-            input_section.find('.weakness_exploit option:selected').val())
+            section.find('.weakness_exploit option:selected').val())
         if (phys_weak >= 45){
             //肉質が45%以上なら肉質を+5%
             phys_weak += weakness_exp
@@ -900,10 +917,8 @@ $(function(){
 
         /* その他スキル *********************************************************/
         /** 未実装スキル
-         *  匠
          *  抜刀会心
          *  抜刀減気
-         *  属性解放
          *  薬・護符・爪
          */
 
@@ -930,7 +945,7 @@ $(function(){
         switch(weapon_type){
             case '大剣':
                 // 中腹ヒット倍率を斬れ味補正にかける
-                phys_sharp_magn *= Number(input_section
+                phys_sharp_magn *= Number(section
                     .find('.center_of_blade option:selected').val())
                 for(motion in GS_DICT){
                     damage_dict[motion] = []
@@ -983,13 +998,13 @@ $(function(){
 
             case '太刀':
                 // 斬れ味に乗算 中腹ヒットと錬気ゲージ点滅
-                phys_sharp_magn *= Number(input_section
+                phys_sharp_magn *= Number(section
                 .find('.center_of_blade option:selected').val())
-                phys_sharp_magn *= Number(input_section
+                phys_sharp_magn *= Number(section
                     .find('.sb_full select option:selected').val())
                 
                 // 錬気ゲージ色倍率 モーションに乗算（端数切捨）
-                let sb_color = Number(input_section
+                let sb_color = Number(section
                     .find('.sb_color select option:selected').val())
                 
                 // モーションごとにダメージを計算
@@ -1038,9 +1053,9 @@ $(function(){
             case '双剣':
                 // 鬼人化時: モーション値*1.15（端数切捨て）(鬼人強化では変化なし)
                 // 両手攻撃: 属性値*0.7 (モーション値に乗算を含むもの)
-                let demon = input_section
+                let demon = section
                     .find('.demon_mode select option:selected').val()
-                let demon_flag = input_section
+                let demon_flag = section
                     .find('.demon_mode select option:selected').text()
                 
                 switch(demon_flag){
@@ -1157,10 +1172,10 @@ $(function(){
                 break
             case 'ガンランス':
                 // 砲撃タイプを取得
-                let shell_type = input_section
+                let shell_type = section
                     .find('.shell_types select option:selected').text()
                 // 砲撃レベルを取得
-                let lv = Number(input_section
+                let lv = Number(section
                     .find('.shelling_lv select option:selected').val())
                 
                 // 砲撃タイプ毎に各砲撃の倍率を設定
@@ -1260,7 +1275,7 @@ $(function(){
             case 'スラッシュアックス':
                 // 強撃と強属性ビン以外は未対応
                 // ビンタイプを取得
-                let phial = Number(input_section
+                let phial = Number(section
                     .find('.sa_p_types select option:selected').val())
                 if(phial==1.2){
                     // 強撃ビンの場合
@@ -1308,7 +1323,7 @@ $(function(){
                 let phials_type = $(this).prev()
                     .find('.p_type select option:selected').text()
                 // 属性強化倍率を取得
-                let boost = Number(input_section
+                let boost = Number(section
                     .find('.boost_mode select option:selected').val())
 
                 // 属性強化状態かどうかで処理を分ける
@@ -1431,7 +1446,7 @@ $(function(){
             case '操虫棍':
                 // 赤白エキス モーション値*1.2 
                 // 赤白橙エキス モーション値*1.25
-                let essences = Number(input_section.find('.essences select option:selected').val())
+                let essences = Number(section.find('.essences select option:selected').val())
                 if(essences > 1){
                     // エキスが選択された時は赤エキス時に存在するモーションだけ計算
                     for(m in IG_DICT){
@@ -1477,7 +1492,7 @@ $(function(){
 
     // 最初のカードにイベントを設定
     $('#0 .weapon_types select').on('change', set_weapon_select)
-    $('#0 .weapon_name select').on('change', select_weapon)
+    $('#0 .weapon_name select').on('change', input_weapon_data)
     $('#0 .ele_type select').on('change', select_ele_type)
     $('#0 .sharp_plus select').on('change', update_sharpness)
     $('#0 .awaken select').on('change', update_element)
