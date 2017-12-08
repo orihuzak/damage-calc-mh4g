@@ -92,6 +92,57 @@
         },
         "シールドスクアーロ": {
             "atk": 468, "ele_type": "氷", "ele_val": 150, "awake_ele_type": 0, "awake_ele_val": 0, "affi": -20, "phials": "強属性", "sharp": "緑", "sharp+": "緑", "slots": 1
+        },
+        "シールドスクアーロ改": {
+            "atk": 504, "ele_type": "氷", "ele_val": 180, "awake_ele_type": 0, "awake_ele_val": 0, "affi": -20, "phials": "強属性", "sharp": "緑", "sharp+": "青", "slots": 1
+        },
+        "スクアリーアルマ": {
+            "atk": 540, "ele_type": "氷", "ele_val": 250, "awake_ele_type": 0, "awake_ele_val": 0, "affi": -15, "phials": "強属性", "sharp": "青", "sharp+": "青", "slots": 1
+        },
+        "スクアリーアルマード": {
+            "atk": 612, "ele_type": "氷", "ele_val": 320, "awake_ele_type": 0, "awake_ele_val": 0, "affi": -10, "phials": "強属性", "sharp": "青", "sharp+": "白", "slots": 1
+        },
+        "ギア・グラース": {
+            "atk": 828, "ele_type": "氷", "ele_val": 380, "awake_ele_type": 0, "awake_ele_val": 0, "affi": -10,"phials": "強属性", "sharp": "青", "sharp+": "白", "slots": 1
+        },
+        "ザ・ボア・ファナー": {
+            "atk": 936, "ele_type": "氷", "ele_val": 460, "awake_ele_type": 0, "awake_ele_val": 0, "affi": -10,"phials": "強属性", "sharp": "青", "sharp+": "紫", "slots": 1
+        },
+        "ハブーブ": {
+            "atk": 792, "ele_type": "麻", "ele_val": 180, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0,"phials": "榴弾", "sharp": "白", "sharp+": "白", "slots": 1
+        },
+        "デザートローズ": {
+            "atk": 900, "ele_type": "麻", "ele_val": 220, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0,"phials": "榴弾", "sharp": "白", "sharp+": "紫", "slots": 1
+        },
+        "フォースofフォール": {
+            "atk": 468, "ele_type": "龍", "ele_val": 100, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 20,"phials": "榴弾", "sharp": "緑", "sharp+": "青", "slots": 0
+        },
+        "フォースofルイン": {
+            "atk": 504, "ele_type": "龍", "ele_val": 120, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 20,"phials": "榴弾", "sharp": "青", "sharp+": "青", "slots": 0
+        },
+        "フォースofカタストル": {
+            "atk": 540, "ele_type": "龍", "ele_val": 160, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 20,"phials": "榴弾", "sharp": "白", "sharp+": "白", "slots": 0
+        },
+        "THEサプレッション": {
+            "atk": 648, "ele_type": "龍", "ele_val": 230, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 25,"phials": "榴弾", "sharp": "白", "sharp+": "白", "slots": 0
+        },
+        "THEブースト": {
+            "atk": 828, "ele_type": "龍", "ele_val": 330, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 30,"phials": "榴弾", "sharp": "白", "sharp+": "紫", "slots": 0
+        },
+        "THEセイヴァー": {
+            "atk": 900, "ele_type": "龍", "ele_val": 390, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 35,"phials": "榴弾", "sharp": "白", "sharp+": "紫", "slots": 0
+        },
+        "八咫盾斧": {
+            "atk": 468, "ele_type": "水", "ele_val": 250, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 5,"phials": "強属性", "sharp": "青", "sharp+": "青", "slots": 1
+        },
+        "豪盾斧【伊邪那美】": {
+            "atk": 612, "ele_type": "水", "ele_val": 350, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 5,"phials": "強属性", "sharp": "青", "sharp+": "青", "slots": 2
+        },
+        "九泉盾斧": {
+            "atk": 828, "ele_type": "水", "ele_val": 430, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 10,"phials": "強属性", "sharp": "白", "sharp+": "白", "slots": 2
+        },
+        "豪溜盾斧【綿津見】": {
+            "atk": 864, "ele_type": "水", "ele_val": 450, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 10,"phials": "強属性", "sharp": "白", "sharp+": "紫", "slots": 2
         }
     }
 }
