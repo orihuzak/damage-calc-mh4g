@@ -143,6 +143,159 @@
         },
         "豪溜盾斧【綿津見】": {
             "atk": 864, "ele_type": "水", "ele_val": 450, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 10,"phials": "強属性", "sharp": "白", "sharp+": "紫", "slots": 2
+        },
+        "ディオスアームズ": {
+            "atk": 540, "ele_type": "爆", "ele_val": 180, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0,"phials": "榴弾", "sharp": "緑", "sharp+": "青", "slots": 1
+        },
+        "爆砕の盾斧": {
+            "atk": 648, "ele_type": "爆", "ele_val": 240, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0,"phials": "榴弾", "sharp": "青", "sharp+": "青", "slots": 2
+        },
+        "破岩盾斧イフルゼント": {
+            "atk": 900, "ele_type": "爆", "ele_val": 290, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0,"phials": "榴弾", "sharp": "白", "sharp+": "紫", "slots": 2
+        },
+        "砕光の盾斧": {
+            "atk": 1008, "ele_type": "爆", "ele_val": 330, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0,"phials": "榴弾", "sharp": "白", "sharp+": "紫", "slots": 2
+        },
+        "アラクネスケイル": {
+            "atk": 468, "ele_type": "毒", "ele_val": 160, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 20,"phials": "榴弾", "sharp": "白", "sharp+": "白", "slots": 1
+        },
+        "アラクネスケイル改": {
+            "atk": 540, "ele_type": "毒", "ele_val": 180, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 20,"phials": "榴弾", "sharp": "白", "sharp+": "白", "slots": 1
+        },
+        "アラクネサイズ": {
+            "atk": 648, "ele_type": "毒", "ele_val": 200, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 25,"phials": "榴弾", "sharp": "白", "sharp+": "紫", "slots": 1
+        },
+        "ベロボーグサイズ": {
+            "atk": 864, "ele_type": "毒", "ele_val": 230, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 35,"phials": "榴弾", "sharp": "紫", "sharp+": "紫", "slots": 1
+        },
+        "シュバルツシュラー": {
+            "atk": 648, "ele_type": "眠", "ele_val": 200, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 30,"phials": "榴弾", "sharp": "白", "sharp+": "白", "slots": 1
+        },
+        "シュバルツシュラー改": {
+            "atk": 756, "ele_type": "眠", "ele_val": 230, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 35,"phials": "榴弾", "sharp": "白", "sharp+": "紫", "slots": 1
+        },
+        "チェルノボグサイズ": {
+            "atk": 828, "ele_type": "眠", "ele_val": 250, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 45,"phials": "榴弾", "sharp": "白", "sharp+": "紫", "slots": 1
+        },
+        "シルトインセクト": {
+            "atk": 540, "ele_type": "水", "ele_val": 210, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0,"phials": "強属性", "sharp": "緑", "sharp+": "青", "slots": 0
+        },
+        "シルトインセクト改": {
+            "atk": 612, "ele_type": "水", "ele_val": 230, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0,"phials": "強属性", "sharp": "青", "sharp+": "青", "slots": 0
+        },
+        "イクサイトインセクト": {
+            "atk": 792, "ele_type": "水", "ele_val": 300, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0,"phials": "強属性", "sharp": "青", "sharp+": "白", "slots": 0
+        },
+        "ドミナスインセクト": {
+            "atk": 900, "ele_type": "水", "ele_val": 330, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0,"phials": "強属性", "sharp": "白", "sharp+": "白", "slots": 1
+        },
+        "マキシマムインセクト": {
+            "atk": 972, "ele_type": "水", "ele_val": 390, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0,"phials": "強属性", "sharp": "白", "sharp+": "紫", "slots": 1
+        },
+        "アスラトアルマイサ": {
+            "atk": 648, "ele_type": "無", "ele_val": 0, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 10,"phials": "榴弾", "sharp": "白", "sharp+": "白", "slots": 1
+        },
+        "アスラトアルマイサ改": {
+            "atk": 720, "ele_type": "無", "ele_val": 0, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 10,"phials": "榴弾", "sharp": "白", "sharp+": "白", "slots": 1
+        },
+        "叛逆の盾斧": {
+            "atk": 936, "ele_type": "無", "ele_val": 0,"awake_ele_type": 0, "awake_ele_val": 0, "affi": 15,"phials": "榴弾", "sharp": "紫", "sharp+": "紫", "slots": 1
+        },
+        "叛逆盾斧ガルレギオン": {
+            "atk": 1044, "ele_type": "無", "ele_val": 0,"awake_ele_type": 0, "awake_ele_val": 0, "affi": 15,"phials": "榴弾", "sharp": "紫", "sharp+": "紫", "slots": 1
+        },
+        "ナバルクラノス": {
+            "atk": 684, "ele_type": "水", "ele_val": 210,"awake_ele_type": 0, "awake_ele_val": 0, "affi": 0,"phials": "榴弾", "sharp": "青", "sharp+": "白", "slots": 0
+        },
+        "ヒロイックザンナバル": {
+            "atk": 720, "ele_type": "水", "ele_val": 250,"awake_ele_type": 0, "awake_ele_val": 0, "affi": 0,"phials": "榴弾", "sharp": "青", "sharp+": "白", "slots": 0
+        },
+        "海王器ナバルレガリア": {
+            "atk": 1080, "ele_type": "水", "ele_val": 310,"awake_ele_type": 0, "awake_ele_val": 0, "affi": 0,"phials": "榴弾", "sharp": "白", "sharp+": "紫", "slots": 0
+        },
+        "ダオラ＝カスカ": {
+            "atk": 648, "ele_type": "氷", "ele_val": 310,"awake_ele_type": 0, "awake_ele_val": 0, "affi": 5,"phials": "榴弾", "sharp": "白", "sharp+": "白", "slots": 2
+        },
+        "ダオラ＝ゲンム": {
+            "atk": 972, "ele_type": "氷", "ele_val": 380,"awake_ele_type": 0, "awake_ele_val": 0, "affi": 10,"phials": "榴弾", "sharp": "白", "sharp+": "紫", "slots": 2
+        },
+        "エルダオル＝カスカ": {
+            "atk": 1116, "ele_type": "氷", "ele_val": 230,"awake_ele_type": 0, "awake_ele_val": 0, "affi": -35,"phials": "榴弾", "sharp": "紫", "sharp+": "紫", "slots": 0
+        },
+        "テオ＝ストライカー": {
+            "atk": 612, "ele_type": "爆", "ele_val": 430,"awake_ele_type": 0, "awake_ele_val": 0, "affi": 0,"phials": "榴弾", "sharp": "白", "sharp+": "白", "slots": 0
+        },
+        "テオ＝ノーヴァ": {
+            "atk": 936, "ele_type": "爆", "ele_val": 560,"awake_ele_type": 0, "awake_ele_val": 0, "affi": 0,"phials": "榴弾", "sharp": "白", "sharp+": "紫", "slots": 1
+        },
+        "凶刃を纏いし戦具": {
+            "atk": 684, "ele_type": "無", "ele_val": 0,"awake_ele_type": "麻", "awake_ele_val": 80, "affi": -10,"phials": "榴弾", "sharp": "青", "sharp+": "青", "slots": 3
+        },
+        "星火燎原の装機マキナ": {
+            "atk": 756, "ele_type": "無", "ele_val": 0,"awake_ele_type": "麻", "awake_ele_val": 100, "affi": -10,"phials": "榴弾", "sharp": "青", "sharp+": "白", "slots": 3
+        },
+        "解放王アデルマキナ": {
+            "atk": 1044, "ele_type": "無", "ele_val": 0,"awake_ele_type": "麻", "awake_ele_val": 110, "affi": -10,"phials": "榴弾", "sharp": "青", "sharp+": "白", "slots": 3
+        },
+        "帝盾斧ダラカルテリア": {
+            "atk": 1080, "ele_type": "無", "ele_val": 0,"awake_ele_type": "麻", "awake_ele_val": 120, "affi": -10,"phials": "榴弾", "sharp": "白", "sharp+": "白", "slots": 3
+        },
+        "蛇盾斧ゲドルマデュラ": {
+            "atk": 1116, "ele_type": "無", "ele_val": 0,"awake_ele_type": "麻", "awake_ele_val": 140, "affi": -10,"phials": "榴弾", "sharp": "白", "sharp+": "白", "slots": 3
+        },
+        "覇盾斧エンカムトルム": {
+            "atk": 864, "ele_type": "無", "ele_val": 0,"awake_ele_type": 0, "awake_ele_val": 0, "affi": 20,"phials": "榴弾", "sharp": "黄", "sharp+": "緑", "slots": 0
+        },
+        "覇断斧クーネエンカム": {
+            "atk": 1224, "ele_type": "無", "ele_val": 0,"awake_ele_type": 0, "awake_ele_val": 0, "affi": 40,"phials": "榴弾", "sharp": "緑", "sharp+": "青", "slots": 0
+        },
+        "黒龍盾斧": {
+            "atk": 576, "ele_type": "龍", "ele_val": 410,"awake_ele_type": 0, "awake_ele_val": 0, "affi": 0,"phials": "強属性", "sharp": "青", "sharp+": "紫", "slots": 1
+        },
+        "真・黒龍盾斧": {
+            "atk": 972, "ele_type": "龍", "ele_val": 500,"awake_ele_type": 0, "awake_ele_val": 0, "affi": 0,"phials": "強属性", "sharp": "青", "sharp+": "紫", "slots": 1
+        },
+        "黒滅龍盾斧": {
+            "atk": 576, "ele_type": "爆", "ele_val": 330,"awake_ele_type": 0, "awake_ele_val": 0, "affi": 10,"phials": "榴弾", "sharp": "青", "sharp+": "紫", "slots": 3
+        },
+        "真・黒滅龍盾斧": {
+            "atk": 972, "ele_type": "爆", "ele_val": 400,"awake_ele_type": 0, "awake_ele_val": 0, "affi": 10,"phials": "榴弾", "sharp": "青", "sharp+": "紫", "slots": 3
+        },
+        "ミラアンセスブロウ": {
+            "atk": 1008, "ele_type": "雷", "ele_val": 440,"awake_ele_type": 0, "awake_ele_val": 0, "affi": 0,"phials": "強属性", "sharp": "白", "sharp+": "紫", "slots": 0
+        },
+        "ブロスアームズ": {
+            "atk": 1044, "ele_type": "無", "ele_val": 0,"awake_ele_type": 0, "awake_ele_val": 0, "affi": -10,"phials": "榴弾", "sharp": "青", "sharp+": "白", "slots": 1
+        },
+        "角王盾斧ジオブロス": {
+            "atk": 1152, "ele_type": "無", "ele_val": 0,"awake_ele_type": 0, "awake_ele_val": 0, "affi": -20,"phials": "榴弾", "sharp": "青", "sharp+": "紫", "slots": 1
+        },
+        "鬼神盾斧【夜叉】": {
+            "atk": 1044, "ele_type": "雷", "ele_val": 320,"awake_ele_type": 0, "awake_ele_val": 0, "affi": -10,"phials": "榴弾", "sharp": "白", "sharp+": "紫", "slots": 0
+        },
+        "鬼神盾斧【金剛夜叉】": {
+            "atk": 1080, "ele_type": "雷", "ele_val": 350,"awake_ele_type": 0, "awake_ele_val": 0, "affi": -10,"phials": "榴弾", "sharp": "白", "sharp+": "紫", "slots": 0
+        },
+        "禁じられた棺": {
+            "atk": 972, "ele_type": "眠", "ele_val": 80,"awake_ele_type": 0, "awake_ele_val": 0, "affi": -10,"phials": "榴弾", "sharp": "白", "sharp+": "白", "slots": 0
+        },
+        "代償のネイディア": {
+            "atk": 1044, "ele_type": "眠", "ele_val": 110,"awake_ele_type": 0, "awake_ele_val": 0, "affi": -10,"phials": "榴弾", "sharp": "白", "sharp+": "白", "slots": 0
+        },
+        "スタールークアクス": {
+            "atk": 576, "ele_type": "氷", "ele_val": 120,"awake_ele_type": 0, "awake_ele_val": 0, "affi": 10,"phials": "榴弾", "sharp": "青", "sharp+": "白", "slots": 0
+        },
+        "グランドスターアクス": {
+            "atk": 648, "ele_type": "氷", "ele_val": 180,"awake_ele_type": 0, "awake_ele_val": 0, "affi": 10,"phials": "榴弾", "sharp": "青", "sharp+": "白", "slots": 0
+        },
+        "伝説Jアンカー": {
+            "atk": 720, "ele_type": "無", "ele_val": 0,"awake_ele_type": "爆", "awake_ele_val": 80, "affi": -30,"phials": "榴弾", "sharp": "緑", "sharp+": "青", "slots": 0
+        },
+        "伝説Jレガシー": {
+            "atk": 756, "ele_type": "無", "ele_val": 0,"awake_ele_type": "爆", "awake_ele_val": 160, "affi": -25,"phials": "榴弾", "sharp": "青", "sharp+": "青", "slots": 0
+        },
+        "チャージフォックス": {
+            "atk": 864, "ele_type": "火", "ele_val": 160,"awake_ele_type": 0, "awake_ele_val": 0, "affi": 40,"phials": "榴弾", "sharp": "白", "sharp+": "紫", "slots": 3
         }
     }
 }
