@@ -24,6 +24,14 @@ a:hover {
 }
 
 
+table {
+    border-collapse: collapse;
+}
+
+table th,td {
+    border: 1px solid #333;
+}
+
 /* ヘッダー ******************************/
 
 
@@ -139,14 +147,6 @@ a:hover {
 
 button {
     width: 80px;
-}
-
-.result th,td {
-    border: 1px solid #333;
-}
-
-.result {
-    border-collapse: collapse;
 }
 
 .result td {
