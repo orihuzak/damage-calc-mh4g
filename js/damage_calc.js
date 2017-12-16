@@ -317,8 +317,23 @@ const CB_DICT = {
         num_of_impacts: 2},
     "斧:高出力属性解放斬り:ビン有": 
         {dmg_type: "切断", motion_val: [90], impact_phial_coef: 0.1, ele_phial_coef: 4.5, num_of_impacts: 3},
-    // あえて属性強化前のモーション値をかくと 21 83 84 榴弾ビン倍率は0.33かもしれない ビン1~6まで計算してください。
-    "斧:超高出力属性解放斬り:ビン": 
+    // あえて属性強化前のモーション値をかくと [21, 83, 84] 榴弾ビン倍率は0.33かもしれない
+    "斧:超高出力属性解放斬り:ビン1": 
+        {dmg_type: "切断", motion_val: [25, 99, 100], impact_phial_coef: 0.335, ele_phial_coef: 13.5, 
+        num_of_impacts: 1},
+    "斧:超高出力属性解放斬り:ビン2": 
+        {dmg_type: "切断", motion_val: [25, 99, 100], impact_phial_coef: 0.335, ele_phial_coef: 13.5, 
+        num_of_impacts: 2},
+    "斧:超高出力属性解放斬り:ビン3": 
+        {dmg_type: "切断", motion_val: [25, 99, 100], impact_phial_coef: 0.335, ele_phial_coef: 13.5, 
+        num_of_impacts: 3},
+    "斧:超高出力属性解放斬り:ビン4": 
+        {dmg_type: "切断", motion_val: [25, 99, 100], impact_phial_coef: 0.335, ele_phial_coef: 13.5, 
+        num_of_impacts: 4},
+    "斧:超高出力属性解放斬り:ビン5": 
+        {dmg_type: "切断", motion_val: [25, 99, 100], impact_phial_coef: 0.335, ele_phial_coef: 13.5,
+        num_of_impacts: 5},
+    "斧:超高出力属性解放斬り:ビン6": 
         {dmg_type: "切断", motion_val: [25, 99, 100], impact_phial_coef: 0.335, ele_phial_coef: 13.5,
         num_of_impacts: 6},
     "斧:ジャンプ叩きつけ": 
@@ -442,6 +457,10 @@ function output_result(clicked_place, dict){
             "<td>" + dict[k] + "</td>" +
             "</tr>")
     }   
+}
+
+function output_result_table(section, dict){
+    let tbody = section.find(".result tbody")
 }
 
 /* イベント ************************************************************/
@@ -1349,9 +1368,8 @@ function click_calc_botton(){
         
         case "チャージアックス":
             /** ビン爆発ダメージ計算
-             *  (武器倍率 * 榴弾or強属性ビン係数) * 爆発回数
-             *  damage_dict {モーション名:
-             *      [物理ダメージ, 属性ダメージ, ビン爆発ダメージ]}
+             *  榴弾: 武器倍率 * 榴弾係数 * 爆発回数 (* 属性強化倍率)
+             *  強属性: 属性倍率 * 強属性係数 * 爆発回数 (* 属性強化倍率)
              *  damage_dict 
              * {モーション名: {部位1:[[通常物理ダメ,怒り物理ダメ], 属性ダメ, ビンダメ], 怒り[...],
              *               部位2:[...]}}*/
@@ -1362,184 +1380,119 @@ function click_calc_botton(){
             let boost = Number(section
                 .find(".boost_mode select option:selected").val())
             
-            
-            // 新しいダメージ計算処理
             $.getJSON("monster_data.json", function(data){
-                // 属性強化状態かどうかで処理を分ける
-                if(boost == 1.2){
-                    // 属性強化状態
-                    for(m in CB_DICT){
-                        // モーションのダメージタイプを取得
-                        let dmg_type = CB_DICT[m]["dmg_type"]
-                        // 部位毎のダメージを格納するdict
-                        let part_dmg_dict = {}
-                        // 部位ごとに計算
-                        for(part in data[monster]){
-                            // ダメージタイプ肉質を取得
-                            let phys_weak = data[monster][part][dmg_type]
-                            let phys_dmg = []
-                            // 通常・怒り肉質毎に計算
-                            for(let i = 0; i < phys_weak.length; i++){
-                                let sum_motion_dmg = 0
-                                // モーションが複数ヒットならそれぞれ計算し合計
-                                for(let n = 0; n < CB_DICT[m]["motion_val"].length; n++){
-                                    // 超高出力を除く斧モーションと、盾突きに1.2をかける
-                                    let motion_val = 0
-                                    if(m.match(/斧:/) && !m.match(/超高出力/) || m.match(/盾突き/)){
-                                        motion_val = Math.floor(CB_DICT[m]["motion_val"][n] * 1.2)
-                                    }else{
-                                        motion_val = CB_DICT[m]["motion_val"][n]
-                                    }
-                                    // 物理ダメージ計算
-                                    sum_motion_dmg += mul(weapon_magn, motion_val / 100, affi_exp, phys_sharp_magn, phys_weak[i] / 100)
-                                }
-                                phys_dmg.push(sum_motion_dmg)
-                            }
-
-                            // 属性ダメージの計算 無属性なら計算を飛ばす
-                            let ele_dmg = []
-                            if(ele_type == "" || ele_type == "無"){
-                                ele_dmg = [0]
-                            }else{
-                                let ele_weak = 
-                                    data[monster][part][ele_type]
-                                // 通常,怒り肉質ごとに計算
-                                for(let i = 0; i < ele_weak.length; i++){
-                                    ele_dmg.push(
-                                        mul(ele_magn, ele_sharp_magn,
-                                        CB_DICT[m]["motion_val"].length,ele_weak[i] / 100,
-                                        crit_ele_exp))
-                                    
-                                    // 強属性ビンのダメージ計算
-                                    if(phials_type == "強属性"){
-                                        if (m.match(/盾突き/)
-                                        || m.match(/チャージ後斬り返し/)
-                                        || m.match(/カウンター爆発/)
-                                        || m.match(/超高出力/)){
-                                        // 盾突きとチャージ後斬り返しとカウンター爆発と超高出力は1.35をかけない
-                                            ele_dmg.push(
-                                                mul(ele_magn,
-                                                    CB_DICT[m]["ele_phial_coef"],
-                                                    CB_DICT[m]["num_of_impacts"]),
-                                                    ele_weak[i] / 100)
-                                        }else{
-                                            ele_dmg.push(
-                                                mul(ele_magn,
-                                                    CB_DICT[m]["ele_phial_coef"],
-                                                    CB_DICT[m]["num_of_impacts"]),
-                                                    ele_weak[i] / 100,
-                                                    1.35)
-                                        }
-                                    }
-                                }
-                            }
-                            part_dmg_dict[part] = [phys_dmg, ele_dmg]
-                        }
-                        
-                        // 榴弾は肉質に依存しないので計算回数を減らすため後から追加
-                        let impact_phial_dmg = 0
-                        // 榴弾ビンのダメージ計算
-                        if(phials_type == "榴弾"){
-                            if (m.match(/盾突き/)
-                            || m.match(/チャージ斬り返し/)
-                            || m.match(/カウンター爆発/)
-                            || m.match(/超高出力/)){
-                            // 盾突きとチャージ後斬り返しとカウンター爆発と超高出力は1.3をかけない
-                                impact_phial_dmg = mul(weapon_magn,
-                                    CB_DICT[m]["impact_phial_coef"],
-                                    CB_DICT[m]["num_of_impacts"], artillery_magn)
-                            }else{
-                                impact_phial_dmg = mul(weapon_magn,
-                                    CB_DICT[m]["impact_phial_coef"],
-                                    CB_DICT[m]["num_of_impacts"], artillery_magn,
-                                    1.3)
-                            }
-                        }
-                        for(p in part_dmg_dict){
-                            part_dmg_dict[p].push(impact_phial_dmg)
-                        }
-                        damage_dict[m] = part_dmg_dict
+                for(m in CB_DICT){
+                    // ダメージタイプを取得
+                    let dmg_type = CB_DICT[m]["dmg_type"],
+                        // モーション値配列をコピー
+                        motion_val = CB_DICT[m]["motion_val"],
+                        part_dmg_dict = {} // 部位毎のダメージを格納するdict
+                    
+                    // ビン爆発計算に使う変数を定義
+                    let basic_phial_atk, phial_coef,
+                        num_of_impacts = CB_DICT[m]["num_of_impacts"]
+                    if (phials_type == "榴弾"){
+                        basic_phial_atk = weapon_magn
+                        phial_coef = CB_DICT[m]["impact_phial_coef"]
+                    }else{ 
+                        basic_phial_atk = ele_magn
+                        phial_coef = CB_DICT[m]["ele_phial_coef"]
                     }
-                }else{
-                    // モーションごとに計算
-                    for(m in CB_DICT){
-                        // 超高出力なら飛ばす
+                    
+                    // 属性強化ビン爆発補正をかける
+                    if (boost == 1.2){
+                        // 超高出力を除く解放斬り
+                        if (m.match(/解放斬り/) && !m.match(/超高出力/)){
+                            if(phials_type == "榴弾"){
+                                basic_phial_atk *= 1.3
+                            }else{
+                                basic_phial_atk *= 1.35
+                            }
+                        }
+                    }else{ // 通常状態
+                        // 盾突き・チャージ斬り返し・カウンター爆発のビン爆発係数を0にする
+                        if(m.match(/盾突き/)
+                        || m.match(/チャージ斬り返し/)
+                        || m.match(/カウンター爆発/)){
+                            phial_coef = 0
+                        }
+                        // 通常状態なら超高出力は計算自体を飛ばす
                         if(m.match(/超高出力/)){ continue }
-                        // モーションのダメージタイプを取得
-                        let dmg_type = CB_DICT[m]["dmg_type"]
-                        // 部位毎のダメージを格納するdict
-                        let part_dmg_dict = {}
-                        // 部位ごとに計算
-                        for(part in data[monster]){
-                            // ダメージタイプ肉質を取得
-                            let phys_weak = data[monster][part][dmg_type]
-                            let phys_dmg = []
-                            // 通常・怒り肉質毎に計算
-                            for(let i = 0; i < phys_weak.length; i++){
-                                let sum_motion_dmg = 0
-                                // モーションが複数ヒットならそれぞれ計算して合計
-                                for(let n = 0; n < CB_DICT[m]["motion_val"].length; n++){
+                    }
 
-                                    // 物理ダメージ計算
-                                    sum_motion_dmg += mul(weapon_magn, CB_DICT[m]["motion_val"][n] / 100, affi_exp, phys_sharp_magn, phys_weak[i] / 100)
-                                }
-                                phys_dmg.push(sum_motion_dmg)
-                            }
+                    // 属性強化倍率をモーションに掛ける
+                    for (let i = 0; i < motion_val.length; i++){
+                        // 超高出力以外の斧と盾突きモーション値にboostをかける
+                        if(m.match(/斧:/) && !m.match(/超高出力/)
+                        || m.match(/盾突き/)){
+                            motion_val[i] = Math.floor(motion_val[i] * boost)
+                        }
+                    }
 
-                            // 属性ダメージの計算 無属性なら計算を飛ばす
-                            let ele_dmg = []
-                            if(ele_type == "" || ele_type == "無"){
-                                ele_dmg = [0]
-                            }else{
-                                let ele_weak = data[monster][part][ele_type]
-                                // 通常,怒り肉質ごとに計算
-                                for(let i = 0; i < ele_weak.length; i++){
-                                    ele_dmg.push(
-                                        mul(ele_magn,  ele_sharp_magn,
-                                        CB_DICT[m]["motion_val"].length, ele_weak[i] / 100, crit_ele_exp))
-                                    
-                                    // 強属性ビンのダメージ計算
-                                    if(phials_type == "強属性"){
-                                        if (m.match(/盾突き/)
-                                        || m.match(/チャージ後斬り返し/)
-                                        || m.match(/カウンター爆発/)){
-                                        // 盾突きとチャージ後斬り返しとカウンター爆発は0
-                                        ele_dmg.push(0)
-                                        }else{
-                                            ele_dmg.push(mul(ele_magn,
-                                            CB_DICT[m]["ele_phial_coef"],
-                                            CB_DICT[m]["num_of_impacts"]),
-                                            ele_weak[i] / 100)
-                                        }
-                                    }
-                                }
+                    for(part in data[monster]){
+                        // ダメージタイプ肉質を取得
+                        let phys_weak = data[monster][part][dmg_type],
+                            // 肉質変化ごとの物理ダメージを格納する配列
+                            phys_dmg = [],
+                            // 耐属性変化ごとの属性ダメージを格納する配列
+                            ele_dmg = [],
+                            // ビンダメージを格納する配列
+                            phial_dmg = []
+                        
+                        // 物理ダメージを計算
+                        // 肉質変化があればそれぞれ計算
+                        for(let i = 0; i < phys_weak.length; i++){
+                            // 複数ヒットモーションのそれぞれのダメージの合計
+                            let sum_motion_dmg = 0 
+                            for(let n = 0; n < motion_val.length; n++){
+                                // 物理ダメージ計算
+                                sum_motion_dmg += mul(weapon_magn,
+                                    motion_val[n] / 100, affi_exp, phys_sharp_magn, phys_weak[i] / 100)
                             }
-                            part_dmg_dict[part] = [phys_dmg, ele_dmg]
+                            phys_dmg.push(sum_motion_dmg)
                         }
                         
-                        // 榴弾は肉質に依存しないので計算回数を減らすため後から追加
-                        let impact_phial_dmg = 0
-                        // 榴弾ビンのダメージ計算
-                        if(phials_type == "榴弾"){
-                            if (m.match(/盾突き/)
-                            || m.match(/チャージ斬り返し/)
-                            || m.match(/カウンター爆発/)){
-                            // 盾突きとチャージ後斬り返しとカウンター爆発は0
-                                impact_phial_dmg = 0
-                            }else{
-                                impact_phial_dmg = mul(weapon_magn,
-                                    CB_DICT[m]["impact_phial_coef"],
-                                    CB_DICT[m]["num_of_impacts"], artillery_magn)
+                        // 属性ダメージの計算 無属性なら計算しない
+                        if(ele_type == "" || ele_type == "無"){
+                            ele_dmg = [0]
+                        }else{
+                            // モンスターの耐属性を取得
+                            let ele_weak = data[monster][part][ele_type]
+                            // 耐属性変化があればそれぞれを計算
+                            for(let i = 0; i < ele_weak.length; i++){
+                                ele_dmg.push(
+                                    mul(ele_magn, ele_sharp_magn,
+                                        motion_val.length,
+                                        ele_weak[i] / 100,
+                                        crit_ele_exp))
+                                
+                                // 強属性ビンのダメージ計算
+                                if(phials_type == "強属性"){
+                                    phial_dmg.push(mul(basic_phial_atk, 
+                                        phial_coef, num_of_impacts, ele_weak[i]))
+                                }
                             }
                         }
-                        for(p in part_dmg_dict){
-                            part_dmg_dict[p].push(impact_phial_dmg)
-                        }
-                        damage_dict[m] = part_dmg_dict
+                        // 部位毎の物理・属性ダメージを格納
+                        part_dmg_dict[part] = 
+                            [phys_dmg, ele_dmg, phial_dmg]
                     }
+
+                    // 榴弾は肉質に依存しないので、
+                    // 計算回数を増やさないために後から追加
+                    let impact_phial_dmg = 0
+                    if(phials_type == "榴弾"){
+                        impact_phial_dmg = 
+                            mul(weapon_magn, phial_coef,
+                                num_of_impacts, artillery_magn)
+                    }
+                    for(p in part_dmg_dict){
+                        part_dmg_dict[p][2].push(impact_phial_dmg)
+                    }
+                    damage_dict[m] = part_dmg_dict
                 }
             })
-            console.log(damage_dict)
+
             break    
         
 
@@ -1578,15 +1531,29 @@ function click_calc_botton(){
 
     // 合計ダメージの計算
     // sum_damage_dict = {モーション名: 合計ダメージ}
-    let sum_damage_dict = {}
+    /*let sum_damage_dict = {}
     for(m in damage_dict){
         // 端数切捨(端数切捨(物理+属性+etc) * 防御率)
         sum_damage_dict[m] = Math.floor(
             Math.floor(sum_array(damage_dict[m])) * defense_rate)
+    }*/
+
+    // 合計ダメージ
+    for(m in damage_dict){
+        for(p in damage_dict[m]){
+            // 部位毎の合計ダメージ
+            let sum_dmg = 0 
+            for(let i = 0; i < damage_dict[m][p].length; i++){
+                sum_dmg += damage_dict[m][p][i]
+            }
+            damage_dict[m][p].push(Math.floor(sum_dmg))
+        }
     }
+    console.log(damage_dict)
 
     //計算結果の出力
-    output_result($(this), sum_damage_dict)
+    // output_result($(this), sum_damage_dict)
+    output_result_table($(this), )
     return false
 }
 
