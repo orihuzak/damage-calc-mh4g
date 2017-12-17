@@ -443,24 +443,39 @@ function calc_affi_exp(affi, magn=1.25){
     return (1.0 + (magn - 1.0) * affi / 100)
 }
 
-/** 計算結果のoutput
- *  モーション名|ダメージ（武器毎の強化状態のダメージ）
- *  〇〇斬り   |〇〇
- *  という感じで出力させる。*/
-function output_result(clicked_place, dict){
-    let result_place = clicked_place.nextAll().children(".result tbody")
-    result_place.empty()
-    for(k in dict){
-        result_place.append(
-            "<tr>" + 
-            "<td>" + k + "</td>" +
-            "<td>" + dict[k] + "</td>" +
-            "</tr>")
-    }   
-}
+/** 計算結果をresult tableに出力 */
+function output_result_table(table, dict){
+    let thead = $("<thead>"),
+        tbody = $("<tbody>"),
+        h_row = $("<tr>"),
+        i = 0
 
-function output_result_table(section, dict){
-    let tbody = section.find(".result tbody")
+    table.empty()
+    h_row.append($("<th>").text(""))
+    for(m in dict){
+        let b_row = $("<tr>")
+        b_row.append($("<td>").text(m))
+        for(p in dict[m]){
+            if(i == 0){
+                h_row.append($("<th>").text(p))
+            }
+            
+            b_row.append($("<td>").text(
+                dict[m][p][0][3] + ":"
+                + dict[m][p][0][0] + ":"
+                + dict[m][p][0][1] + ":"
+                + dict[m][p][0][2] + "\n("
+                + dict[m][p][1][3] + ":"
+                + dict[m][p][1][0] + ":"
+                + dict[m][p][1][1] + ":"
+                + dict[m][p][1][2] + ")"))
+        }
+        tbody.append(b_row)
+        i++
+    }
+    thead.append(h_row)
+    table.append(thead, tbody)
+    return 0
 }
 
 /* イベント ************************************************************/
@@ -753,32 +768,45 @@ function monster_name_to_select(){
 /** モンスターが選択されたらモンスターデータのテーブルを表示 */
 function output_monster_data_table(){
     let monster = $("option:selected", this).text(),
-        tbody = $(this).parents().find(".monster_table tbody")
+        table = $(this).parents().find(".monster_table")
+        thead = $("<thead>"),
+        tbody = $("<tbody>")
     
     // tbodyの中身をリセット
-    tbody.empty()
+    table.empty()
 
     $.getJSON("monster_data.json", function(data){
+        let i = 0
+        // テーブルヘッド
+        let h_row = $("<tr>")
+        h_row.append($("<th>").text(""))
         for(part in data[monster]){
-            let low = $("<tr>")
-            for(ele in data[monster][part]){
+            let row = $("<tr>")
+            row.append($("<td>").text(part))
+            for(dmg_type in data[monster][part]){
+                if(i == 0){
+                    h_row.append($("<th>").text(dmg_type))
+                }
                 let td = $("<td>")
                 // 各攻撃属性の値（配列）の要素数を確認
-                if(data[monster][part][ele].length == 1){
+                if(data[monster][part][dmg_type].length == 1){
                     // 配列の長さが1の場合、0こ目の要素をそのままtdへ入力
-                    td.text(String(data[monster][part][ele][0]))
+                    td.text(String(data[monster][part][dmg_type][0]))
                 }else{
                     // 配列の長さが二つ以上のなら
                     // "配列[0](配列[1])"という形でtdに入力
                     td.text(
-                        String(data[monster][part][ele][0]) + 
-                        "("+ String(data[monster][part][ele][1]) +")"
+                        String(data[monster][part][dmg_type][0]) + 
+                        "("+ String(data[monster][part][dmg_type][1]) +")"
                     )
                 }
-                low.append(td)
+                row.append(td)
             }
-            tbody.append(low)
+            tbody.append(row)
+            i++
         }
+        thead.append(h_row)
+        table.append(thead, tbody)
     })
 }
 
@@ -992,395 +1020,401 @@ function click_calc_botton(){
 
     // damage_dict = {モーション名: [物理ダメージ, 属性ダメージ, etc...]}
     let damage_dict = {}
-    
-    // 武器種別に計算をする
-    switch(weapon_type){
-        case "大剣":
-            // 中腹ヒット倍率を斬れ味補正にかける
-            phys_sharp_magn *= Number(section
+    let result_table = $(this).parents().find(".result")
+
+    // jsonを呼び出し
+    $.ajax({
+        url: "monster_data.json",
+        type: "get",
+        dataType: "json"
+    }).then(function(data){
+        // 武器種別に計算をする
+        switch(weapon_type){
+            case "大剣":
+                // 中腹ヒット倍率を斬れ味補正にかける
+                phys_sharp_magn *= Number(section
+                    .find(".center_of_blade option:selected").val())
+                for(motion in GS_DICT){
+                    damage_dict[motion] = []
+            
+                    let motion_val = GS_DICT[motion] / 100
+                    // モーションごとの補正を入れる
+                    if(motion.match(/溜め1/) || motion == "強なぎ払い1"){
+                        //(強)溜め1 と 強なぎ払い1 はモーション値を1.1倍
+                        motion_val *= 1.1
+                    }else if(motion.match(/溜め2/) || motion == "強なぎ払い2"){
+                        //(強)溜め2 と 強なぎ払い2 はモーション値を1.2倍
+                        motion_val *= 1.2
+                    }else if(motion.match(/溜め3/) || motion == "強なぎ払い3"){
+                        //(強)溜め3 と 強なぎ払い3 はモーション値を1.3倍
+                        motion_val *= 1.3
+                    }
+            
+                    // モーションごとの属性値補正を入れる
+                    let element = ele_magn
+                    switch(motion){
+                        case "溜め1":
+                            element *= 1.2
+                            break
+                        case "溜め2":
+                            element *= 1.5
+                            break
+                        case "溜め3":
+                            element *= 2.0
+                            break
+                        case "強溜め1":
+                            element *= 1.8
+                            break
+                        case "強溜め2":
+                            element *= 2.25
+                            break
+                        case "強溜め3":
+                            element *= 3.00
+                            break
+                    }
+            
+                    // 物理ダメージ計算
+                    damage_dict[motion].push(
+                        mul(weapon_magn, motion_val, affi_exp,     phys_sharp_magn, phys_weak))
+            
+                    // 属性ダメージ計算
+                    damage_dict[motion].push(
+                        mul(element, ele_sharp_magn, ele_weak, crit_ele_exp))
+                }
+                break
+
+            case "太刀":
+                // 斬れ味に乗算 中腹ヒットと錬気ゲージ点滅
+                phys_sharp_magn *= Number(section
                 .find(".center_of_blade option:selected").val())
-            for(motion in GS_DICT){
-                damage_dict[motion] = []
-        
-                let motion_val = GS_DICT[motion] / 100
-                // モーションごとの補正を入れる
-                if(motion.match(/溜め1/) || motion == "強なぎ払い1"){
-                    //(強)溜め1 と 強なぎ払い1 はモーション値を1.1倍
-                    motion_val *= 1.1
-                }else if(motion.match(/溜め2/) || motion == "強なぎ払い2"){
-                    //(強)溜め2 と 強なぎ払い2 はモーション値を1.2倍
-                    motion_val *= 1.2
-                }else if(motion.match(/溜め3/) || motion == "強なぎ払い3"){
-                    //(強)溜め3 と 強なぎ払い3 はモーション値を1.3倍
-                    motion_val *= 1.3
+                phys_sharp_magn *= Number(section
+                    .find(".sb_full select option:selected").val())
+                
+                // 錬気ゲージ色倍率 モーションに乗算（端数切捨）
+                let sb_color = Number(section
+                    .find(".sb_color select option:selected").val())
+                
+                // モーションごとにダメージを計算
+                for(m in LS_DICT){
+                    damage_dict[m] = []
+                    // 錬気ゲージ色倍率をモーションに掛ける
+                    let motion_val = Math.floor(LS_DICT[m][0] * sb_color) / 100
+
+                    // 物理ダメ計算
+                    damage_dict[m].push(
+                        mul(weapon_magn, motion_val, affi_exp, 
+                            phys_sharp_magn, phys_weak))
+
+                    // 属性ダメ計算
+                    damage_dict[m].push(
+                        mul(ele_magn, ele_sharp_magn, LS_DICT[m][1], ele_weak, crit_ele_exp))
                 }
-        
-                // モーションごとの属性値補正を入れる
-                let element = ele_magn
-                switch(motion){
-                    case "溜め1":
-                        element *= 1.2
-                        break
-                    case "溜め2":
-                        element *= 1.5
-                        break
-                    case "溜め3":
-                        element *= 2.0
-                        break
-                    case "強溜め1":
-                        element *= 1.8
-                        break
-                    case "強溜め2":
-                        element *= 2.25
-                        break
-                    case "強溜め3":
-                        element *= 3.00
-                        break
-                }
-        
-                // 物理ダメージ計算
-                damage_dict[motion].push(
-                    mul(weapon_magn, motion_val, affi_exp,     phys_sharp_magn, phys_weak))
-        
-                // 属性ダメージ計算
-                damage_dict[motion].push(
-                    mul(element, ele_sharp_magn, ele_weak, crit_ele_exp))
-            }
-            break
-
-        case "太刀":
-            // 斬れ味に乗算 中腹ヒットと錬気ゲージ点滅
-            phys_sharp_magn *= Number(section
-            .find(".center_of_blade option:selected").val())
-            phys_sharp_magn *= Number(section
-                .find(".sb_full select option:selected").val())
+                break
             
-            // 錬気ゲージ色倍率 モーションに乗算（端数切捨）
-            let sb_color = Number(section
-                .find(".sb_color select option:selected").val())
-            
-            // モーションごとにダメージを計算
-            for(m in LS_DICT){
-                damage_dict[m] = []
-                // 錬気ゲージ色倍率をモーションに掛ける
-                let motion_val = Math.floor(LS_DICT[m][0] * sb_color) / 100
+            case "片手剣":
+                // 片手剣は常時は斬れ味補正 *1.06
+                phys_sharp_magn *= 1.06
+                for(m in SnS_DICT){
+                    damage_dict[m] = []
+                    let motion_val = SnS_DICT[m][0] / 100
 
-                // 物理ダメ計算
-                damage_dict[m].push(
-                    mul(weapon_magn, motion_val, affi_exp, 
-                        phys_sharp_magn, phys_weak))
-
-                // 属性ダメ計算
-                damage_dict[m].push(
-                    mul(ele_magn, ele_sharp_magn, LS_DICT[m][1], ele_weak, crit_ele_exp))
-            }
-            break
-        
-        case "片手剣":
-            // 片手剣は常時は斬れ味補正 *1.06
-            phys_sharp_magn *= 1.06
-            for(m in SnS_DICT){
-                damage_dict[m] = []
-                let motion_val = SnS_DICT[m][0] / 100
-
-                // 溜め斬りは属性値 * 2
-                let element
-                if(m == "溜め斬り"){
-                    element = ele_magn * 2
-                }else{
-                    element = ele_magn
-                }
-
-                // 物理ダメージ
-                damage_dict[m].push(
-                    mul(weapon_magn, motion_val, affi_exp, 
-                        phys_sharp_magn, phys_weak))
-
-                // 属性ダメージ
-                damage_dict[m].push(
-                    mul(element, ele_sharp_magn, SnS_DICT[m][1], ele_weak, crit_ele_exp))
-            }
-            break
-        
-        case "双剣":
-            // 鬼人化時: モーション値*1.15（端数切捨て）(鬼人強化では変化なし)
-            // 両手攻撃: 属性値*0.7 (モーション値に乗算を含むもの)
-            let demon = section
-                .find(".demon_mode select option:selected").val()
-            let demon_flag = section
-                .find(".demon_mode select option:selected").text()
-            
-            switch(demon_flag){
-                // 鬼人化状態のダメージ
-                case "あり":
-                    for(m in DB_DICT){
-                        damage_dict[m] = []
-                        let element
-                        // 鬼人化専用と鬼人化共用のモーションに*1.15(切捨)
-                        if ((DB_DICT[m][2] == 1) || (DB_DICT[m][2] == 2)){
-                            let m_arr = [],
-                                i
-                            for(i = 0; i < DB_DICT[m][0].length; i++){
-                                m_arr.push(Math.floor(DB_DICT[m][0][i] * 1.15))
-                            }
-                            let motion_val = sum_array(m_arr) / 100
-
-                            // 物理
-                            damage_dict[m].push(
-                                mul(weapon_magn, motion_val, affi_exp,
-                                    phys_sharp_magn, phys_weak))
-                            // 属性 両手モーションなら属性値*0.7
-                            if(DB_DICT[m][3] == 1){
-                                element = ele_magn * 0.7
-                            }else{
-                                element = ele_magn
-                            }
-                            damage_dict[m].push(
-                                mul(element, ele_sharp_magn, DB_DICT[m][1],     ele_weak, crit_ele_exp))
-                        }
+                    // 溜め斬りは属性値 * 2
+                    let element
+                    if(m == "溜め斬り"){
+                        element = ele_magn * 2
+                    }else{
+                        element = ele_magn
                     }
-                    break
-                case "なし":
-                    for(m in DB_DICT){
-                        damage_dict[m] = []
-                        let element
-                        let motion_val = sum_array(DB_DICT[m][0]) / 100
-                        // 通常状態のみと鬼人化共用のモーションだけ
-                        if ((DB_DICT[m][2] == 0) || (DB_DICT[m][2] == 1)){
-                            damage_dict[m].push(
-                                mul(weapon_magn, motion_val, affi_exp,
-                                    phys_sharp_magn, phys_weak))
-                            // 属性 両手モーションは属性値*0.7
-                            if(DB_DICT[m][3] == 1){
-                                element = ele_magn * 0.7
-                            }else{
-                                element = ele_magn
+
+                    // 物理ダメージ
+                    damage_dict[m].push(
+                        mul(weapon_magn, motion_val, affi_exp, 
+                            phys_sharp_magn, phys_weak))
+
+                    // 属性ダメージ
+                    damage_dict[m].push(
+                        mul(element, ele_sharp_magn, SnS_DICT[m][1], ele_weak, crit_ele_exp))
+                }
+                break
+            
+            case "双剣":
+                // 鬼人化時: モーション値*1.15（端数切捨て）(鬼人強化では変化なし)
+                // 両手攻撃: 属性値*0.7 (モーション値に乗算を含むもの)
+                let demon = section
+                    .find(".demon_mode select option:selected").val()
+                let demon_flag = section
+                    .find(".demon_mode select option:selected").text()
+                
+                switch(demon_flag){
+                    // 鬼人化状態のダメージ
+                    case "あり":
+                        for(m in DB_DICT){
+                            damage_dict[m] = []
+                            let element
+                            // 鬼人化専用と鬼人化共用のモーションに*1.15(切捨)
+                            if ((DB_DICT[m][2] == 1) || (DB_DICT[m][2] == 2)){
+                                let m_arr = [],
+                                    i
+                                for(i = 0; i < DB_DICT[m][0].length; i++){
+                                    m_arr.push(Math.floor(DB_DICT[m][0][i] * 1.15))
+                                }
+                                let motion_val = sum_array(m_arr) / 100
+
+                                // 物理
+                                damage_dict[m].push(
+                                    mul(weapon_magn, motion_val, affi_exp,
+                                        phys_sharp_magn, phys_weak))
+                                // 属性 両手モーションなら属性値*0.7
+                                if(DB_DICT[m][3] == 1){
+                                    element = ele_magn * 0.7
+                                }else{
+                                    element = ele_magn
+                                }
+                                damage_dict[m].push(
+                                    mul(element, ele_sharp_magn, DB_DICT[m][1],     ele_weak, crit_ele_exp))
                             }
-                            damage_dict[m].push(
-                                mul(element, ele_sharp_magn, DB_DICT[m][1],     ele_weak, crit_ele_exp))
                         }
-                    }
-                    break
-            }
-            break
-        
-        case "ハンマー":
-            for(m in HAMMER_DICT){
-                if(m == "回転攻撃"){
-                    // モーション値を取得
-                    let mv = HAMMER_DICT[m][0][0]
-                    for(let i = 1; i < HAMMER_DICT[m][1]+1; i++){
-                        // 回転攻撃は1回転~6回転目まで１個ずつ計算
-                        damage_dict[m+i] = []
+                        break
+                    case "なし":
+                        for(m in DB_DICT){
+                            damage_dict[m] = []
+                            let element
+                            let motion_val = sum_array(DB_DICT[m][0]) / 100
+                            // 通常状態のみと鬼人化共用のモーションだけ
+                            if ((DB_DICT[m][2] == 0) || (DB_DICT[m][2] == 1)){
+                                damage_dict[m].push(
+                                    mul(weapon_magn, motion_val, affi_exp,
+                                        phys_sharp_magn, phys_weak))
+                                // 属性 両手モーションは属性値*0.7
+                                if(DB_DICT[m][3] == 1){
+                                    element = ele_magn * 0.7
+                                }else{
+                                    element = ele_magn
+                                }
+                                damage_dict[m].push(
+                                    mul(element, ele_sharp_magn, DB_DICT[m][1],     ele_weak, crit_ele_exp))
+                            }
+                        }
+                        break
+                }
+                break
+            
+            case "ハンマー":
+                for(m in HAMMER_DICT){
+                    if(m == "回転攻撃"){
+                        // モーション値を取得
+                        let mv = HAMMER_DICT[m][0][0]
+                        for(let i = 1; i < HAMMER_DICT[m][1]+1; i++){
+                            // 回転攻撃は1回転~6回転目まで１個ずつ計算
+                            damage_dict[m+i] = []
+                            // 物理ダメ
+                            damage_dict[m+i].push(
+                                mul(weapon_magn, mv / 100, affi_exp, 
+                                    phys_sharp_magn, phys_weak))
+                            // 属性ダメ
+                            damage_dict[m+i].push(
+                                mul(ele_magn, ele_sharp_magn, i,
+                                    ele_weak, crit_ele_exp))
+                            mv += HAMMER_DICT[m][0][1]
+                            
+                        }
+                    }else{
+                        damage_dict[m] = []
                         // 物理ダメ
-                        damage_dict[m+i].push(
-                            mul(weapon_magn, mv / 100, affi_exp, 
+                        damage_dict[m].push(
+                            mul(weapon_magn, HAMMER_DICT[m][0]/100, affi_exp, 
                                 phys_sharp_magn, phys_weak))
                         // 属性ダメ
-                        damage_dict[m+i].push(
-                            mul(ele_magn, ele_sharp_magn, i,
+                        damage_dict[m].push(
+                            mul(ele_magn, ele_sharp_magn, HAMMER_DICT[m][1],
                                 ele_weak, crit_ele_exp))
-                        mv += HAMMER_DICT[m][0][1]
-                        
                     }
-                }else{
+                }
+                break
+            case "狩猟笛":
+                for(m in HH_DICT){
                     damage_dict[m] = []
                     // 物理ダメ
                     damage_dict[m].push(
-                        mul(weapon_magn, HAMMER_DICT[m][0]/100, affi_exp, 
-                            phys_sharp_magn, phys_weak))
+                        mul(weapon_magn, HH_DICT[m]/100, affi_exp, phys_sharp_magn, phys_weak))
+                    
                     // 属性ダメ
                     damage_dict[m].push(
-                        mul(ele_magn, ele_sharp_magn, HAMMER_DICT[m][1],
-                            ele_weak, crit_ele_exp))
+                        mul(ele_magn, ele_sharp_magn, ele_weak, crit_ele_exp))
                 }
-            }
-            break
-        case "狩猟笛":
-            for(m in HH_DICT){
-                damage_dict[m] = []
-                // 物理ダメ
-                damage_dict[m].push(
-                    mul(weapon_magn, HH_DICT[m]/100, affi_exp, phys_sharp_magn, phys_weak))
-                
-                // 属性ダメ
-                damage_dict[m].push(
-                    mul(ele_magn, ele_sharp_magn, ele_weak, crit_ele_exp))
-            }
-            break
-        case "ランス":
-            // 未実装 切断と打撃肉質のうち大きい方を計算に使う
-            for(m in LANCE_DICT){
-                damage_dict[m] = []
-                let motion_val = LANCE_DICT[m] / 100
-                // 物理
-                damage_dict[m].push(
-                    mul(weapon_magn, motion_val, affi_exp, 
-                        phys_sharp_magn, phys_weak))
-                // 属性
-                damage_dict[m].push(
-                    mul(ele_magn, ele_sharp_magn, ele_weak, crit_ele_magn))
-            }
-            break
-        case "ガンランス":
-            // 砲撃タイプを取得
-            let shell_type = section
-                .find(".shell_types select option:selected").text()
-            // 砲撃レベルを取得
-            let lv = Number(section
-                .find(".shelling_lv select option:selected").val())
-            
-            // 砲撃タイプ毎に各砲撃の倍率を設定
-            // charged shelling, full burst, wyvern"s fire
-            let cs, fb, wf 
-            switch(shell_type){
-                case "通常":
-                    cs = 1.2
-                    fb = 1.1
-                    wf = 1.0
-                    break
-                case "放射":
-                    cs = 1.2
-                    fb = 1
-                    wf = 1.2
-                    break
-                case "拡散":
-                    cs = 1.44
-                    fb = 0.9
-                    wf = 1
-                    break
-            }
-
-            /** 砲撃ダメージの計算 
-             *  切捨(砲撃の基本ダメ * 切捨(切捨(砲撃術 * 猫の砲撃術) * 砲撃タイプ倍率)) + 砲撃の火ダメ
-             *  （未確定）砲撃の火ダメージ: 砲撃基本火ダメ * (未対応)耐火属性
-             *  各乗算で端数切り捨て */
-            for(m in GL_DICT){
-                switch (m){
-                    case "砲撃":
-                        damage_dict[m] = []
-                        damage_dict[m].push(
-                            Math.floor(
-                                GL_SHELL_TYPES[shell_type][lv][0]
-                                * artillery_magn)
-                            + (GL_SHELL_TYPES[shell_type][lv][1]
-                                * ele_weak))
-                        
-                        break
-                    case "溜め砲撃":
-                        damage_dict[m] = []
-                        damage_dict[m].push(
-                            Math.floor(Math.floor(
-                                GL_SHELL_TYPES[shell_type][lv][0]
-                                * artillery_magn)
-                            * cs)
-                            + GL_SHELL_TYPES[shell_type][lv][1]
-                                * ele_weak)
-                        break
-                    case "フルバースト":
-                        // フルバーストの装填数1~6(6は装填数UP)まで計算する
-                        for(let i = 1; i < 7; i++){
-                            damage_dict[m+i] = []
-                            damage_dict[m+i].push((
-                                Math.floor(Math.floor(
-                                    GL_SHELL_TYPES[shell_type][lv][0]
-                                    * artillery_magn)
-                                * fb)
-                                + (GL_SHELL_TYPES[shell_type][lv][1])
-                                    * ele_weak)
-                                * i)
-                        }
-                        break
-                    case "竜撃砲":
-                        damage_dict[m] = []
-                        let d = 0,
-                            fd = 0
-                        for(let i = 0; i < 4; i++){
-                            // 砲撃基本ダメージの計算
-                            d += (Math.floor(Math.floor(
-                                GL_SHELL_TYPES["竜撃砲"][lv][0][i]
-                                * artillery_magn)
-                            * wf))
-                            // 砲撃火属性ダメージの計算
-                            fd += (GL_SHELL_TYPES["竜撃砲"][lv][1][i]
-                                    * ele_weak)
-                        }
-                        damage_dict[m].push(d+fd)
-                        break
-                    default:
-                        damage_dict[m] = []
-                        // 物理
-                        damage_dict[m].push(
-                            mul(weapon_magn, GL_DICT[m] / 100, affi_exp, 
-                                phys_sharp_magn, phys_weak))
-                        
-                        // 属性
-                        damage_dict[m].push(
-                            mul(ele_magn, ele_sharp_magn, 
-                                ele_weak, crit_ele_magn))
-                        break
-                }
-            }
-            break
-        
-
-        case "スラッシュアックス":
-            // 強撃と強属性ビン以外は未対応
-            // ビンタイプを取得
-            let phial = Number(section
-                .find(".sa_p_types select option:selected").val())
-            if(phial==1.2){
-                // 強撃ビンの場合
-                for(m in SA_DICT){
-                    damage_dict[m]=[]
-                    // phailをかけて端数を切り捨てたモーション値を格納
-                    let m_arr = [] 
-                    // 各モーション値に強撃ビン倍率をかけ、端数を切捨て
-                    for(let i = 0; i < SA_DICT[m][0].length; i++){
-                        m_arr.push(Math.floor(SA_DICT[m][0][i]) * phial)
-                    }
-
+                break
+            case "ランス":
+                // 未実装 切断と打撃肉質のうち大きい方を計算に使う
+                for(m in LANCE_DICT){
+                    damage_dict[m] = []
+                    let motion_val = LANCE_DICT[m] / 100
                     // 物理
                     damage_dict[m].push(
-                        mul(weapon_magn, sum_array(m_arr) / 100, affi_exp,
+                        mul(weapon_magn, motion_val, affi_exp, 
                             phys_sharp_magn, phys_weak))
                     // 属性
                     damage_dict[m].push(
-                        mul(ele_magn, phial, ele_weak, ele_sharp_magn, crit_ele_exp, SA_DICT[m][1]))
+                        mul(ele_magn, ele_sharp_magn, ele_weak, crit_ele_magn))
                 }
-                  
-            }else{
-                // 強属性ビン
-                ele_magn = Math.floor(ele_magn * phial)
-                for(m in SA_DICT){
-                    damage_dict[m] = []
-                    // 物理
-                    damage_dict[m].push(
-                        mul(weapon_magn, sum_array(SA_DICT[m][0]) / 100,
-                            affi_exp, phys_sharp_magn, phys_weak))
-                    //属性
-                    damage_dict[m].push(
-                        mul(ele_magn, phial, ele_weak, ele_sharp_magn, crit_ele_exp, SA_DICT[m][1]))
+                break
+            case "ガンランス":
+                // 砲撃タイプを取得
+                let shell_type = section
+                    .find(".shell_types select option:selected").text()
+                // 砲撃レベルを取得
+                let lv = Number(section
+                    .find(".shelling_lv select option:selected").val())
+                
+                // 砲撃タイプ毎に各砲撃の倍率を設定
+                // charged shelling, full burst, wyvern"s fire
+                let cs, fb, wf 
+                switch(shell_type){
+                    case "通常":
+                        cs = 1.2
+                        fb = 1.1
+                        wf = 1.0
+                        break
+                    case "放射":
+                        cs = 1.2
+                        fb = 1
+                        wf = 1.2
+                        break
+                    case "拡散":
+                        cs = 1.44
+                        fb = 0.9
+                        wf = 1
+                        break
                 }
-            }
-            break
 
-        
-        case "チャージアックス":
-            /** ビン爆発ダメージ計算
-             *  榴弾: 武器倍率 * 榴弾係数 * 爆発回数 (* 属性強化倍率)
-             *  強属性: 属性倍率 * 強属性係数 * 爆発回数 (* 属性強化倍率)
-             *  damage_dict 
-             * {モーション名: {部位1:[[通常物理ダメ,怒り物理ダメ], 属性ダメ, ビンダメ], 怒り[...],
-             *               部位2:[...]}}*/
-            // ビンタイプを取得
-            let phials_type = $(this).prev()
-                .find(".p_type select option:selected").val()
-            // 属性強化倍率を取得
-            let boost = Number(section
-                .find(".boost_mode select option:selected").val())
+                /** 砲撃ダメージの計算 
+                 *  切捨(砲撃の基本ダメ * 切捨(切捨(砲撃術 * 猫の砲撃術) * 砲撃タイプ倍率)) + 砲撃の火ダメ
+                 *  （未確定）砲撃の火ダメージ: 砲撃基本火ダメ * (未対応)耐火属性
+                 *  各乗算で端数切り捨て */
+                for(m in GL_DICT){
+                    switch (m){
+                        case "砲撃":
+                            damage_dict[m] = []
+                            damage_dict[m].push(
+                                Math.floor(
+                                    GL_SHELL_TYPES[shell_type][lv][0]
+                                    * artillery_magn)
+                                + (GL_SHELL_TYPES[shell_type][lv][1]
+                                    * ele_weak))
+                            
+                            break
+                        case "溜め砲撃":
+                            damage_dict[m] = []
+                            damage_dict[m].push(
+                                Math.floor(Math.floor(
+                                    GL_SHELL_TYPES[shell_type][lv][0]
+                                    * artillery_magn)
+                                * cs)
+                                + GL_SHELL_TYPES[shell_type][lv][1]
+                                    * ele_weak)
+                            break
+                        case "フルバースト":
+                            // フルバーストの装填数1~6(6は装填数UP)まで計算する
+                            for(let i = 1; i < 7; i++){
+                                damage_dict[m+i] = []
+                                damage_dict[m+i].push((
+                                    Math.floor(Math.floor(
+                                        GL_SHELL_TYPES[shell_type][lv][0]
+                                        * artillery_magn)
+                                    * fb)
+                                    + (GL_SHELL_TYPES[shell_type][lv][1])
+                                        * ele_weak)
+                                    * i)
+                            }
+                            break
+                        case "竜撃砲":
+                            damage_dict[m] = []
+                            let d = 0,
+                                fd = 0
+                            for(let i = 0; i < 4; i++){
+                                // 砲撃基本ダメージの計算
+                                d += (Math.floor(Math.floor(
+                                    GL_SHELL_TYPES["竜撃砲"][lv][0][i]
+                                    * artillery_magn)
+                                * wf))
+                                // 砲撃火属性ダメージの計算
+                                fd += (GL_SHELL_TYPES["竜撃砲"][lv][1][i]
+                                        * ele_weak)
+                            }
+                            damage_dict[m].push(d+fd)
+                            break
+                        default:
+                            damage_dict[m] = []
+                            // 物理
+                            damage_dict[m].push(
+                                mul(weapon_magn, GL_DICT[m] / 100, affi_exp, 
+                                    phys_sharp_magn, phys_weak))
+                            
+                            // 属性
+                            damage_dict[m].push(
+                                mul(ele_magn, ele_sharp_magn, 
+                                    ele_weak, crit_ele_magn))
+                            break
+                    }
+                }
+                break
             
-            $.getJSON("monster_data.json", function(data){
+
+            case "スラッシュアックス":
+                // 強撃と強属性ビン以外は未対応
+                // ビンタイプを取得
+                let phial = Number(section
+                    .find(".sa_p_types select option:selected").val())
+                if(phial==1.2){
+                    // 強撃ビンの場合
+                    for(m in SA_DICT){
+                        damage_dict[m]=[]
+                        // phailをかけて端数を切り捨てたモーション値を格納
+                        let m_arr = [] 
+                        // 各モーション値に強撃ビン倍率をかけ、端数を切捨て
+                        for(let i = 0; i < SA_DICT[m][0].length; i++){
+                            m_arr.push(Math.floor(SA_DICT[m][0][i]) * phial)
+                        }
+
+                        // 物理
+                        damage_dict[m].push(
+                            mul(weapon_magn, sum_array(m_arr) / 100, affi_exp,
+                                phys_sharp_magn, phys_weak))
+                        // 属性
+                        damage_dict[m].push(
+                            mul(ele_magn, phial, ele_weak, ele_sharp_magn, crit_ele_exp, SA_DICT[m][1]))
+                    }
+                    
+                }else{
+                    // 強属性ビン
+                    ele_magn = Math.floor(ele_magn * phial)
+                    for(m in SA_DICT){
+                        damage_dict[m] = []
+                        // 物理
+                        damage_dict[m].push(
+                            mul(weapon_magn, sum_array(SA_DICT[m][0]) / 100,
+                                affi_exp, phys_sharp_magn, phys_weak))
+                        //属性
+                        damage_dict[m].push(
+                            mul(ele_magn, phial, ele_weak, ele_sharp_magn, crit_ele_exp, SA_DICT[m][1]))
+                    }
+                }
+                break
+
+            
+            case "チャージアックス":
+                /** ビン爆発ダメージ計算
+                 *  榴弾: 武器倍率 * 榴弾係数 * 爆発回数 (* 属性強化倍率)
+                 *  強属性: 属性倍率 * 強属性係数 * 爆発回数 (* 属性強化倍率)
+                 *  damage_dict 
+                 * {モーション名: {部位1:[[通常物理ダメ,怒り物理ダメ], 属性ダメ, ビンダメ], 怒り[...],
+                 *               部位2:[...]}}*/
+                // ビンタイプを取得
+                let phials_type = 
+                    section.find(".p_type select option:selected").val()
+                // 属性強化倍率を取得
+                let boost = Number(section
+                    .find(".boost_mode select option:selected").val())
+                
                 for(m in CB_DICT){
                     // ダメージタイプを取得
                     let dmg_type = CB_DICT[m]["dmg_type"],
@@ -1425,135 +1459,134 @@ function click_calc_botton(){
                         // 超高出力以外の斧と盾突きモーション値にboostをかける
                         if(m.match(/斧:/) && !m.match(/超高出力/)
                         || m.match(/盾突き/)){
-                            motion_val[i] = Math.floor(motion_val[i] * boost)
+                            motion_val[i] = 
+                                Math.floor(motion_val[i] * boost)
                         }
                     }
 
                     for(part in data[monster]){
                         // ダメージタイプ肉質を取得
-                        let phys_weak = data[monster][part][dmg_type],
-                            // 肉質変化ごとの物理ダメージを格納する配列
-                            phys_dmg = [],
-                            // 耐属性変化ごとの属性ダメージを格納する配列
-                            ele_dmg = [],
-                            // ビンダメージを格納する配列
-                            phial_dmg = []
+                        let weak = data[monster][part][dmg_type],
+                            // 肉質ごとにダメージを格納
+                            dmg_arr = [[], []]
                         
+                        // 肉質変化しない場合、怒り肉質を通常肉質と同じ値にする
+                        if(weak.length == 1){ weak.push(weak[0]) }
+
                         // 物理ダメージを計算
                         // 肉質変化があればそれぞれ計算
-                        for(let i = 0; i < phys_weak.length; i++){
+                        for(let i = 0; i < weak.length; i++){
                             // 複数ヒットモーションのそれぞれのダメージの合計
                             let sum_motion_dmg = 0 
-                            for(let n = 0; n < motion_val.length; n++){
+                            for(let n = 0; n < motion_val.length;
+                                n++){
                                 // 物理ダメージ計算
                                 sum_motion_dmg += mul(weapon_magn,
-                                    motion_val[n] / 100, affi_exp, phys_sharp_magn, phys_weak[i] / 100)
+                                    motion_val[n] / 100, affi_exp, phys_sharp_magn, weak[i] / 100)
                             }
-                            phys_dmg.push(sum_motion_dmg)
+                            dmg_arr[i].push(sum_motion_dmg)
+        
                         }
                         
                         // 属性ダメージの計算 無属性なら計算しない
                         if(ele_type == "" || ele_type == "無"){
-                            ele_dmg = [0]
+                            
                         }else{
                             // モンスターの耐属性を取得
-                            let ele_weak = data[monster][part][ele_type]
+                            weak = data[monster][part][ele_type]
+                            // 耐属性変化しない場合、怒りを通常と同じ値にする
+                            if(weak.length == 1){ weak.push(weak[0]) }
+
                             // 耐属性変化があればそれぞれを計算
-                            for(let i = 0; i < ele_weak.length; i++){
-                                ele_dmg.push(
+                            for(let i = 0; i < weak.length; i++){
+                                dmg_arr[i].push(
                                     mul(ele_magn, ele_sharp_magn,
                                         motion_val.length,
-                                        ele_weak[i] / 100,
+                                        weak[i] / 100,
                                         crit_ele_exp))
-                                
                                 // 強属性ビンのダメージ計算
+                                // 未確定だけど計算後に端数切り捨て
                                 if(phials_type == "強属性"){
-                                    phial_dmg.push(mul(basic_phial_atk, 
-                                        phial_coef, num_of_impacts, ele_weak[i]))
+                                    dmg_arr[i].push(
+                                        Math.floor(mul(basic_phial_atk,
+                                            phial_coef, num_of_impacts,
+                                            weak[i] / 100)))
                                 }
                             }
                         }
                         // 部位毎の物理・属性ダメージを格納
-                        part_dmg_dict[part] = 
-                            [phys_dmg, ele_dmg, phial_dmg]
+                        part_dmg_dict[part] = dmg_arr
                     }
-
+                    
                     // 榴弾は肉質に依存しないので、
                     // 計算回数を増やさないために後から追加
-                    let impact_phial_dmg = 0
+                    // 未確定だけど計算後に端数切り捨て
                     if(phials_type == "榴弾"){
-                        impact_phial_dmg = 
-                            mul(weapon_magn, phial_coef,
-                                num_of_impacts, artillery_magn)
-                    }
-                    for(p in part_dmg_dict){
-                        part_dmg_dict[p][2].push(impact_phial_dmg)
+                        let impact_phial_dmg = 
+                            Math.floor(mul(weapon_magn, phial_coef,
+                                num_of_impacts, artillery_magn))
+                        for(p in part_dmg_dict){
+                            for(let i = 0; i < part_dmg_dict[p].length; i++){
+                                if(part_dmg_dict[p][i]){
+                                    part_dmg_dict[p][i]
+                                        .push(impact_phial_dmg)
+                                }
+                            }
+                        }
                     }
                     damage_dict[m] = part_dmg_dict
                 }
-            })
-
-            break    
-        
-
-        case "操虫棍":
-            // 赤白エキス モーション値*1.2 
-            // 赤白橙エキス モーション値*1.25
-            let essences = Number(section.find(".essences select option:selected").val())
-            if(essences > 1){
-                // エキスが選択された時は赤エキス時に存在するモーションだけ計算
-                for(m in IG_DICT){
-                    damage_dict[m] = []
-                    if(IG_DICT[m][2]){
+                break
+            
+            case "操虫棍":
+                // 赤白エキス モーション値*1.2 
+                // 赤白橙エキス モーション値*1.25
+                let essences = Number(section.find(".essences select option:selected").val())
+                if(essences > 1){
+                    // エキスが選択された時は赤エキス時に存在するモーションだけ計算
+                    for(m in IG_DICT){
+                        damage_dict[m] = []
+                        if(IG_DICT[m][2]){
+                            // 物理
+                            damage_dict[m].push(
+                                mul(weapon_magn, essences, sum_array(IG_DICT[m][0]) / 100, affi_exp, phys_sharp_magn, phys_weak))
+                            // 属性
+                            damage_dict[m].push(
+                                mul(ele_magn, ele_sharp_magn, IG_DICT[m][1], ele_weak, crit_ele_magn))
+                        }
+                    }
+                }else{
+                    for(m in IG_DICT){
+                        damage_dict[m] = []
                         // 物理
                         damage_dict[m].push(
-                            mul(weapon_magn, essences, sum_array(IG_DICT[m][0]) / 100, affi_exp, phys_sharp_magn, phys_weak))
+                            mul(weapon_magn, sum_array(IG_DICT[m][0])/100, affi_exp,phys_sharp_magn, phys_weak))
                         // 属性
                         damage_dict[m].push(
                             mul(ele_magn, ele_sharp_magn, IG_DICT[m][1], ele_weak, crit_ele_magn))
                     }
                 }
-            }else{
-                for(m in IG_DICT){
-                    damage_dict[m] = []
-                    // 物理
-                    damage_dict[m].push(
-                        mul(weapon_magn, sum_array(IG_DICT[m][0])/100, affi_exp,phys_sharp_magn, phys_weak))
-                    // 属性
-                    damage_dict[m].push(
-                        mul(ele_magn, ele_sharp_magn, IG_DICT[m][1], ele_weak, crit_ele_magn))
-                }}
-            break
-
-
-        
-    }
-
-    // 合計ダメージの計算
-    // sum_damage_dict = {モーション名: 合計ダメージ}
-    /*let sum_damage_dict = {}
-    for(m in damage_dict){
-        // 端数切捨(端数切捨(物理+属性+etc) * 防御率)
-        sum_damage_dict[m] = Math.floor(
-            Math.floor(sum_array(damage_dict[m])) * defense_rate)
-    }*/
-
-    // 合計ダメージ
-    for(m in damage_dict){
-        for(p in damage_dict[m]){
-            // 部位毎の合計ダメージ
-            let sum_dmg = 0 
-            for(let i = 0; i < damage_dict[m][p].length; i++){
-                sum_dmg += damage_dict[m][p][i]
-            }
-            damage_dict[m][p].push(Math.floor(sum_dmg))
+                break
         }
-    }
-    console.log(damage_dict)
 
+        // 合計ダメージを計算して各ダメージ配列の最後に入れる
+        for(let m in damage_dict){
+            for(let p in damage_dict[m]){
+                for(let w = 0; w < damage_dict[m][p].length; w++){
+                    // 肉質変化毎の合計ダメージ
+                    damage_dict[m][p][w].push(
+                        Math.floor(sum_array(damage_dict[m][p][w])))
+                }
+            }
+        }
+        console.log(damage_dict)
+        // 計算結果の出力
+        output_result_table(result_table, damage_dict)
+    })
+    
     //計算結果の出力
     // output_result($(this), sum_damage_dict)
-    output_result_table($(this), )
+    
     return false
 }
 
@@ -1620,5 +1653,6 @@ $(function(){
 
     // モンスターセレクトにmonster_data.jsonから名前を入力
     monster_name_to_select()
+    
 })
 
