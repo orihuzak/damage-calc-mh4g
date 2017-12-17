@@ -461,14 +461,12 @@ function output_result_table(table, dict){
             }
             
             b_row.append($("<td>").text(
-                dict[m][p][0][3] + ":"
+                dict[m][p][0][2] + ":"
                 + dict[m][p][0][0] + ":"
-                + dict[m][p][0][1] + ":"
-                + dict[m][p][0][2] + "\n("
-                + dict[m][p][1][3] + ":"
+                + dict[m][p][0][1] + "\n("
+                + dict[m][p][1][2] + ":"
                 + dict[m][p][1][0] + ":"
-                + dict[m][p][1][1] + ":"
-                + dict[m][p][1][2] + ")"))
+                + dict[m][p][1][1] + ")"))
         }
         tbody.append(b_row)
         i++
@@ -1499,11 +1497,15 @@ function click_calc_botton(){
 
                             // 耐属性変化があればそれぞれを計算
                             for(let i = 0; i < weak.length; i++){
-                                dmg_arr[i].push(
+                                dmg_arr[i][0] = Math.floor(dmg_arr[i][0] + mul(ele_magn, ele_sharp_magn,
+                                    motion_val.length,
+                                    weak[i] / 100,
+                                    crit_ele_exp))
+                                /*dmg_arr[i].push(
                                     mul(ele_magn, ele_sharp_magn,
                                         motion_val.length,
                                         weak[i] / 100,
-                                        crit_ele_exp))
+                                        crit_ele_exp))*/
                                 // 強属性ビンのダメージ計算
                                 // 未確定だけど計算後に端数切り捨て
                                 if(phials_type == "強属性"){
@@ -1568,14 +1570,14 @@ function click_calc_botton(){
                 }
                 break
         }
-
+        
         // 合計ダメージを計算して各ダメージ配列の最後に入れる
-        for(let m in damage_dict){
-            for(let p in damage_dict[m]){
+        for(m in damage_dict){
+            for(p in damage_dict[m]){
                 for(let w = 0; w < damage_dict[m][p].length; w++){
                     // 肉質変化毎の合計ダメージ
                     damage_dict[m][p][w].push(
-                        Math.floor(sum_array(damage_dict[m][p][w])))
+                        sum_array(damage_dict[m][p][w]))
                 }
             }
         }
@@ -1583,9 +1585,6 @@ function click_calc_botton(){
         // 計算結果の出力
         output_result_table(result_table, damage_dict)
     })
-    
-    //計算結果の出力
-    // output_result($(this), sum_damage_dict)
     
     return false
 }
