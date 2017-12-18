@@ -375,6 +375,16 @@ const ELE_SHARP_DICT = {
 
 /* Functions ******************************************************************/
 
+/** 2つのdictが同じかどうかを調べる
+ *  return bool */
+function is_same_dict(a, b){
+    if(JSON.stringify(a) == JSON.stringify(b)){
+        return true
+    }else{
+        return false
+    }
+}
+
 /** １の位を切り下げ */
 function truncate_ones_place(x){
     return Math.floor(x/10) * 10
@@ -459,14 +469,15 @@ function output_result_table(table, dict){
             if(i == 0){
                 h_row.append($("<th>").text(p))
             }
-            
-            b_row.append($("<td>").text(
-                dict[m][p][0][2] + ":"
-                + dict[m][p][0][0] + ":"
-                + dict[m][p][0][1] + "\n("
-                + dict[m][p][1][2] + ":"
-                + dict[m][p][1][0] + ":"
-                + dict[m][p][1][1] + ")"))
+            let td = $("<td>")
+            let text = ""
+            for(let i = 0; i < dict[m][p].length; i++){
+                if(!i == 0){text += "\n("}
+                text += dict[m][p][i]["合計"]
+                if(!i == 0){text += ")"}
+                td.text(text)
+            }
+            b_row.append(td)
         }
         tbody.append(b_row)
         i++
@@ -1466,7 +1477,7 @@ function click_calc_botton(){
                         // ダメージタイプ肉質を取得
                         let weak = data[monster][part][dmg_type],
                             // 肉質ごとにダメージを格納
-                            dmg_arr = [[], []]
+                            dmg_arr = [{}, {}]
                         
                         // 肉質変化しない場合、怒り肉質を通常肉質と同じ値にする
                         if(weak.length == 1){ weak.push(weak[0]) }
@@ -1482,7 +1493,7 @@ function click_calc_botton(){
                                 sum_motion_dmg += mul(weapon_magn,
                                     motion_val[n] / 100, affi_exp, phys_sharp_magn, weak[i] / 100)
                             }
-                            dmg_arr[i].push(sum_motion_dmg)
+                            dmg_arr[i]["物理"] = sum_motion_dmg
         
                         }
                         
@@ -1497,22 +1508,20 @@ function click_calc_botton(){
 
                             // 耐属性変化があればそれぞれを計算
                             for(let i = 0; i < weak.length; i++){
-                                dmg_arr[i][0] = Math.floor(dmg_arr[i][0] + mul(ele_magn, ele_sharp_magn,
-                                    motion_val.length,
-                                    weak[i] / 100,
-                                    crit_ele_exp))
-                                /*dmg_arr[i].push(
+                                dmg_arr[i]["属性"] = 
                                     mul(ele_magn, ele_sharp_magn,
                                         motion_val.length,
                                         weak[i] / 100,
-                                        crit_ele_exp))*/
-                                // 強属性ビンのダメージ計算
+                                        crit_ele_exp)
+                                
+                                // 強属性ビンダメージ計算
                                 // 未確定だけど計算後に端数切り捨て
                                 if(phials_type == "強属性"){
-                                    dmg_arr[i].push(
-                                        Math.floor(mul(basic_phial_atk,
-                                            phial_coef, num_of_impacts,
-                                            weak[i] / 100)))
+                                    dmg_arr[i]["ビン"] = Math.floor(
+                                        mul(basic_phial_atk,
+                                            phial_coef,
+                                            weak[i] / 100))
+                                        * num_of_impacts
                                 }
                             }
                         }
@@ -1524,15 +1533,12 @@ function click_calc_botton(){
                     // 計算回数を増やさないために後から追加
                     // 未確定だけど計算後に端数切り捨て
                     if(phials_type == "榴弾"){
-                        let impact_phial_dmg = 
-                            Math.floor(mul(weapon_magn, phial_coef,
-                                num_of_impacts, artillery_magn))
                         for(p in part_dmg_dict){
+                            let phial_dmg = Math.floor(mul(weapon_magn,
+                                phial_coef, artillery_magn)) * num_of_impacts
                             for(let i = 0; i < part_dmg_dict[p].length; i++){
-                                if(part_dmg_dict[p][i]){
-                                    part_dmg_dict[p][i]
-                                        .push(impact_phial_dmg)
-                                }
+                                part_dmg_dict[p][i]["ビン"] = phial_dmg
+                                //console.log(part_dmg_dict[p][i])
                             }
                         }
                     }
@@ -1574,10 +1580,18 @@ function click_calc_botton(){
         // 合計ダメージを計算して各ダメージ配列の最後に入れる
         for(m in damage_dict){
             for(p in damage_dict[m]){
+                // 肉質変化のない部位ならそのdictを削除
+                if(is_same_dict(damage_dict[m][p][0], damage_dict[m][p][1])){
+                    damage_dict[m][p].pop()
+                }
+                // 合計を計算
                 for(let w = 0; w < damage_dict[m][p].length; w++){
+                    let sum = 0
+                    for(k in damage_dict[m][p][w]){
+                        sum += damage_dict[m][p][w][k]
+                    }
                     // 肉質変化毎の合計ダメージ
-                    damage_dict[m][p][w].push(
-                        sum_array(damage_dict[m][p][w]))
+                    damage_dict[m][p][w]["合計"] = Math.floor(sum)
                 }
             }
         }
@@ -1588,6 +1602,7 @@ function click_calc_botton(){
     
     return false
 }
+
 
 
 
