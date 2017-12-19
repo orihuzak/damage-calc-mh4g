@@ -91,26 +91,24 @@ const GS_DICT = {
 
 /** 太刀 
  *  {モーション名: [モーション値, ヒット数]}
- *  錬気ゲージ点滅: 斬れ味*1.13
- *  白ゲージ: モーション値*1.05
- *  黄ゲージ: モーション値*1.1
- *  赤ゲージ: モーション値*1.3 */
+ *  */
 const LS_DICT = {
-    "踏込斬り": [26, 1],
-    "縦斬り": [23, 1],
-    "突き": [14, 1],
-    "斬り上げ": [18, 1],
-    "斬り下がり・左右移動斬り": [24, 1],
-    "気刃斬り1（錬気不足）": [16, 1],
-    "気刃斬り1": [28, 1],
-    "気刃斬り2": [32, 1],
-    "気刃斬り3": [60, 3], //12+14+34
-    "気刃大回転斬り": [42, 1],
-    "気刃踏込斬り(錬気不足)": [18, 1],
-    "気刃踏込斬り": [30, 1],
-    "ジャンプ斬り": [26, 1],
-    "ジャンプ気刃斬り": [30, 1],
-    "ジャンプ気刃２連斬り": [12+36, 2]
+    "[抜刀]踏み込み斬り": {dmg_type: "切断", motion_val: [26]},
+    "踏み込み斬り": {dmg_type: "切断", motion_val: [26]},
+    "縦斬り": {dmg_type: "切断", motion_val: [23]},
+    "突き": {dmg_type: "切断", motion_val: [14]},
+    "斬り上げ": {dmg_type: "切断", motion_val: [18]},
+    "斬り下がり/左右移動斬り": {dmg_type: "切断", motion_val: [24]},
+    "気刃斬り1（錬気不足）": {dmg_type: "切断", motion_val: [16]},
+    "気刃斬り1": {dmg_type: "切断", motion_val: [28]},
+    "気刃斬り2": {dmg_type: "切断", motion_val: [30]},
+    "気刃斬り3": {dmg_type: "切断", motion_val: [12, 14, 34]}, // 60
+    "気刃大回転斬り": {dmg_type: "切断", motion_val: [42]},
+    "気刃踏込斬り(錬気不足)": {dmg_type: "切断", motion_val: [18]},
+    "気刃踏込斬り": {dmg_type: "切断", motion_val: [30]},
+    "ジャンプ斬り": {dmg_type: "切断", motion_val: [26]},
+    "ジャンプ気刃斬り": {dmg_type: "切断", motion_val: [30]},
+    "ジャンプ気刃2連斬り": {dmg_type: "切断", motion_val: [12, 36]}
 }
 
 /** 片手剣
@@ -491,9 +489,11 @@ function output_result_table(table, dict){
             let td = $("<td>")
             let text = ""
             for(let i = 0; i < dict[m][p].length; i++){
-                if(!i == 0){text += "\n("}
-                text += dict[m][p][i]["合計"]
-                if(!i == 0){text += ")"}
+                if(i == 0){
+                    text += dict[m][p][i]["合計"]
+                }else{
+                    text += "\n(" + dict[m][p][i]["合計"] +")"
+                }
                 td.text(text)
             }
             b_row.append(td)
@@ -563,8 +563,8 @@ function set_weapon_select(){
     section.find(".center_of_blade").hide()
     section.find(".p_type").hide()
     section.find(".boost_mode").hide()
-    section.find(".sb_full").hide()
-    section.find(".sb_color").hide()
+    section.find(".spirit_full").hide()
+    section.find(".spirit_color").hide()
     section.find(".demon_mode").hide()
     section.find(".shell_types").hide()
     section.find(".shelling_lv").hide()
@@ -580,8 +580,8 @@ function set_weapon_select(){
         case "太刀":
             // 中腹ヒットhtmlを表示
             section.find(".center_of_blade").show()
-            section.find(".sb_full").show()
-            section.find(".sb_color").show()
+            section.find(".spirit_full").show()
+            section.find(".spirit_color").show()
             break
         case "スラッシュアックス":
             section.find(".sa_p_types").show()
@@ -1054,7 +1054,7 @@ function click_calc_botton(){
     }).then(function(data){
         // 武器種別に計算をする
         switch(weapon_type){
-            case "大剣":
+            case "大剣": {
                 // 中腹ヒット倍率を取得
                 let center_of_blade = Number(
                     section.find(".center_of_blade select option:selected").val())
@@ -1109,35 +1109,83 @@ function click_calc_botton(){
                     damage_dict[motion] = part_dmg_dict
                 }
                 break
-
-            case "太刀":
-                // 斬れ味に乗算 中腹ヒットと錬気ゲージ点滅
-                phys_sharp_magn *= Number(section
-                .find(".center_of_blade select option:selected").val())
-                phys_sharp_magn *= Number(section
-                    .find(".sb_full select option:selected").val())
+            }
+            case "太刀": {
                 
-                // 錬気ゲージ色倍率 モーションに乗算（端数切捨）
-                let sb_color = Number(section
-                    .find(".sb_color select option:selected").val())
+                /** 中腹ヒット: 斬れ味に乗算
+                 *  錬気ゲージフル: 斬れ味に乗算
+                 *  錬気ゲージ色: モーションに乗算（端数切捨）
+                 *  白: *1.05
+                 *  黄: *1.1
+                 *  赤: *1.3 */
+                let center_of_blade = Number(section
+                    .find(".center_of_blade select option:selected")
+                        .val()),
+                    spirit_full = Number(section
+                    .find(".spirit_full select option:selected")
+                        .val()),
+                    spirit_color = Number(section
+                    .find(".spirit_color select option:selected")
+                        .val())
                 
                 // モーションごとにダメージを計算
                 for(m in LS_DICT){
-                    damage_dict[m] = []
-                    // 錬気ゲージ色倍率をモーションに掛ける
-                    let motion_val = Math.floor(LS_DICT[m][0] * sb_color) / 100
+                    // モーションのダメージタイプを取得
+                    let dmg_type = LS_DICT[m]["dmg_type"],
+                        motion_val = LS_DICT[m]["motion_val"],
+                    // 部位毎のダメージを格納する連想配列
+                        part_dmg_dict = {}
 
-                    // 物理ダメ計算
-                    damage_dict[m].push(
-                        mul(weapon_magn, motion_val, affi_exp, 
-                            phys_sharp_magn, phys_weak))
+                    for(part in data[monster]){
+                        // モンスターの部位毎のダメージタイプ肉質を取得
+                        let weak = data[monster][part][dmg_type],
+                        // 肉質ごとのダメージを格納する配列
+                            dmg_arr = [{}, {}]
+                        
+                        // 肉質変化しない場合、怒り肉質を通常肉質と同じ値にする
+                        if(weak.length == 1){ weak.push(weak[0]) }
+                        
+                        // 物理ダメージを計算
+                        // 肉質変化があればそれぞれ計算
+                        for(let i = 0; i < weak.length; i++){
+                            // モーション配列からモーション値を取り出し計算
+                            // 結果を合計
+                            let sum_motion_dmg = 0
+                            for(let n = 0; n < motion_val.length; n++){
+                                // 錬気ゲージ色をモーション値に乗算し、端数切り捨て
+                                let mv = Math.floor(
+                                    motion_val[n] * spirit_color)
+                                sum_motion_dmg += mul(weapon_magn,
+                                    mv / 100, affi_exp, phys_sharp_magn,spirit_full, center_of_blade, 
+                                    weak[i] / 100)
+                            }
+                            dmg_arr[i]["物理"] = sum_motion_dmg
+                        }
 
-                    // 属性ダメ計算
-                    damage_dict[m].push(
-                        mul(ele_magn, ele_sharp_magn, LS_DICT[m][1], ele_weak, crit_ele_exp))
+                        // 属性ダメージの計算 無属性なら計算しない
+                        if(ele_type == "" || ele_type == "無"){
+                            // 何もしない
+                        }else{
+                            // モンスターの部位毎の耐属性を取得
+                            weak = data[monster][part][ele_type]
+
+                            // 耐属性変化しない場合、怒りを通常と同じ値にする
+                            if(weak.length == 1){ weak.push(weak[0]) }
+                            
+                            // 耐属性変化があればそれぞれを計算
+                            for(let i = 0; i < weak.length; i++){
+                                dmg_arr[i]["属性"] = 
+                                    mul(ele_magn, ele_sharp_magn,
+                                        weak[i] / 100, crit_ele_exp) 
+                                    * motion_val.length
+                            }
+                        }
+                        part_dmg_dict[part] = dmg_arr
+                    }
+                    damage_dict[m] = part_dmg_dict
                 }
                 break
-            
+            }
             case "片手剣":
                 // 片手剣は常時は斬れ味補正 *1.06
                 phys_sharp_magn *= 1.06
@@ -1594,9 +1642,7 @@ function click_calc_botton(){
                 }
                 break
         }
-
-        console.log(damage_dict)
-        
+        // console.log(damage_dict)
         // 合計ダメージを計算して各ダメージ配列の最後に入れる
         for(m in damage_dict){
             for(p in damage_dict[m]){
@@ -1687,6 +1733,5 @@ $(function(){
 
     // モンスターセレクトにmonster_data.jsonから名前を入力
     monster_name_to_select()
-    
 })
 
