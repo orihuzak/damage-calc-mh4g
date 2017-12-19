@@ -45,28 +45,47 @@ const WEAPON_COEF_DICT = {
 }
 
 
-/** 大剣 */
+/** 大剣
+ *  {dmg_type: "切断or打撃or弾", motion_val: val, 
+ *  斬れ味補正: val, 属性補正: val}
+ */
 const GS_DICT = {
-    "縦斬り": 48,
-    "斬り上げ": 46,
-    "縦斬り": 48,
-    "斬り上げ": 46,
-    "なぎ払い": 36,
-    "横殴り（打撃）": 18,
-    "溜め1": 65,
-    "溜め2": 77,
-    "溜め3": 110,
-    "溜めすぎ": 77,
-    "強溜め0": 52,
-    "強なぎ払い": 48,
-    "強溜め1": 70,
-    "強なぎ払い1": 52,
-    "強溜め2": 85,
-    "強なぎ払い2": 66,
-    "強溜め3": 115,
-    "強なぎ払い3": 110,
-    "ジャンプ攻撃": 48,
-    "ジャンプ後なぎ払い": 66
+    "[抜刀]縦斬り": 
+        {dmg_type: "切断", motion_val: 48, sharp_up: 1, ele_up: 1},
+    "縦斬り": 
+        {dmg_type: "切断", motion_val: 48, sharp_up: 1, ele_up: 1},
+    "斬り上げ": 
+        {dmg_type: "切断", motion_val: 46, sharp_up: 1, ele_up: 1},
+    "なぎ払い": 
+        {dmg_type: "切断", motion_val: 36, sharp_up: 1, ele_up: 1},
+    "横殴り": 
+        {dmg_type: "打撃", motion_val: 18, sharp_up: 1, ele_up: 1},
+    "溜め1": 
+        {dmg_type: "切断", motion_val: 65, sharp_up: 1.1, ele_up: 1.2},
+    "溜め2/溜めすぎ": 
+        {dmg_type: "切断", motion_val: 77, sharp_up: 1.2, ele_up: 1.5},
+    "溜め3": 
+        {dmg_type: "切断", motion_val: 110, sharp_up: 1.3, ele_up: 2},
+    "強溜め0": 
+        {dmg_type: "切断", motion_val: 52, sharp_up: 1, ele_up: 1},
+    "強なぎ払い": 
+        {dmg_type: "切断", motion_val: 48, sharp_up: 1, ele_up: 1},
+    "強溜め1": 
+        {dmg_type: "切断", motion_val: 70, sharp_up: 1.1, ele_up: 1.8},
+    "強なぎ払い1": 
+        {dmg_type: "切断", motion_val: 52, sharp_up: 1, ele_up: 1},
+    "強溜め2": 
+        {dmg_type: "切断", motion_val: 85, sharp_up: 1.2, ele_up: 2.25},
+    "強なぎ払い2": 
+        {dmg_type: "切断", motion_val: 66, sharp_up: 1, ele_up: 1},
+    "強溜め3": 
+        {dmg_type: "切断", motion_val: 115, sharp_up: 1.3, ele_up: 3},
+    "強なぎ払い3": 
+        {dmg_type: "切断", motion_val: 110, sharp_up: 1, ele_up: 1},
+    "ジャンプ攻撃": 
+        {dmg_type: "切断", motion_val: 48, sharp_up: 1, ele_up: 1},
+    "ジャンプ後なぎ払い": 
+        {dmg_type: "切断", motion_val: 66, sharp_up: 1, ele_up: 1},
 }
 
 
@@ -541,7 +560,7 @@ function set_weapon_select(){
     })
     
     // 武器種に依存するhtmlを隠す
-    section.find(".cob").hide()
+    section.find(".center_of_blade").hide()
     section.find(".p_type").hide()
     section.find(".boost_mode").hide()
     section.find(".sb_full").hide()
@@ -556,11 +575,11 @@ function set_weapon_select(){
     switch(type){
         case "大剣":
             // 中腹ヒットhtmlを表示
-            section.find(".cob").show()
+            section.find(".center_of_blade").show()
             break
         case "太刀":
             // 中腹ヒットhtmlを表示
-            section.find(".cob").show()
+            section.find(".center_of_blade").show()
             section.find(".sb_full").show()
             section.find(".sb_color").show()
             break
@@ -853,10 +872,7 @@ function click_calc_botton(){
     // 属性タイプを取得
     let ele_type = 
         section.find(".ele_type select option:selected").val()
-    // モンスター名を取得
-    let monster = section.find(".monster select option:selected").text()
-    // 肉質, 耐属性用の変数を宣言
-    let phys_weak, ele_weak
+    
     
     // 防御率の取得
     let defense_rate = Number(section.find(".defense_rate").val())
@@ -1003,10 +1019,7 @@ function click_calc_botton(){
     // 痛撃 （肉質へ加算）
     let weakness_exp = Number(
         section.find(".weakness_exploit option:selected").val())
-    if (phys_weak >= 45){
-        //肉質が45%以上なら肉質を+5%
-        phys_weak += weakness_exp
-    }
+    
 
     /* その他スキル *********************************************************/
     /** 未実装スキル
@@ -1026,6 +1039,8 @@ function click_calc_botton(){
     // 属性会心期待値の計算
     let crit_ele_exp = calc_affi_exp(affinity, crit_ele_magn)
     
+    // モンスター名を取得
+    let monster = section.find(".monster select option:selected").text()
 
     // damage_dict = {モーション名: [物理ダメージ, 属性ダメージ, etc...]}
     let damage_dict = {}
@@ -1040,62 +1055,65 @@ function click_calc_botton(){
         // 武器種別に計算をする
         switch(weapon_type){
             case "大剣":
-                // 中腹ヒット倍率を斬れ味補正にかける
-                phys_sharp_magn *= Number(section
-                    .find(".center_of_blade option:selected").val())
+                // 中腹ヒット倍率を取得
+                let center_of_blade = Number(
+                    section.find(".center_of_blade select option:selected").val())
                 for(motion in GS_DICT){
-                    damage_dict[motion] = []
-            
-                    let motion_val = GS_DICT[motion] / 100
-                    // モーションごとの補正を入れる
-                    if(motion.match(/溜め1/) || motion == "強なぎ払い1"){
-                        //(強)溜め1 と 強なぎ払い1 はモーション値を1.1倍
-                        motion_val *= 1.1
-                    }else if(motion.match(/溜め2/) || motion == "強なぎ払い2"){
-                        //(強)溜め2 と 強なぎ払い2 はモーション値を1.2倍
-                        motion_val *= 1.2
-                    }else if(motion.match(/溜め3/) || motion == "強なぎ払い3"){
-                        //(強)溜め3 と 強なぎ払い3 はモーション値を1.3倍
-                        motion_val *= 1.3
+                    // モーションのダメージタイプを取得
+                    let dmg_type = GS_DICT[motion]["dmg_type"]
+                    // モーション値
+                        motion_val = GS_DICT[motion]["motion_val"],
+                    // モーション毎の斬れ味補正
+                        sharp_up = GS_DICT[motion]["sharp_up"],
+                    // モーション毎の属性補正
+                        ele_up = GS_DICT[motion]["ele_up"],
+                        part_dmg_dict = {} // 部位毎のダメージを格納するdict
+                    
+                    for(part in data[monster]){
+                        // モンスターの部位毎のダメージタイプ肉質を取得
+                        let weak = data[monster][part][dmg_type],
+                        // 肉質ごとのダメージを格納する配列
+                            dmg_arr = [{}, {}]
+                        
+                        // 肉質変化しない場合、怒り肉質を通常肉質と同じ値にする
+                        if(weak.length == 1){ weak.push(weak[0]) }
+                        
+                        // 物理ダメージを計算
+                        // 肉質変化があればそれぞれ計算
+                        for(let i = 0; i < weak.length; i++){
+                            dmg_arr[i]["物理"] = mul(weapon_magn,
+                                motion_val / 100, affi_exp, phys_sharp_magn, sharp_up, 
+                                center_of_blade, weak[i] / 100)
+                        }
+
+                        // 属性ダメージの計算 無属性なら計算しない
+                        if(ele_type == "" || ele_type == "無"){
+                            // 何もしない
+                        }else{
+                            // モンスターの部位毎の耐属性を取得
+                            weak = data[monster][part][ele_type]
+
+                            // 耐属性変化しない場合、怒りを通常と同じ値にする
+                            if(weak.length == 1){ weak.push(weak[0]) }
+                            
+                            // 耐属性変化があればそれぞれを計算
+                            for(let i = 0; i < weak.length; i++){
+                                dmg_arr[i]["属性"] = 
+                                    mul(ele_magn, ele_up,   
+                                        ele_sharp_magn, weak[i] / 100,
+                                        crit_ele_exp)
+                            }
+                        }
+                        part_dmg_dict[part] = dmg_arr
                     }
-            
-                    // モーションごとの属性値補正を入れる
-                    let element = ele_magn
-                    switch(motion){
-                        case "溜め1":
-                            element *= 1.2
-                            break
-                        case "溜め2":
-                            element *= 1.5
-                            break
-                        case "溜め3":
-                            element *= 2.0
-                            break
-                        case "強溜め1":
-                            element *= 1.8
-                            break
-                        case "強溜め2":
-                            element *= 2.25
-                            break
-                        case "強溜め3":
-                            element *= 3.00
-                            break
-                    }
-            
-                    // 物理ダメージ計算
-                    damage_dict[motion].push(
-                        mul(weapon_magn, motion_val, affi_exp,     phys_sharp_magn, phys_weak))
-            
-                    // 属性ダメージ計算
-                    damage_dict[motion].push(
-                        mul(element, ele_sharp_magn, ele_weak, crit_ele_exp))
+                    damage_dict[motion] = part_dmg_dict
                 }
                 break
 
             case "太刀":
                 // 斬れ味に乗算 中腹ヒットと錬気ゲージ点滅
                 phys_sharp_magn *= Number(section
-                .find(".center_of_blade option:selected").val())
+                .find(".center_of_blade select option:selected").val())
                 phys_sharp_magn *= Number(section
                     .find(".sb_full select option:selected").val())
                 
@@ -1499,9 +1517,9 @@ function click_calc_botton(){
                         
                         // 属性ダメージの計算 無属性なら計算しない
                         if(ele_type == "" || ele_type == "無"){
-                            
+                            // 何もしない
                         }else{
-                            // モンスターの耐属性を取得
+                            // モンスターの部位毎の耐属性を取得
                             weak = data[monster][part][ele_type]
                             // 耐属性変化しない場合、怒りを通常と同じ値にする
                             if(weak.length == 1){ weak.push(weak[0]) }
@@ -1576,6 +1594,8 @@ function click_calc_botton(){
                 }
                 break
         }
+
+        console.log(damage_dict)
         
         // 合計ダメージを計算して各ダメージ配列の最後に入れる
         for(m in damage_dict){
