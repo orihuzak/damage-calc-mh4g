@@ -299,8 +299,8 @@ const CB_DICT = {
         {dmg_type: "切断", motion_val: [8, 12], impact_phial_coef: 0.05, ele_phial_coef: 2.5, num_of_impacts: 1},
     "剣:ジャンプ斬り":
         {dmg_type: "切断", motion_val: [22], impact_phial_coef: 0, ele_phial_coef: 0, num_of_impacts: 0},
-    "剣:カウンター爆発":
-        {dmg_type: "切断", motion_val: [0], impact_phial_coef: 0.05, ele_phial_coef: 2.5, num_of_impacts: 1},
+    "剣:GP爆発":
+        {dmg_type: "切断", motion_val: [], impact_phial_coef: 0.05, ele_phial_coef: 2.5, num_of_impacts: 1},
     "斧:叩きつけ":
         {dmg_type: "切断", motion_val: [47], impact_phial_coef: 0, ele_phial_coef: 0, num_of_impacts: 0},
     "斧:斬り上げ": 
@@ -461,7 +461,7 @@ function output_result_table(table, dict){
         i = 0
 
     table.empty()
-    h_row.append($("<th>").text(""))
+    h_row.append($("<th>").text("モーション"))
     for(m in dict){
         let b_row = $("<tr>")
         b_row.append($("<td>").text(m))
@@ -1456,7 +1456,7 @@ function click_calc_botton(){
                         // 盾突き・チャージ斬り返し・カウンター爆発のビン爆発係数を0にする
                         if(m.match(/盾突き/)
                         || m.match(/チャージ斬り返し/)
-                        || m.match(/カウンター爆発/)){
+                        || m.match(/GP爆発/)){
                             phial_coef = 0
                         }
                         // 通常状態なら超高出力は計算自体を飛ばす
