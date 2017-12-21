@@ -21,6 +21,17 @@
             "atk": 297, "ele_type": "水", "ele_val": 150, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "sharp": "緑", "sharp+": "緑", "slots": 0
         }
     },
+    "片手剣":{
+        "ハンターナイフ": {
+            "atk": 84, "ele_type": "無", "ele_val": 0, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "sharp": "黄", "sharp+": "黄", "slots": 0 
+        },
+        "アンクofチェッカー": {
+            "atk": 168, "ele_type": "龍", "ele_val": 120, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 15, "sharp": "緑", "sharp+": "青", "slots": 0 
+        },
+        "十字紋の剣盾": {
+            "atk": 182, "ele_type": "水", "ele_val": 120, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "sharp": "緑", "sharp+": "緑", "slots": 1
+        }
+    },
     "スラッシュアックス":{
         "ボーンアックス": {
             "atk": 378, "ele_type": "無", "ele_val": 0, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "phial": "強撃", "sharp": "黄", "sharp+": "黄", "slots": 0 

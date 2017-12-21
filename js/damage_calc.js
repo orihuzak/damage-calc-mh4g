@@ -111,23 +111,27 @@ const LS_DICT = {
     "ジャンプ気刃2連斬り": {dmg_type: "切断", motion_val: [12, 36]}
 }
 
-/** 片手剣
- * {モーション名: [モーション値, ヒット数]} */
+
 const SnS_DICT = {
-    "【抜刀】突進斬り": [18, 1],
-    "斬り上げ": [14, 1],
-    "斬り下ろし": [14, 1],
-    "横斬り": [13, 1],
-    "剣盾コンボ": [30, 2], // 10+20 気絶値 15 減気値15
-    "水平斬り": [21, 1],
-    "斬り返し": [19, 1],
-    "盾攻撃": [8, 1],
-    "バックナックル": [16, 1],
-    "ガード攻撃": [14, 1],
-    "溜め斬り": [57, 2], // 20 + 37 気絶値 15 減気値25
-    "ジャンプ斬り": [20, 1],
-    "ジャンプ突進斬り": [20, 1],
-    "ジャンプ斬り上げ": [18, 1]
+    /** 片手剣
+     * {モーション名: { dmg_type: ダメージタイプ, motion_val: モーション値 } */
+    "【抜刀】突進斬り": { dmg_type: "切断", motion_val: 18 },
+    "斬り上げ": { dmg_type: "切断", motion_val: 14 },
+    "斬り下ろし": { dmg_type: "切断", motion_val: 14 },
+    "横斬り": { dmg_type: "切断", motion_val: 13 },
+    // 気絶値15 減気値15
+    "剣盾コンボ盾": { dmg_type: "打撃", motion_val: 10 },
+    "剣盾コンボ剣": { dmg_type: "切断", motion_val: 20 },
+    "水平斬り": { dmg_type: "切断", motion_val: 21 },
+    "斬り返し": { dmg_type: "切断", motion_val: 19 },
+    "盾攻撃": { dmg_type: "打撃", motion_val: 6 },
+    "バックナックル": { dmg_type: "打撃", motion_val: 16 },
+    "ガード攻撃": { dmg_type: "切断", motion_val: 14 },
+    "溜め斬り盾": { dmg_type: "打撃", motion_val: 20 }, // 気絶値15 減気値25
+    "溜め斬り剣": { dmg_type: "切断", motion_val: 37 },
+    "ジャンプ斬り": { dmg_type: "切断", motion_val: 20 },
+    "ジャンプ突進斬り": { dmg_type: "切断", motion_val: 20 },
+    "ジャンプ斬り上げ": { dmg_type: "切断", motion_val: 18 },
 }
 
 /** 双剣 
@@ -288,8 +292,7 @@ const SA_DICT = {
     "剣:横切り": {dmg_type: "切断", motion_val: [25]},
     "剣:二連斬り":{dmg_type: "切断", motion_val: [28, 36]},
     "剣:属性解放突き": {dmg_type: "切断", motion_val: [28]},
-    // 属性解放継続 (13+13+13) * 2 なのかな
-    "剣:属性解放継続": {dmg_type: "切断", motion_val: [13,13,13,13,13,13]},
+    "剣:属性解放継続(*1~6)": {dmg_type: "切断", motion_val: [13]},
     "剣:属性解放任意フィニッシュ": {dmg_type: "切断", motion_val: [50]},
     "剣:属性解放フィニッシュ": {dmg_type: "切断", motion_val: [80]},
     "剣:ジャンプ斬り": {dmg_type: "切断", motion_val: [43]},
@@ -1198,31 +1201,69 @@ function click_calc_botton(){
                 }
                 break
             }
-            case "片手剣":
-                // 片手剣は常時は斬れ味補正 *1.06
-                phys_sharp_magn *= 1.06
-                for(m in SnS_DICT){
-                    damage_dict[m] = []
-                    let motion_val = SnS_DICT[m][0] / 100
+            case "片手剣": {
+                /** 斬撃タイプの攻撃は、斬れ味補正 *1.06
+                 *  溜め斬りは、属性補正 *2 */ 
 
-                    // 溜め斬りは属性値 * 2
-                    let element
-                    if(m == "溜め斬り"){
-                        element = ele_magn * 2
-                    }else{
-                        element = ele_magn
+                for(motion in SnS_DICT){
+                    // モーションのダメージタイプを取得
+                    let dmg_type = SnS_DICT[motion]["dmg_type"],
+                    // モーション値
+                        motion_val = SnS_DICT[motion]["motion_val"],
+                    // 部位毎のダメージを格納するdict    
+                        part_dmg_dict = {}, 
+                    // 片手剣独自の補正用の変数
+                        sharp_up = 1,
+                        element_up = 1
+                    // 斬撃タイプのモーションなら、物理斬れ味 *1.06
+                    if(dmg_type == "切断"){
+                        sharp_up = 1.06
+                    }
+                    // 溜め斬りは属性値 * 2 #未確定だけど盾と剣の両方を*2にした
+                    if(motion.match(/溜め斬り/)){
+                        element_up = 2
                     }
 
-                    // 物理ダメージ
-                    damage_dict[m].push(
-                        mul(weapon_magn, motion_val, affi_exp, 
-                            phys_sharp_magn, phys_weak))
+                    for(part in data[monster]){
+                        // モンスターの部位毎のダメージタイプ肉質を取得
+                        let weak = data[monster][part][dmg_type],
+                        // 肉質ごとのダメージを格納する配列
+                            dmg_arr = [{}, {}]
+                        
+                        // 肉質変化しない場合、怒り肉質を通常肉質と同じ値にする
+                        if(weak.length == 1){ weak.push(weak[0]) }
+                        
+                        // 物理ダメージを計算
+                        // 肉質変化があればそれぞれ計算
+                        for(let i = 0; i < weak.length; i++){
+                            dmg_arr[i]["物理"] = mul(weapon_magn,
+                                motion_val / 100, affi_exp,
+                                phys_sharp_magn, sharp_up, weak[i] / 100)
+                        }
 
-                    // 属性ダメージ
-                    damage_dict[m].push(
-                        mul(element, ele_sharp_magn, SnS_DICT[m][1], ele_weak, crit_ele_exp))
+                        // 属性ダメージの計算 無属性なら計算しない
+                        if(ele_type == "" || ele_type == "無"){
+                            // 何もしない
+                        }else{
+                            // モンスターの部位毎の耐属性を取得
+                            weak = data[monster][part][ele_type]
+
+                            // 耐属性変化しない場合、怒りを通常と同じ値にする
+                            if(weak.length == 1){ weak.push(weak[0]) }
+                            
+                            // 耐属性変化があればそれぞれを計算
+                            for(let i = 0; i < weak.length; i++){
+                                dmg_arr[i]["属性"] = 
+                                    mul(ele_magn, element_up, 
+                                        ele_sharp_magn, weak[i] / 100, crit_ele_exp)
+                            }
+                        }
+                        part_dmg_dict[part] = dmg_arr
+                    }
+                    damage_dict[motion] = part_dmg_dict
                 }
                 break
+            }
             
             case "双剣":
                 // 鬼人化時: モーション値*1.15（端数切捨て）(鬼人強化では変化なし)
