@@ -273,23 +273,28 @@ const IG_DICT = {
 /** スラッシュアックス SA Switch Axe
  *  {モーション名: [0:[モーション値], 1:ヒット数]} */
 const SA_DICT = {
-    "斧:抜刀:横斬り":[[23], 1],
-    "斧:縦斬り":[[40], 1],
-    "斧:斬り上げ":[[28], 1],
-    "斧:振りまわし(回数分)":[[24], 1], // 振り回しのヒット回数は上限がないからどうしよ
-    "斧:なぎ払いフィニッシュ":[[57], 1],
-    "斧:突進斬り":[[19], 1],
-    "斧:変形斬り":[[30], 1],
-    "剣:変形斬り":[[23], 1],
-    "剣:抜刀:縦斬り":[[30], 1],
-    "剣:斬り上げ":[[25], 1],
-    "剣:横切り":[[25], 1],
-    "剣:二連斬り":[[28, 36], 2],
-    "剣:属性解放突き":[[28], 1],
-    "剣:属性解放継続":[[13,13,13,13,13,13], 6], // 1~6ヒットで計算する
-    "剣:属性解放任意フィニッシュ":[[50], 1],
-    "剣:属性解放フィニッシュ":[[80], 1],
-    "剣:ジャンプ斬り":[[30], 1]
+    "斧:[抜刀]横斬り": {dmg_type: "切断", motion_val: [23]},
+    "斧:縦斬り": {dmg_type: "切断", motion_val: [40]},
+    "斧:斬り上げ": {dmg_type: "切断", motion_val: [28]},
+    // 振り回しダメージはダメージ*n回
+    "斧:振りまわし(*n回)": {dmg_type: "切断", motion_val: [24]},
+    "斧:なぎ払いフィニッシュ": {dmg_type: "切断", motion_val: [57]},
+    "斧:突進斬り": {dmg_type: "切断", motion_val: [19]},
+    "斧:変形斬り": {dmg_type: "切断", motion_val: [30]},
+    "斧:ジャンプ斬り": {dmg_type: "切断", motion_val: [43]},
+    "剣:変形斬り": {dmg_type: "切断", motion_val: [23]},
+    "剣:[抜刀]縦斬り": {dmg_type: "切断", motion_val: [30]},
+    "剣:斬り上げ": {dmg_type: "切断", motion_val: [25]},
+    "剣:横切り": {dmg_type: "切断", motion_val: [25]},
+    "剣:二連斬り":{dmg_type: "切断", motion_val: [28, 36]},
+    "剣:属性解放突き": {dmg_type: "切断", motion_val: [28]},
+    // 属性解放継続 (13+13+13) * 2 なのかな
+    "剣:属性解放継続": {dmg_type: "切断", motion_val: [13,13,13,13,13,13]},
+    "剣:属性解放任意フィニッシュ": {dmg_type: "切断", motion_val: [50]},
+    "剣:属性解放フィニッシュ": {dmg_type: "切断", motion_val: [80]},
+    "剣:ジャンプ斬り": {dmg_type: "切断", motion_val: [43]},
+    "剣:ジャンプ変形斬り": {dmg_type: "切断", motion_val: [43]},
+    "剣:ジャンプ属性解放突き": {dmg_type: "切断", motion_val: [28]},
 }
 
 /** チャージアックス 全て切断属性
@@ -707,10 +712,17 @@ function input_weapon_data(){
 
         // 武器種毎の処理
         switch(type){
-            case "チャージアックス":
+            case "スラッシュアックス": {
+                input_sect.find("sa_p_type select")
+                    .val(data[type][name]["phial"])
+                break
+            }
+                
+            case "チャージアックス": {
                 input_sect.find(".p_type select")
                     .val(data[type][name]["phials"])
                 break
+            }
         }
     })
 }
@@ -1434,48 +1446,80 @@ function click_calc_botton(){
                 break
             
 
-            case "スラッシュアックス":
-                // 強撃と強属性ビン以外は未対応
+            case "スラッシュアックス": {
+                /** スラッシュアックスのダメージ計算
+                 *  強撃(power)ビン: 端数切捨(モーション値*1.2)
+                 *  強属性(element)ビン: 一の位切捨(表示属性値*1.25)
+                 *  強撃と強属性ビン以外は未対応 */
                 // ビンタイプを取得
-                let phial = Number(section
-                    .find(".sa_p_types select option:selected").val())
-                if(phial==1.2){
-                    // 強撃ビンの場合
-                    for(m in SA_DICT){
-                        damage_dict[m]=[]
-                        // phailをかけて端数を切り捨てたモーション値を格納
-                        let m_arr = [] 
-                        // 各モーション値に強撃ビン倍率をかけ、端数を切捨て
-                        for(let i = 0; i < SA_DICT[m][0].length; i++){
-                            m_arr.push(Math.floor(SA_DICT[m][0][i]) * phial)
+                let phial_type = 
+                    section.find(".sa_p_types select option:selected")      .text()
+                for(m in SA_DICT){
+                    // モーションのダメージタイプを取得
+                    let dmg_type = SA_DICT[m]["dmg_type"],
+                        motion_val = SA_DICT[m]["motion_val"],
+                        // 部位毎のダメージを格納する連想配列
+                        part_dmg_dict = {}
+                        // 剣モードかどうかのフラグ
+                        sword_mode = m.match(/剣:/)
+                        element = ele_magn
+                    // 強属性ビンかつ剣モーション
+                    if(phial_type == "強属性" && sword_mode){
+                        element = Math.floor(ele_magn * 1.25)
+                    }
+
+                    for(part in data[monster]){
+                        // モンスターの部位毎のダメージタイプ肉質を取得
+                        let weak = data[monster][part][dmg_type],
+                        // 肉質ごとのダメージを格納する配列
+                            dmg_arr = [{}, {}]
+                        
+                        // 肉質変化しない場合、怒り肉質を通常肉質と同じ値にする
+                        if(weak.length == 1){ weak.push(weak[0]) }
+                        
+                        // 物理ダメージを計算
+                        // 肉質変化があればそれぞれ計算
+                        for(let i = 0; i < weak.length; i++){
+                            let sum_motion_dmg = 0
+                            // モーション値配列からモーション値を取り出し計算
+                            for(let n = 0; n < motion_val.length; n++){
+                                let mv = motion_val[n]
+                                // 強撃ビンかつ剣モーションなら
+                                // 切捨(モーション値*1.2)
+                                if(phial_type == "強撃" && sword_mode){
+                                    mv = Math.floor(motion_val[n] * 1.2)
+                                }
+                                sum_motion_dmg += mul(weapon_magn,
+                                    mv / 100, affi_exp, phys_sharp_magn,
+                                    weak[i] / 100)
+                            }
+                            dmg_arr[i]["物理"] = sum_motion_dmg
                         }
 
-                        // 物理
-                        damage_dict[m].push(
-                            mul(weapon_magn, sum_array(m_arr) / 100, affi_exp,
-                                phys_sharp_magn, phys_weak))
-                        // 属性
-                        damage_dict[m].push(
-                            mul(ele_magn, phial, ele_weak, ele_sharp_magn, crit_ele_exp, SA_DICT[m][1]))
+                        // 属性ダメージの計算 無属性なら計算しない
+                        if(ele_type == "" || ele_type == "無"){
+                            // 何もしない
+                        }else{
+                            // モンスターの部位毎の耐属性を取得
+                            weak = data[monster][part][ele_type]
+                            
+                            // 耐属性変化しない場合、怒りを通常と同じ値にする
+                            if(weak.length == 1){ weak.push(weak[0]) }
+                            
+                            // 耐属性変化があればそれぞれを計算
+                            for(let i = 0; i < weak.length; i++){
+                                dmg_arr[i]["属性"] = 
+                                    mul(element, ele_sharp_magn,
+                                        weak[i] / 100, crit_ele_exp) 
+                                    * motion_val.length
+                            }
+                        }
+                        part_dmg_dict[part] = dmg_arr
                     }
-                    
-                }else{
-                    // 強属性ビン
-                    ele_magn = Math.floor(ele_magn * phial)
-                    for(m in SA_DICT){
-                        damage_dict[m] = []
-                        // 物理
-                        damage_dict[m].push(
-                            mul(weapon_magn, sum_array(SA_DICT[m][0]) / 100,
-                                affi_exp, phys_sharp_magn, phys_weak))
-                        //属性
-                        damage_dict[m].push(
-                            mul(ele_magn, phial, ele_weak, ele_sharp_magn, crit_ele_exp, SA_DICT[m][1]))
-                    }
+                    damage_dict[m] = part_dmg_dict
                 }
                 break
-
-            
+            }
             case "チャージアックス":
                 /** ビン爆発ダメージ計算
                  *  榴弾: 武器倍率 * 榴弾係数 * 爆発回数 (* 属性強化倍率)

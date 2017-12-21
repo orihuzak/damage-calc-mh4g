@@ -21,6 +21,17 @@
             "atk": 297, "ele_type": "水", "ele_val": 150, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "sharp": "緑", "sharp+": "緑", "slots": 0
         }
     },
+    "スラッシュアックス":{
+        "ボーンアックス": {
+            "atk": 378, "ele_type": "無", "ele_val": 0, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "phial": "強撃", "sharp": "黄", "sharp+": "黄", "slots": 0 
+        },
+        "ヴァーヴンアックス": {
+            "atk": 540, "ele_type": "水", "ele_val": 120, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "phial": "強属性", "sharp": "緑", "sharp+": "緑", "slots": 0 
+        },
+        "王剣斧ライデン": {
+            "atk": 702, "ele_type": "雷", "ele_val": 120, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "phial": "強撃", "sharp": "緑", "sharp+": "緑", "slots": 0
+        }
+    },
     "チャージアックス": {
         "精鋭討伐隊盾斧": {
             "atk": 252, "ele_type": "無", "ele_val": 0, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "phials": "榴弾", "sharp": "黄", "sharp+": "緑", "slots": 0 
