@@ -135,27 +135,100 @@ const SnS_DICT = {
 }
 
 /** 双剣 
- *  {モーション名:[0モーション値配列, 1ヒット数, 2鬼人化フラグ, 3両手モーションフラグ]} 
- *  モーション値にかけ算を含むものは両手攻撃 
+ *  {モーション名:{
+        dmg_type: ダメージタイプ, 
+        motion_arr: 
+            [{val: モーション値, hits: ヒット数, duals: 両手攻撃属性補正}], 
+        demon_flag: 鬼人化フラグ},
  *  鬼人化フラグ: 通常状態のみ:0, 鬼人化でも使える:1 鬼人化専用:2
- *  両手モーションフラグ: 通常:0, 両手:1 */
+ *  両手攻撃属性補正: 通常:1, 両手:0.7
+ *  両手攻撃の属性補正はモーション全体にかかるのではなく、
+ *  両手攻撃のヒット時のダメージ計算にかかる */
 const DB_DICT = {
-    "[抜刀]斬り払い": [[7,7,7,7], 4, 1, 1], // 28 32
-    "鬼人突進連斬":[[7,7,7,7,9,9], 6, 2, 1], // 46 52
-    "斬り上げ": [[18], 1, 1, 0], // 20
-    "二段斬り": [[8,12], 2, 0, 0], // 20 
-    "斬り返し": [[7,10], 2, 0, 0], // 17
-    "車輪斬り": [[10,12,12], 3, 1, 1], // 34 37
-    "六連斬り": [[4,8,4,8,11,11], 6, 2, 1], // 46 50 鬼人化専用
-    "右二連斬り": [[7,10], 2, 0, 0], // 17
-    "左二連斬り": [[9,12], 2, 0, 0], // 21
-    "回転斬りα": [[16,6,8], 3, 1, 0], // 30 33
-    "回転斬りβ": [[18,6,10], 3, 1, 0], // 34 37
-    "鬼人連斬": [[8,8,8,8,6,6,20,20], 6, 0, 1], // 72 
-    "乱舞": [[29,4,4,4,4,4,4,4,4,18,18], 11, 2, 1], // 97 105鬼人化専用
-    "ジャンプ二連斬り": [[10,13], 2, 1, 0], // 23 25
-    "空中回転乱舞": [[12,15,15,12], 4, 1, 0], // 54 60
-    "回転乱舞フィニッシュ": [[23,23], 2, 1, 0] // 46 52
+    "[抜刀]斬り払い": {
+        dmg_type: "切断", 
+        motion_arr: [{val: 7, hits: 2, duals: 0.7},
+                    {val: 7, hits: 2, duals: 0.7}], 
+        demon_flag: 1},
+    "鬼人突進連斬": {
+        dmg_type: "切断",
+        motion_arr: [{val: 7, hits: 4, duals: 1},
+                    {val: 9, hits: 2, duals: 0.7}],
+        demon_flag: 1}, // 46 52
+    "斬り上げ": {
+        dmg_type: "切断",
+        motion_arr: [{val: 18, hits: 1, duals: 1}],
+        demon_flag: 1}, // 20
+    "二段斬り": {
+        dmg_type: "切断",
+        motion_arr: [{val: 8, hits: 1, duals: 1},
+                    {val: 12, hits: 1, duals: 1}],
+        demon_flag: 0}, // 20 
+    "斬り返し": {
+        dmg_type: "切断",
+        motion_arr: [{val: 7, hits: 1, duals: 1},
+                    {val: 10, hits: 1, duals: 1}], 
+        demon_flag: 0}, // 17
+    "車輪斬り": {
+        dmg_type: "切断",
+        motion_arr: [{val: 10, hits: 1, duals: 1},
+                    {val: 12, hits: 2, duals: 0.7}],
+        demon_flag: 1}, // 34 37
+    "六連斬り": {
+        dmg_type: "切断",
+        motion_arr: [{val: 4, hits: 2, duals: 1},
+                    {val: 8, hits: 2, duals: 1},
+                    {val: 11, hits: 2, duals: 0.7}],
+        demon_flag: 2}, // 46 50 鬼人化専用
+    "右二連斬り": {
+        dmg_type: "切断", 
+        motion_arr: [{val: 7, hits: 1, duals: 1},
+                    {val: 10, hits: 1, duals: 1}],
+        demon_flag: 0}, // 17
+    "左二連斬り": {
+        dmg_type: "切断",
+        motion_arr: [{val: 9, hits: 1, duals: 1},
+                    {val: 12, hits: 1, duals: 1}],
+        demon_flag: 0}, // 21
+    "回転斬りα": {
+        dmg_type: "切断",
+        motion_arr: [{val: 16, hits: 1, duals: 1},
+                    {val: 6, hits: 1, duals: 1},
+                    {val: 8, hits: 1, duals: 1}],
+        demon_flag: 1}, // 30 33
+    "回転斬りβ": {
+        dmg_type: "切断",
+        motion_arr: [{val: 18, hits: 1, duals: 1},
+                    {val: 6, hits: 1, duals: 1},
+                    {val: 10, hits: 1, duals: 1}],
+        demon_flag: 1}, // 34 37
+    "鬼人連斬": {
+        dmg_type: "切断", 
+        motion_arr: [{val: 8, hits: 2, duals: 0.7},
+                    {val: 8, hits: 2, duals: 1},
+                    {val: 6, hits: 2, duals: 1},
+                    {val: 20, hits: 2, duals: 0.7}],
+        demon_flag: 0}, // 72 
+    "乱舞": { // 97 105 鬼人化専用
+        dmg_type: "切断",
+        motion_arr: [{val: 29, hits: 1, duals: 1},
+                    {val: 4, hits: 8, duals: 1},
+                    {val: 18, hits: 2, duals: 0.7}],
+        demon_flag: 2}, 
+    "ジャンプ二連斬り": {
+        dmg_type: "切断",
+        motion_arr: [{val: 10, hits: 1, duals: 1},
+                    {val: 13, hits: 1, duals: 1}],
+        demon_flag: 1}, // 23 25
+    "空中回転乱舞": {
+        dmg_type: "切断",
+        motion_arr: [{val: 12, hits: 2, duals: 1},
+                    {val: 15, hits: 2, duals: 1}],
+        demon_flag: 1}, // 54 60
+    "回転乱舞フィニッシュ": {
+        dmg_type: "切断",
+        motion_arr: [{val: 23, hits: 2, duals: 1}],
+        demon_flag: 1} // 46 52
 }
 
 /** ハンマー 
@@ -1266,64 +1339,80 @@ function click_calc_botton(){
             }
             
             case "双剣":
-                // 鬼人化時: モーション値*1.15（端数切捨て）(鬼人強化では変化なし)
-                // 両手攻撃: 属性値*0.7 (モーション値に乗算を含むもの)
+                // 鬼人化時(非鬼人強化): モーション値*1.15（端数切捨て）
+                // 両手攻撃: 属性値*0.7
+                // 鬼人化状態なら1.15違うなら1
                 let demon = section
                     .find(".demon_mode select option:selected").val()
-                let demon_flag = section
-                    .find(".demon_mode select option:selected").text()
-                
-                switch(demon_flag){
-                    // 鬼人化状態のダメージ
-                    case "あり":
-                        for(m in DB_DICT){
-                            damage_dict[m] = []
-                            let element
-                            // 鬼人化専用と鬼人化共用のモーションに*1.15(切捨)
-                            if ((DB_DICT[m][2] == 1) || (DB_DICT[m][2] == 2)){
-                                let m_arr = [],
-                                    i
-                                for(i = 0; i < DB_DICT[m][0].length; i++){
-                                    m_arr.push(Math.floor(DB_DICT[m][0][i] * 1.15))
-                                }
-                                let motion_val = sum_array(m_arr) / 100
+                    // 属性ダメージ計算をするかどうかのフラグ
+                    ele_flag = false
+                if(!(ele_type == "" || ele_type == "無")){
+                    // 武器が属性を持っていればフラグをtrue
+                    ele_flag = true
+                }
+                // モーションごとにダメージを計算
+                for(m in DB_DICT){
+                    // モーションのダメージタイプを取得
+                    let dmg_type = DB_DICT[m]["dmg_type"],
+                        motion_arr = DB_DICT[m]["motion_arr"],
+                        // 鬼人化フラグ
+                        demon_flag = DB_DICT[m]["demon_flag"],
+                    // 部位毎のダメージを格納する連想配列
+                        part_dmg_dict = {}
 
-                                // 物理
-                                damage_dict[m].push(
-                                    mul(weapon_magn, motion_val, affi_exp,
-                                        phys_sharp_magn, phys_weak))
-                                // 属性 両手モーションなら属性値*0.7
-                                if(DB_DICT[m][3] == 1){
-                                    element = ele_magn * 0.7
-                                }else{
-                                    element = ele_magn
-                                }
-                                damage_dict[m].push(
-                                    mul(element, ele_sharp_magn, DB_DICT[m][1],     ele_weak, crit_ele_exp))
-                            }
+                    for(part in data[monster]){
+                        // モンスターの部位毎のダメージタイプ肉質を取得
+                        let phys_weak = data[monster][part][dmg_type]
+                        // 肉質変化しない場合、怒り肉質を通常肉質と同じ値にする
+                        if(phys_weak.length == 1){ 
+                            phys_weak.push(phys_weak[0]) 
                         }
-                        break
-                    case "なし":
-                        for(m in DB_DICT){
-                            damage_dict[m] = []
-                            let element
-                            let motion_val = sum_array(DB_DICT[m][0]) / 100
-                            // 通常状態のみと鬼人化共用のモーションだけ
-                            if ((DB_DICT[m][2] == 0) || (DB_DICT[m][2] == 1)){
-                                damage_dict[m].push(
-                                    mul(weapon_magn, motion_val, affi_exp,
-                                        phys_sharp_magn, phys_weak))
-                                // 属性 両手モーションは属性値*0.7
-                                if(DB_DICT[m][3] == 1){
-                                    element = ele_magn * 0.7
-                                }else{
-                                    element = ele_magn
-                                }
-                                damage_dict[m].push(
-                                    mul(element, ele_sharp_magn, DB_DICT[m][1],     ele_weak, crit_ele_exp))
+                        // 属性付きの武器なら耐属性を取得
+                        let ele_weak = []
+                        if(ele_flag){
+                            ele_weak = data[monster][part][ele_type]
+                            if(ele_weak.length == 1){
+                                ele_weak.push(ele_weak[0])
                             }
+                        }    
+                        // 肉質ごとのダメージを格納する配列
+                        let dmg_arr = [{}, {}]
+                        
+                        // 物理ダメージを計算
+                        // 肉質変化があればそれぞれ計算
+                        for(let w = 0; w < phys_weak.length; w++){
+                            // モーション配列からモーションdictを取り出し計算
+                            // 物理ダメージを合計する変数
+                            let sum_motion_dmg = 0
+                            let sum_element_dmg = 0
+                            for(let i = 0; i < motion_arr.length; i++){
+                                // 鬼人化フラグが1か2のモーションなら、
+                                // 切捨(モーション値*1.15)
+                                let mv = motion_arr[i]["val"]
+                                if (demon_flag == 1 || demon_flag == 2){
+                                    mv = Math.floor(mv * demon)
+                                }
+                                // 物理ダメージ ヒット数を後からかける
+                                sum_motion_dmg += 
+                                    mul(weapon_magn, mv / 100, 
+                                        affi_exp, phys_sharp_magn, 
+                                        phys_weak[w] / 100, 
+                                        motion_arr[i]["hits"])
+                                // 属性ダメージ
+                                if(ele_flag){
+                                    sum_element_dmg += 
+                                        mul(ele_magn, ele_sharp_magn,
+                                            ele_weak[w] / 100, crit_ele_exp,
+                                            motion_arr[i]["duals"],
+                                            motion_arr[i]["hits"]) 
+                                }
+                            }
+                            dmg_arr[w]["物理"] = sum_motion_dmg
+                            dmg_arr[w]["属性"] = sum_element_dmg
                         }
-                        break
+                        part_dmg_dict[part] = dmg_arr
+                    }
+                    damage_dict[m] = part_dmg_dict
                 }
                 break
             

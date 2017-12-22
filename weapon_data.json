@@ -32,6 +32,17 @@
             "atk": 182, "ele_type": "水", "ele_val": 120, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "sharp": "緑", "sharp+": "緑", "slots": 1
         }
     },
+    "双剣":{
+        "ツインダガー": {
+            "atk": 84, "ele_type": "無", "ele_val": 0, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "sharp": "黄", "sharp+": "黄", "slots": 0 
+        },
+        "オーダーレイピア": {
+            "atk": 140, "ele_type": "水", "ele_val": 80, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 5, "sharp": "緑", "sharp+": "緑", "slots": 1
+        },
+        "クロウofリッパー": {
+            "atk": 168, "ele_type": "龍", "ele_val": 100, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 10, "sharp": "緑", "sharp+": "青", "slots": 0
+        }
+    },
     "スラッシュアックス":{
         "ボーンアックス": {
             "atk": 378, "ele_type": "無", "ele_val": 0, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "phial": "強撃", "sharp": "黄", "sharp+": "黄", "slots": 0 
