@@ -275,21 +275,38 @@ const HH_DICT = {
  *  攻撃属性: 切断
  *  未実装 特徴:切断と打撃のうち高い方の肉質を計算に使う */
 const LANCE_DICT = {
-    "[抜刀]抜槍突き": 27,
-    "中段突き１・２": 20,
-    "中段突き３": 27,
-    "上段突き１・２": 22,
-    "上段突き３": 27,
-    "ガード突き": 20,
-    "なぎ払い": 20,
-    "盾攻撃": 14, // 気絶値 27, 減気値27
-    "ジャンプ突き": 30,
-    "突進": 16,
-    "フィニッシュ突き": 50,
-    "突進ジャンプ突き": 50,
-    "振り向き攻撃": 50,
-    "キャンセル突き": 22,
-    "カウンター突き": 50
+    "[抜刀]武器出し攻撃":
+        {dmg_type: "突き", motion_val: 23},
+    "中段突き1,2":
+        {dmg_type: "突き", motion_val: 20},
+    "中段突き3":
+        {dmg_type: "突き", motion_val: 27},
+    "上段突き1,2":
+        {dmg_type: "突き", motion_val: 22},
+    "上段突き3":
+        {dmg_type: "突き", motion_val: 27},
+    "なぎ払い":
+        {dmg_type: "突き", motion_val: 20},
+    "突進(*n回)":
+        {dmg_type: "突き", motion_val: 16},
+    "フィニッシュ突き":
+        {dmg_type: "突き", motion_val: 50},
+    "突進ジャンプ突き":
+        {dmg_type: "突き", motion_val: 50},
+    "振り向き攻撃":
+        {dmg_type: "突き", motion_val: 50},
+    "キャンセル突き":
+        {dmg_type: "突き", motion_val: 22},
+    "カウンター突き":
+        {dmg_type: "突き", motion_val: 50},
+    "[抜刀]ジャンプ突き":
+        {dmg_type: "突き", motion_val: 30},
+    "ジャンプ突き":
+        {dmg_type: "突き", motion_val: 30},
+    "ガード突き":
+        {dmg_type: "突き", motion_val: 20},
+    "盾攻撃":
+        {dmg_type: "打撃", motion_val: 14} // 気絶値 27, 減気値27
 }
 
 /** ガンランス */
@@ -1337,8 +1354,7 @@ function click_calc_botton(){
                 }
                 break
             }
-            
-            case "双剣":
+            case "双剣": {
                 // 鬼人化時(非鬼人強化): モーション値*1.15（端数切捨て）
                 // 両手攻撃: 属性値*0.7
                 // 鬼人化状態なら1.15違うなら1
@@ -1415,7 +1431,7 @@ function click_calc_botton(){
                     damage_dict[m] = part_dmg_dict
                 }
                 break
-            
+            }
             case "ハンマー":
                 for(m in HAMMER_DICT){
                     if(m == "回転攻撃"){
@@ -1460,20 +1476,74 @@ function click_calc_botton(){
                         mul(ele_magn, ele_sharp_magn, ele_weak, crit_ele_exp))
                 }
                 break
-            case "ランス":
-                // 未実装 切断と打撃肉質のうち大きい方を計算に使う
-                for(m in LANCE_DICT){
-                    damage_dict[m] = []
-                    let motion_val = LANCE_DICT[m] / 100
-                    // 物理
-                    damage_dict[m].push(
-                        mul(weapon_magn, motion_val, affi_exp, 
-                            phys_sharp_magn, phys_weak))
-                    // 属性
-                    damage_dict[m].push(
-                        mul(ele_magn, ele_sharp_magn, ele_weak, crit_ele_magn))
+            case "ランス": {
+                for(motion in LANCE_DICT){
+                    // モーションのダメージタイプを取得
+                    let dmg_type = LANCE_DICT[motion]["dmg_type"]
+                    // モーション値
+                        motion_val = LANCE_DICT[motion]["motion_val"],
+                        part_dmg_dict = {} // 部位毎のダメージを格納するdict
+                        // 属性ダメージ計算をするかどうかのフラグ
+                        ele_flag = false
+                    if(!(ele_type == "" || ele_type == "無")){
+                        // 武器が属性を持っていればフラグをtrue
+                        ele_flag = true
+                    }
+
+                    for(part in data[monster]){
+                        let phys_weak = [],
+                            ele_weak = [],
+                            dmg_arr = [{}, {}]
+                        if(dmg_type == "突き"){
+                            // ダメージタイプが"突き"の時は、通常と怒り状態それぞれの打撃*0.72と切断のうち高い方をとりphys_weakに格納
+                            let cut_weak = data[monster][part]["切断"]
+                            let impact_weak = data[monster][part]["打撃"]
+                            // 各肉質の要素数を揃える
+                            if(cut_weak.length == 1){ 
+                                cut_weak.push(cut_weak[0]) 
+                            }
+                            if(impact_weak.length == 1){ 
+                                impact_weak.push(impact_weak[0])
+                            }
+                            for(let i = 0; i < 2; i++){
+                                let imp = impact_weak[i] * 0.72
+                                if(cut_weak[i] > imp){
+                                    // 切断肉質の方が大きければ切断肉質を格納
+                                    phys_weak.push(cut_weak[i])
+                                }else{
+                                    phys_weak.push(imp)
+                                }
+                            }
+                        }else{
+                            // モンスターの部位毎のダメージタイプ肉質を取得
+                            phys_weak = data[monster][part][dmg_type]
+                            // 肉質変化しない場合、怒り肉質を通常肉質と同じ値にする
+                            if(phys_weak.length == 1){ 
+                                phys_weak.push(phys_weak[0])
+                            }
+                        }
+                        // 属性付きの武器なら耐属性を取得
+                        if(ele_flag){
+                            ele_weak = data[monster][part][ele_type]
+                            if(ele_weak.length == 1){
+                                ele_weak.push(ele_weak[0])
+                            }
+                        }
+
+                        // 肉質変化毎に物理・属性ダメージを計算
+                        for(let i = 0; i < phys_weak.length; i++){
+                            dmg_arr[i]["物理"] = mul(weapon_magn,
+                                motion_val / 100, affi_exp, phys_sharp_magn, phys_weak[i] / 100)
+                            dmg_arr[i]["属性"] = 
+                                mul(ele_magn, ele_sharp_magn, 
+                                    ele_weak[i] / 100, crit_ele_exp)
+                        }
+                        part_dmg_dict[part] = dmg_arr
+                    }
+                    damage_dict[motion] = part_dmg_dict
                 }
                 break
+            }    
             case "ガンランス":
                 // 砲撃タイプを取得
                 let shell_type = section
