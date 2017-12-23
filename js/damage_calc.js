@@ -311,18 +311,19 @@ const LANCE_DICT = {
 
 /** ガンランス */
 const GL_DICT = {
-    "[抜刀]踏み込み突き上げ": 32,
-    "砲撃派生突き上げ": 30,
-    "斬り上げ": 28,
-    "上方突き": 18,
-    "水平突き": 24,
-    "叩きつけ": 40,
-    "ジャンプ叩きつけ": 44,
-    "ジャンプ突き": 25,
-    "砲撃": 0,
-    "溜め砲撃": 0,
-    "フルバースト": 0,
-    "竜撃砲": 0
+    "[抜刀]踏み込み突き上げ": {dmg_type: "切断", motion_val: 32},
+    "踏み込み突き上げ": {dmg_type: "切断", motion_val: 32},
+    "砲撃派生突き上げ": {dmg_type: "切断", motion_val: 30},
+    "斬り上げ": {dmg_type: "切断", motion_val: 28},
+    "上方突き": {dmg_type: "切断", motion_val: 18},
+    "水平突き": {dmg_type: "切断", motion_val: 24},
+    "叩きつけ": {dmg_type: "切断", motion_val: 40},
+    "ジャンプ叩きつけ": {dmg_type: "切断", motion_val: 44},
+    "ジャンプ突き": {dmg_type: "切断", motion_val: 25},
+    "砲撃": {hits: 1},
+    "溜め砲撃": {hits: 1},
+    "フルバースト": {hits: 6},
+    "竜撃砲": {hits: 4}
 }
 
 /** ガンランスの砲撃ダメージ
@@ -331,11 +332,8 @@ const GL_SHELL_TYPES = {
     "通常": [[10, 4], [14, 5], [18, 6], [21, 7], [24, 8]],
     "放射": [[15, 9], [21, 11], [28, 14], [32, 16], [36, 18]],
     "拡散": [[20, 6], [30, 8], [40, 10], [44, 11], [48, 12]],
-    "竜撃砲": [[[30,30,30,30], [10,10,10,10]],
-              [[35,35,35,35], [11,11,11,11]], 
-              [[40,40,40,40], [12,12,12,12]],
-              [[45,45,45,45], [13,13,13,13]],
-              [[50,50,50,50], [14,14,14,14]]]
+    //最大4ヒット
+    "竜撃砲": [[30, 10], [35, 11], [40, 12], [45, 13], [50, 14]]
 }
 
 /** 操虫棍 Insect Glaive
@@ -805,8 +803,13 @@ function input_weapon_data(){
 
         // 武器種毎の処理
         switch(type){
+            case "ガンランス": {
+                input_sect.find(".shell_types select").val(data[type][name]["shell_type"])
+                input_sect.find(".shelling_lv select").val(data[type][name]["shell_lv"])
+                break
+            }
             case "スラッシュアックス": {
-                input_sect.find("sa_p_type select")
+                input_sect.find(".sa_p_type select")
                     .val(data[type][name]["phial"])
                 break
             }
@@ -1477,6 +1480,7 @@ function click_calc_botton(){
                 }
                 break
             case "ランス": {
+                const IMPACT_CORRECTION = 0.72
                 for(motion in LANCE_DICT){
                     // モーションのダメージタイプを取得
                     let dmg_type = LANCE_DICT[motion]["dmg_type"]
@@ -1506,7 +1510,8 @@ function click_calc_botton(){
                                 impact_weak.push(impact_weak[0])
                             }
                             for(let i = 0; i < 2; i++){
-                                let imp = impact_weak[i] * 0.72
+                                let imp = impact_weak[i] *      
+                                    IMPACT_CORRECTION
                                 if(cut_weak[i] > imp){
                                     // 切断肉質の方が大きければ切断肉質を格納
                                     phys_weak.push(cut_weak[i])
@@ -1544,108 +1549,134 @@ function click_calc_botton(){
                 }
                 break
             }    
-            case "ガンランス":
+            case "ガンランス": {
                 // 砲撃タイプを取得
-                let shell_type = section
-                    .find(".shell_types select option:selected").text()
+                const SHELL_TYPE = section
+                    .find(".shell_types select option:selected").val(),
                 // 砲撃レベルを取得
-                let lv = Number(section
+                    LV = Number(section
                     .find(".shelling_lv select option:selected").val())
-                
+                let basic_shell_atk = GL_SHELL_TYPES[SHELL_TYPE][LV][0],
+                    fire_atk = GL_SHELL_TYPES[SHELL_TYPE][LV][1]
                 // 砲撃タイプ毎に各砲撃の倍率を設定
                 // charged shelling, full burst, wyvern"s fire
-                let cs, fb, wf 
-                switch(shell_type){
-                    case "通常":
+                let cs, fb, wf
+                switch(SHELL_TYPE){
+                    case "通常": {
                         cs = 1.2
                         fb = 1.1
-                        wf = 1.0
+                        wf = 1
                         break
-                    case "放射":
+                    }
+                    case "放射": {
                         cs = 1.2
                         fb = 1
                         wf = 1.2
                         break
-                    case "拡散":
+                    }
+                    case "拡散": {
                         cs = 1.44
                         fb = 0.9
                         wf = 1
                         break
+                    }
                 }
 
                 /** 砲撃ダメージの計算 
-                 *  切捨(砲撃の基本ダメ * 切捨(切捨(砲撃術 * 猫の砲撃術) * 砲撃タイプ倍率)) + 砲撃の火ダメ
+                 *  切捨(切捨(切捨(砲撃の基本ダメ * 砲撃術) * 猫の砲撃術) * 砲撃タイプ倍率) + 砲撃の火ダメ
                  *  （未確定）砲撃の火ダメージ: 砲撃基本火ダメ * (未対応)耐火属性
                  *  各乗算で端数切り捨て */
                 for(m in GL_DICT){
-                    switch (m){
-                        case "砲撃":
-                            damage_dict[m] = []
-                            damage_dict[m].push(
-                                Math.floor(
-                                    GL_SHELL_TYPES[shell_type][lv][0]
-                                    * artillery_magn)
-                                + (GL_SHELL_TYPES[shell_type][lv][1]
-                                    * ele_weak))
-                            
-                            break
-                        case "溜め砲撃":
-                            damage_dict[m] = []
-                            damage_dict[m].push(
-                                Math.floor(Math.floor(
-                                    GL_SHELL_TYPES[shell_type][lv][0]
-                                    * artillery_magn)
-                                * cs)
-                                + GL_SHELL_TYPES[shell_type][lv][1]
-                                    * ele_weak)
-                            break
-                        case "フルバースト":
-                            // フルバーストの装填数1~6(6は装填数UP)まで計算する
-                            for(let i = 1; i < 7; i++){
-                                damage_dict[m+i] = []
-                                damage_dict[m+i].push((
+                    if(m == "砲撃" || m == "溜め砲撃"
+                    || m == "フルバースト" || m == "竜撃砲"){
+                        let shell_magn = 1
+                        // 砲撃モーションごとの倍率
+                        if(m == "溜め砲撃"){
+                            shell_magn = cs
+                        }else if(m == "フルバースト"){
+                            shell_magn = fb
+                        }else if(m == "竜撃砲"){
+                            basic_shell_atk = 
+                                GL_SHELL_TYPES["竜撃砲"][LV][0]
+                            fire_atk = GL_SHELL_TYPES["竜撃砲"][LV][1]
+                            shell_magn = wf
+                        }
+                        let part_dmg_dict = {}
+                        for(p in data[monster]){
+                            let dmg_arr = [{}, {}],
+                                fire_weak = data[monster][p]["火"]
+                            if(fire_weak.length == 1){
+                                fire_weak.push(fire_weak[0])
+                            }
+                            for(let i = 0; i < 2; i++){
+                                dmg_arr[i]["砲撃"] = Math.floor(
                                     Math.floor(Math.floor(
-                                        GL_SHELL_TYPES[shell_type][lv][0]
-                                        * artillery_magn)
-                                    * fb)
-                                    + (GL_SHELL_TYPES[shell_type][lv][1])
-                                        * ele_weak)
-                                    * i)
+                                        basic_shell_atk * 
+                                        artillery_magn)
+                                        * shell_magn)
+                                    + (fire_atk * fire_weak[i] / 100))
+                                    * GL_DICT[m]["hits"]
                             }
-                            break
-                        case "竜撃砲":
-                            damage_dict[m] = []
-                            let d = 0,
-                                fd = 0
-                            for(let i = 0; i < 4; i++){
-                                // 砲撃基本ダメージの計算
-                                d += (Math.floor(Math.floor(
-                                    GL_SHELL_TYPES["竜撃砲"][lv][0][i]
-                                    * artillery_magn)
-                                * wf))
-                                // 砲撃火属性ダメージの計算
-                                fd += (GL_SHELL_TYPES["竜撃砲"][lv][1][i]
-                                        * ele_weak)
+                            part_dmg_dict[p] = dmg_arr
+                        }
+                        damage_dict[m] = part_dmg_dict
+                    }else{
+                        /** 通常のモーションのダメージ計算 */
+                        // モーションのダメージタイプを取得
+                        const DMG_TYPE = 
+                            GL_DICT[m]["dmg_type"],
+                        // モーション値
+                            MOTION_VAL = GL_DICT[m]["motion_val"]
+                                
+                        // 部位毎のダメージを格納するdict
+                        let part_dmg_dict = {},
+                            ele_flag = false
+                        if(!(ele_type == "" || ele_type == "無")){
+                            ele_flag = true
+                        }
+                        
+                        for(part in data[monster]){
+                            // モンスターの部位毎のダメージタイプ肉質を取得
+                            let phys_weak = 
+                                data[monster][part][DMG_TYPE],
+                                ele_weak = [],
+                            // 肉質ごとのダメージを格納する配列
+                                dmg_arr = [{}, {}]
+                            // 肉質変化しない場合、怒り肉質を通常肉質と同じ値にする
+                            if(phys_weak.length == 1){ 
+                                phys_weak.push(phys_weak[0]) 
                             }
-                            damage_dict[m].push(d+fd)
-                            break
-                        default:
-                            damage_dict[m] = []
-                            // 物理
-                            damage_dict[m].push(
-                                mul(weapon_magn, GL_DICT[m] / 100, affi_exp, 
-                                    phys_sharp_magn, phys_weak))
+                            // 属性ダメージの計算 無属性なら計算しない
+                            if(ele_flag){
+                                // モンスターの部位毎の耐属性を取得
+                                ele_weak = data[monster][part][ele_type]
+                                // 耐属性変化しない場合、怒りを通常と同じ値にする
+                                if(ele_weak.length == 1){           
+                                    ele_weak.push(ele_weak[0]) 
+                                }
+                            }
                             
-                            // 属性
-                            damage_dict[m].push(
-                                mul(ele_magn, ele_sharp_magn, 
-                                    ele_weak, crit_ele_magn))
-                            break
+                            // 物理ダメージを計算
+                            // 肉質変化があればそれぞれ計算
+                            for(let i = 0; i < phys_weak.length;
+                                i++){
+                                dmg_arr[i]["物理"] = 
+                                    mul(weapon_magn, MOTION_VAL / 100,
+                                        affi_exp, phys_sharp_magn,
+                                        phys_weak[i] / 100)
+                                if(ele_flag){
+                                    dmg_arr[i]["属性"] = 
+                                        mul(ele_magn, ele_sharp_magn,
+                                        ele_weak[i] / 100, crit_ele_exp)
+                                }
+                            }
+                            part_dmg_dict[part] = dmg_arr
+                        }
+                        damage_dict[m] = part_dmg_dict
                     }
                 }
                 break
-            
-
+            }
             case "スラッシュアックス": {
                 /** スラッシュアックスのダメージ計算
                  *  強撃(power)ビン: 端数切捨(モーション値*1.2)

@@ -54,6 +54,26 @@
             "atk": 230, "ele_type": "水", "ele_val": 180, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "sharp": "緑", "sharp+": "緑", "slots": 0
         }
     },
+    "ガンランス":{
+        "アイアンガンランス": {
+            "atk": 138, "ele_type": "無", "ele_val": 0, 
+            "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, 
+            "sharp": "黄", "sharp+": "黄", "slots": 0,
+            "shell_type": "通常", "shell_lv": 1
+        },
+        "フルボルテージ": {
+            "atk": 253, "ele_type": "雷", "ele_val": 120,
+            "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, 
+            "sharp": "緑", "sharp+": "緑", "slots": 0,
+            "shell_type": "放射", "shell_lv": 1
+        },
+        "シーダイバー": {
+            "atk": 253, "ele_type": "水", "ele_val": 160, 
+            "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, 
+            "sharp": "緑", "sharp+": "青", "slots": 0,
+            "shell_type": "拡散", "shell_lv": 1
+        }
+    },
     "スラッシュアックス":{
         "ボーンアックス": {
             "atk": 378, "ele_type": "無", "ele_val": 0, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "phial": "強撃", "sharp": "黄", "sharp+": "黄", "slots": 0 
