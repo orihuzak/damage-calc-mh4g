@@ -405,5 +405,17 @@
         "チャージフォックス": {
             "atk": 864, "ele_type": "火", "ele_val": 160,"awake_ele_type": 0, "awake_ele_val": 0, "affi": 40,"phials": "榴弾", "sharp": "白", "sharp+": "紫", "slots": 3
         }
+    },
+    "操虫棍":{
+        "ボーンロッド": {
+            "atk": 279, "ele_type": "無", "ele_val": 0, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "sharp": "緑", "sharp+": "緑", "slots": 0 
+        },
+        "エイムofトリック": {
+            "atk": 434, "ele_type": "龍", "ele_val": 200, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 10, "sharp": "緑", "sharp+": "緑", "slots": 1
+        },
+        "如意棒": {
+            "atk": 434, "ele_type": "水", "ele_val": 290, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0,
+            "sharp": "緑", "sharp+": "青", "slots": 2
+        }
     }
 }

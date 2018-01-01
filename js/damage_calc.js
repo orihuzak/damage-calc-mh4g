@@ -341,30 +341,37 @@ const SHELL_ATK_OBJ = {
 }
 
 /** 操虫棍 Insect Glaive
- *  {モーション名:[[通常モーション値], 通常ヒット数, 赤エキスフラグ]}
- *  赤エキスフラグ: 赤エキス時に存在するモーションかどうか。0なら不在, 1なら存在*/
-const IG_DICT = {
-    "突き": [[15], 1, 0],
-    "突き（赤）": [[18, 12], 2, 1],
-    "なぎ払い": [[36], 1, 0],
-    "なぎ払い（赤）": [[18, 30], 2, 1],
-    "なぎ払い斬り上げ派生時（赤）": [[18, 30, 28], 3, 1],
-    "[抜刀]飛び込み斬り": [[28], 1, 1],
-    "回転斬り": [[20], 1, 1],
-    "叩きつけ": [[30], 1, 0], // 赤エキス時は飛燕斬り
-    "飛燕斬り（赤）":[[24, 38], 2, 1],
-    "連続斬り上げ": [[26, 20], 2, 0],
-    "連続斬り上げ（赤）":[[28, 16, 18], 3, 1],
-    "けさ斬り": [[24], 1, 0],
-    "けさ斬り（赤）": [[16, 26], 2, 1],
-    "二段斬り": [[18, 24], 2, 0],
-    "二段斬り（赤）":[[16, 14, 28], 3, 1],
-    "印当て": [[12], 1, 1],
-    "ジャンプ斬り": [[24], 1, 0],
-    "ジャンプ斬り（赤）":[[20, 10], 2, 1],
-    "猟虫": [[45], 1, 1],
-    "虫回転攻撃": [[80], 1, 1]  // 属性補正1.5倍
-}
+ ** [{ name: モーション名, dmg_type: ダメージタイプ, 
+       vals: [モーション値], red: 赤エキスフラグ }]
+ ** 赤エキスフラグ: 通常だけ: 0, どちらも: 1, 赤だけ: 2*/
+const IG_LIST = [
+    { name: "突き", dmg_type: "切断", vals: [15], red: 0 },
+    { name: "突き（赤）", dmg_type: "切断", vals: [18, 12], red: 2 },
+    { name: "なぎ払い", dmg_type: "切断", vals: [36], red: 0 },
+    { name: "なぎ払い（赤）", dmg_type: "切断", vals: [18, 30], red: 2 },
+    { name: "なぎ払い斬り上げ派生時（赤）", dmg_type: "切断", 
+      vals: [18, 30, 28], red: 2 },
+    { name: "[抜刀]飛び込み斬り", dmg_type: "切断", vals: [28], red: 1 },
+    { name: "回転斬り", dmg_type: "切断", vals: [20], red: 1 },
+    // 赤エキス時は飛燕斬り
+    { name: "叩きつけ", dmg_type: "切断", vals: [30], red: 0 }, 
+    { name: "飛燕斬り（赤）", dmg_type: "切断", vals: [24, 38], red: 2 },
+    { name: "連続斬り上げ", dmg_type: "切断", vals: [26, 20], red: 0 },
+    { name: "連続斬り上げ（赤）", dmg_type: "切断", 
+      vals: [28, 16, 18], red: 2 },
+    { name: "けさ斬り", dmg_type: "切断", vals: [24], red: 0 },
+    { name: "けさ斬り（赤）", dmg_type: "切断", vals: [16, 26], red: 2 },
+    { name: "二段斬り", dmg_type: "切断", vals: [18, 24], red: 0 },
+    { name: "二段斬り（赤）", dmg_type: "切断", 
+      vals: [16, 14, 28], red: 2 },
+    { name: "印当て", dmg_type: "切断", vals: [12], red: 1 },
+    { name: "ジャンプ斬り", dmg_type: "切断", vals: [24], red: 0 },
+    { name: "ジャンプ斬り（赤）", dmg_type: "切断", 
+      vals: [20, 10], red: 2 },
+    { name: "猟虫", dmg_type: "切断", vals: [45], red: 1 },
+    // 属性補正1.5倍
+    { name: "虫回転攻撃", dmg_type: "切断", vals: [80], red: 1 }
+]
 
 /** スラッシュアックス SA Switch Axe
  *  {モーション名: [0:[モーション値], 1:ヒット数]} */
@@ -441,7 +448,7 @@ function map_from_obj(obj){
         (map, key) => map.set(key, obj[key]), new Map())
 }
 
-/** objをmapに変換 */
+/** objをmapに変換 ecma 2017 */
 function obj_to_map(obj){
     return new Map(Object.entries(obj))
 }
@@ -556,11 +563,9 @@ function truncate_decimal_place(x, y=1){
 
 /** 大剣/太刀の中腹ヒット補正値 引数がtrueなら1.05を返し、falseなら1を返す */
 const CENTER_OF_BLADE = bool => bool ? 1.05 : 1
-
 /** 太刀の錬気ゲージフル時の斬れ味補正 1.13 : 1 */
 const SPIRIT_FULL = bool => bool ? 1.13 : 1
 /** 太刀の錬気ゲージ色でのモーション値補正 */
-
 const SP_COLOR = { // 錬気ゲージ色オブジェ
     "白": 1.05,
     "黄": 1.1,
@@ -577,10 +582,34 @@ const SnS_SHARP_COR = type => type == "切断" ? 1.06 : 1
 const SnS_ELE_COR = motion => motion.includes("溜め斬り") ? 2 : 1
 /** 双剣の鬼人化状態でのモーション値補正 引数がtrueなら1.15, falseなら1 */
 const DEMON_MODE = bool => bool ? 1.15 : 1
+/** 砲撃タイプ毎の各砲撃補正値 obj */
+const SHELL_COR = {
+    "通常": {
+        "溜め砲撃": 1.2,
+        "フルバースト": 1.1,
+        "竜撃砲": 1
+    },
+    "放射": {
+        "溜め砲撃": 1.2,
+        "フルバースト": 1,
+        "竜撃砲": 1.2
+    },
+    "拡散": {
+        "溜め砲撃": 1.44,
+        "フルバースト": 0.9,
+        "竜撃砲": 1
+    }
+}
 /** チャージアックスの属性強化モーション値補正を返す関数 true: 1.2, false: 1 */
 const BOOST_MODE = bool => bool ? 1.2 : 1
 /** CB: 属性強化状態でのビンダメージ補正を返す true: 1.3, false: 1.35 */
 const BOOST_PHIAL_ATK = type => type == "榴弾" ? 1.3 : 1.35
+/** 操虫棍エキス色のモーション値補正 */
+const ESSENCE_COLOR = {
+    "なし": 1,
+    "赤白": 1.2,
+    "赤白橙": 1.25
+}
 
 
 /**********************************************************************/
@@ -802,24 +831,7 @@ function lance_get_weak(part, dmg_type, ele_type){
 /*** ガンランス ********************************************************/
 /**********************************************************************/
 
-/** 砲撃タイプ毎の各砲撃補正値 obj */
-const SHELL_COR = {
-    "通常": {
-        "溜め砲撃": 1.2,
-        "フルバースト": 1.1,
-        "竜撃砲": 1
-    },
-    "放射": {
-        "溜め砲撃": 1.2,
-        "フルバースト": 1,
-        "竜撃砲": 1.2
-    },
-    "拡散": {
-        "溜め砲撃": 1.44,
-        "フルバースト": 0.9,
-        "竜撃砲": 1
-    }
-}
+
 
 /** GL_LISTのフルバーストをコピーして1-6ヒットになるように追加したリストを返す */
 function add_full_burst(arr){
@@ -1040,6 +1052,53 @@ function cb_calc_dmg(weapon, motion, weak, i){
     return dmg_obj
 }
 
+
+/**********************************************************************/
+/*** 操虫棍 ************************************************************/
+/**********************************************************************/
+
+/** 操虫棍のモーションリストを返す関数
+ ** essence(str): エキス色
+ ** essenceに"赤"が含まれれば、赤エキス状態のモーションリストを返す。でなければ通常状態のモーションリストを返す。*/
+function ig_get_motion_list(essence){
+    new_list = []
+    if(essence.includes("赤")){
+        IG_LIST.forEach( motion => {
+            if(motion.red == 1 || motion.red == 2){
+                new_list.push(motion)
+            }
+        })
+    }else{
+        IG_LIST.forEach( motion => {
+            if(motion.red == 0 || motion.red == 1){
+                new_list.push(motion)
+            }
+        })
+    }
+    return new_list
+}
+
+/** 操虫棍のダメージ計算 */
+function ig_calc_dmg(weapon, motion, weak, i){
+    let dmg_obj = {},
+        sum_phys = 0,
+        sum_ele = 0,
+        // 虫回転攻撃は属性補正*1.5する
+        ele = (motion.name == "虫回転攻撃") 
+            ? weapon.true_element * weapon.insect_cor
+            : weapon.true_element
+    motion.vals.forEach( val => {
+        // エキス色補正をモーションにかける
+        let mv = mul_n_floor(val, weapon.essence)
+        sum_phys += weapon.true_atk * weapon.sharp * weapon.affi_exp 
+            * mv / 100 * weak.phys[i] / 100
+        sum_ele += ele * weapon.ele_sharp * weapon.crit_ele_exp 
+            * weak.ele[i] / 100
+    })
+    dmg_obj["物理"] = sum_phys
+    dmg_obj["属性"] = sum_ele
+    return dmg_obj
+}
 
 /**********************************************************************/
 /*** アウトプット *******************************************************/
@@ -1631,175 +1690,160 @@ function click_calc_button(){
     weapon.crit_ele_exp = calc_affi_exp(weapon.affinity, 
                                         crit_ele_magn)
     
+    
+    // コールバックを格納するobj
+    let callbacks = {},
+        motions = []
+    // 武器種毎の変数を準備
+    switch(weapon.type){
+        case "大剣": { // weaponに独自の色々を追加する
+            // 中腹ヒット倍率を取得し、weapon dictに追加
+            let cob_flag = Number(section.find(
+                ".center_of_blade select option:selected").val())
+            weapon.center_of_blade = CENTER_OF_BLADE(cob_flag)
+            motions = GS_LIST
+            callbacks.set_vars_for_calc = set_vars_for_calc
+            callbacks.get_weak = get_weak
+            callbacks.calc_dmg = gs_calc_dmg
+            break
+        }
+        case "太刀": {
+            let cob_flag = 
+                Number(section.find(".center_of_blade select option:selected").val())
+            let sp_full_flag = 
+                Number(section.find(".spirit_full select option:selected").val())
+            let sp_color_flag = 
+                section.find(".spirit_color select option:selected").val()
+            weapon.center_of_blade = CENTER_OF_BLADE(cob_flag)
+            weapon.spirit_full = SPIRIT_FULL(sp_full_flag)
+            weapon.spirit_color = SPIRIT_COLOR(sp_color_flag)
+            motions = LS_LIST
+            callbacks.set_vars_for_calc = set_vars_for_calc
+            callbacks.get_weak = get_weak
+            callbacks.calc_dmg = ls_calc_dmg
+            break
+        }
+        case "片手剣": {
+            /** 斬撃タイプの攻撃は、斬れ味補正 *1.06
+             *  溜め斬りは、属性補正 *2 */ 
+            motions = SnS_LIST
+            // callbacks
+            callbacks.set_vars_for_calc = sns_vars_for_calc
+            callbacks.get_weak = get_weak
+            callbacks.calc_dmg = sns_calc_dmg
+            break
+        }
+        case "双剣": {
+            motions = DB_LIST
+            // 鬼人化時(非鬼人強化): モーション値*1.15（端数切捨て）
+            // 両手攻撃: 属性値*0.7
+            // 鬼人化状態:1.15, 通常:1
+            let demon_bool = Number(section
+                .find(".demon_mode select option:selected").val())
+            weapon.demon = DEMON_MODE(demon_bool)
+            // コールバック関数を設定
+            callbacks.get_weak = get_weak
+            callbacks.set_vars_for_calc = set_vars_for_calc
+            callbacks.calc_dmg = db_calc_dmg
+            break
+        }
+        case "ハンマー": {
+            motions = HAMMER_LIST
+            // コールバック
+            callbacks.set_vars_for_calc = set_vars_for_calc
+            callbacks.get_weak = get_weak
+            callbacks.calc_dmg = hammer_calc_dmg
+            break
+        }
+        case "狩猟笛": {
+            motions = HH_LIST
+            callbacks.set_vars_for_calc = set_vars_for_calc
+            callbacks.get_weak = get_weak
+            callbacks.calc_dmg = calc_dmg
+            break
+        }
+        case "ランス": {
+            motions = LANCE_LIST
+            // コールバック
+            callbacks.set_vars_for_calc = set_vars_for_calc
+            callbacks.get_weak = lance_get_weak
+            callbacks.calc_dmg = calc_dmg
+            break
+        }    
+        case "ガンランス": {
+            // 砲撃タイプを取得
+            weapon.shell_type = section
+                .find(".shell_types select option:selected").val()
+            // 砲撃レベルを取得
+            weapon.shell_lv = Number(section
+                .find(".shelling_lv select option:selected").val())
+            weapon.shell_atk = SHELL_ATK_OBJ[weapon.shell_type]    
+                                [weapon.shell_lv][0]
+            weapon.fire_atk = SHELL_ATK_OBJ[weapon.shell_type]
+                                [weapon.shell_lv][1]
+            weapon.artillery = artillery_magn
+            motions = add_full_burst(GL_LIST)
+            // callbacks
+            callbacks.set_vars_for_calc = gl_vars_for_calc
+            callbacks.get_weak = gl_get_weak
+            callbacks.calc_dmg = gl_calc_dmg
+            break
+        }
+        case "スラッシュアックス": {
+            /* 剣モードだけに補正がつく
+                * 強撃と強属性ビン以外は未対応 */
+            // ビンタイプを取得
+            const PHIAL_TYPE = section.find(".sa_p_types select option:selected").text()
+            // 強撃(power)ビン: 端数切捨(モーション値*1.2)
+            weapon.power_cor = POWER_PHIAL_COR(PHIAL_TYPE)
+            // 強属性(element)ビン: 一の位切捨(表示属性値*1.25)
+            weapon.ele_cor = ELEMENT_PHIAL_COR(PHIAL_TYPE)
+            motions = SA_LIST
+            callbacks.set_vars_for_calc = set_vars_for_calc
+            callbacks.get_weak = get_weak
+            callbacks.calc_dmg = sa_calc_dmg
+            break
+        }
+        case "チャージアックス": {
+            // ビンタイプ（榴弾or強属性）を取得して、weaponに追加
+            weapon.phial_type =
+                section.find(".p_type select option:selected").val()
+            // 属性強化倍率を取得して、weaponに追加
+            let boost_flag = Number(section
+                .find(".boost_mode select option:selected").val())
+            weapon.boost = BOOST_MODE(boost_flag)
+            weapon.artillery = artillery_magn
+
+            // 通常状態ならCB_LISTから超高出力とGP爆発を削除する
+            motions = control_boost_motion(CB_LIST, boost_flag)
+
+            // コールバックを設定
+            callbacks.set_vars_for_calc = cb_vars_for_calc
+            callbacks.get_weak = get_weak
+            callbacks.calc_dmg = cb_calc_dmg
+            break
+        }
+        case "操虫棍":
+            // 赤エキスフラグによってモーションリストの内容を帰る
+            // 赤白エキス モーション値*1.2 
+            // 赤白橙エキス モーション値*1.25
+            const ESSENCE = section.find(".essences select option:selected").val()
+            // 虫回転攻撃の際の属性補正
+            weapon.insect_cor = 1.5
+            weapon.essence = ESSENCE_COLOR[ESSENCE]
+            motions = ig_get_motion_list(ESSENCE)
+            callbacks.set_vars_for_calc = set_vars_for_calc
+            callbacks.get_weak = get_weak
+            callbacks.calc_dmg = ig_calc_dmg
+            break
+    }
+
     // jsonを呼び出し
     $.ajax({
         url: "monster_data.json",
         type: "get",
         dataType: "json"
     }).then(function(data){
-        // コールバックを格納するobj
-        let callbacks = {},
-            motions = []
-        // 武器種毎の変数を準備
-        switch(weapon.type){
-            case "大剣": { // weaponに独自の色々を追加する
-                // 中腹ヒット倍率を取得し、weapon dictに追加
-                let cob_flag = Number(section.find(
-                    ".center_of_blade select option:selected").val())
-                weapon.center_of_blade = CENTER_OF_BLADE(cob_flag)
-                motions = GS_LIST
-                callbacks.set_vars_for_calc = set_vars_for_calc
-                callbacks.get_weak = get_weak
-                callbacks.calc_dmg = gs_calc_dmg
-                break
-            }
-            case "太刀": {
-                let cob_flag = 
-                    Number(section.find(".center_of_blade select option:selected").val())
-                let sp_full_flag = 
-                    Number(section.find(".spirit_full select option:selected").val())
-                let sp_color_flag = 
-                    section.find(".spirit_color select option:selected").val()
-                weapon.center_of_blade = CENTER_OF_BLADE(cob_flag)
-                weapon.spirit_full = SPIRIT_FULL(sp_full_flag)
-                weapon.spirit_color = SPIRIT_COLOR(sp_color_flag)
-                motions = LS_LIST
-                callbacks.set_vars_for_calc = set_vars_for_calc
-                callbacks.get_weak = get_weak
-                callbacks.calc_dmg = ls_calc_dmg
-                break
-            }
-            case "片手剣": {
-                /** 斬撃タイプの攻撃は、斬れ味補正 *1.06
-                 *  溜め斬りは、属性補正 *2 */ 
-                motions = SnS_LIST
-                // callbacks
-                callbacks.set_vars_for_calc = sns_vars_for_calc
-                callbacks.get_weak = get_weak
-                callbacks.calc_dmg = sns_calc_dmg
-                break
-            }
-            case "双剣": {
-                motions = DB_LIST
-                // 鬼人化時(非鬼人強化): モーション値*1.15（端数切捨て）
-                // 両手攻撃: 属性値*0.7
-                // 鬼人化状態:1.15, 通常:1
-                let demon_bool = Number(section
-                    .find(".demon_mode select option:selected").val())
-                weapon.demon = DEMON_MODE(demon_bool)
-                // コールバック関数を設定
-                callbacks.get_weak = get_weak
-                callbacks.set_vars_for_calc = set_vars_for_calc
-                callbacks.calc_dmg = db_calc_dmg
-                break
-            }
-            case "ハンマー": {
-                motions = HAMMER_LIST
-                // コールバック
-                callbacks.set_vars_for_calc = set_vars_for_calc
-                callbacks.get_weak = get_weak
-                callbacks.calc_dmg = hammer_calc_dmg
-                break
-            }
-            case "狩猟笛": {
-                motions = HH_LIST
-                callbacks.set_vars_for_calc = set_vars_for_calc
-                callbacks.get_weak = get_weak
-                callbacks.calc_dmg = calc_dmg
-                break
-            }
-            case "ランス": {
-                motions = LANCE_LIST
-                // コールバック
-                callbacks.set_vars_for_calc = set_vars_for_calc
-                callbacks.get_weak = lance_get_weak
-                callbacks.calc_dmg = calc_dmg
-                break
-            }    
-            case "ガンランス": {
-                // 砲撃タイプを取得
-                weapon.shell_type = section
-                    .find(".shell_types select option:selected").val()
-                // 砲撃レベルを取得
-                weapon.shell_lv = Number(section
-                    .find(".shelling_lv select option:selected").val())
-                weapon.shell_atk = SHELL_ATK_OBJ[weapon.shell_type]    
-                                   [weapon.shell_lv][0]
-                weapon.fire_atk = SHELL_ATK_OBJ[weapon.shell_type]
-                                  [weapon.shell_lv][1]
-                weapon.artillery = artillery_magn
-                motions = add_full_burst(GL_LIST)
-                // callbacks
-                callbacks.set_vars_for_calc = gl_vars_for_calc
-                callbacks.get_weak = gl_get_weak
-                callbacks.calc_dmg = gl_calc_dmg
-                break
-            }
-            case "スラッシュアックス": {
-                /* 剣モードだけに補正がつく
-                 * 強撃と強属性ビン以外は未対応 */
-                // ビンタイプを取得
-                const PHIAL_TYPE = section.find(".sa_p_types select option:selected").text()
-                // 強撃(power)ビン: 端数切捨(モーション値*1.2)
-                weapon.power_cor = POWER_PHIAL_COR(PHIAL_TYPE)
-                // 強属性(element)ビン: 一の位切捨(表示属性値*1.25)
-                weapon.ele_cor = ELEMENT_PHIAL_COR(PHIAL_TYPE)
-                motions = SA_LIST
-                callbacks.set_vars_for_calc = set_vars_for_calc
-                callbacks.get_weak = get_weak
-                callbacks.calc_dmg = sa_calc_dmg
-                break
-            }
-            case "チャージアックス": {
-                // ビンタイプ（榴弾or強属性）を取得して、weaponに追加
-                weapon.phial_type =
-                    section.find(".p_type select option:selected").val()
-                // 属性強化倍率を取得して、weaponに追加
-                let boost_flag = Number(section
-                    .find(".boost_mode select option:selected").val())
-                weapon.boost = BOOST_MODE(boost_flag)
-                weapon.artillery = artillery_magn
-
-                // 通常状態ならCB_LISTから超高出力とGP爆発を削除する
-                motions = control_boost_motion(CB_LIST, boost_flag)
-
-                // コールバックを設定
-                callbacks.set_vars_for_calc = cb_vars_for_calc
-                callbacks.get_weak = get_weak
-                callbacks.calc_dmg = cb_calc_dmg
-                break
-            }
-            case "操虫棍":
-                // 赤白エキス モーション値*1.2 
-                // 赤白橙エキス モーション値*1.25
-                let essences = Number(section.find(".essences select option:selected").val())
-                if(essences > 1){
-                    // エキスが選択された時は赤エキス時に存在するモーションだけ計算
-                    for(m in IG_DICT){
-                        damage_dict[m] = []
-                        if(IG_DICT[m][2]){
-                            // 物理
-                            damage_dict[m].push(
-                                mul(weapon_magn, essences, sum_array(IG_DICT[m][0]) / 100, affi_exp, phys_sharp_magn, phys_weak))
-                            // 属性
-                            damage_dict[m].push(
-                                mul(ele_magn, ele_sharp_magn, IG_DICT[m][1], ele_weak, crit_ele_magn))
-                        }
-                    }
-                }else{
-                    for(m in IG_DICT){
-                        damage_dict[m] = []
-                        // 物理
-                        damage_dict[m].push(
-                            mul(weapon_magn, sum_array(IG_DICT[m][0])/100, affi_exp,phys_sharp_magn, phys_weak))
-                        // 属性
-                        damage_dict[m].push(
-                            mul(ele_magn, ele_sharp_magn, IG_DICT[m][1], ele_weak, crit_ele_magn))
-                    }
-                }
-                break
-        }
-
         // obj_calc_flowを元にダメージ計算
         damage_obj = calc_damage_flow(weapon, motions, data[monster],  
                                       callbacks)
