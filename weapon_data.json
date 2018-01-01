@@ -54,6 +54,17 @@
             "atk": 624, "ele_type": "水", "ele_val": 120, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "sharp": "緑", "sharp+": "緑", "slots": 1
         }
     },
+    "狩猟笛":{
+        "メタルバグパイプ": {
+            "atk": 312, "ele_type": "無", "ele_val": 0, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "sharp": "黄", "sharp+": "黄", "slots": 0 
+        },
+        "サウンドofクライ": {
+            "atk": 676, "ele_type": "龍", "ele_val": 180, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 20, "sharp": "緑", "sharp+": "青", "slots": 0
+        },
+        "ケチャルワッパ ": {
+            "atk": 416, "ele_type": "水", "ele_val": 200, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "sharp": "緑", "sharp+": "緑", "slots": 0
+        }
+    },
     "ランス":{
         "アイアンランス": {
             "atk": 138, "ele_type": "無", "ele_val": 0, "awake_ele_type": 0, "awake_ele_val": 0, "affi": 0, "sharp": "黄", "sharp+": "黄", "slots": 0 

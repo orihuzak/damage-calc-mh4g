@@ -242,44 +242,49 @@ const DB_LIST = [
 ]
 
 /** ハンマー 
- *  {モーション名: {dmg_type: 攻撃タイプ, motion_val: モーション値}} */
-const HAMMER_DICT = {
-    "[抜刀]振り上げ": {dmg_type: "打撃", motion_val: [20]},
-    "横振り": {dmg_type: "打撃", motion_val: [15]},
-    "縦振り": {dmg_type: "打撃", motion_val: [42]},
-    "縦振り連打": {dmg_type: "打撃", motion_val: [20]},
-    "アッパー": {dmg_type: "打撃", motion_val: [90]},
-    "溜めI": {dmg_type: "打撃", motion_val: [25]},
-    "溜めI追加攻撃": {dmg_type: "打撃", motion_val: [20]},
-    "溜めII": {dmg_type: "打撃", motion_val: [40]},
-    "溜めIII": {dmg_type: "打撃", motion_val: [15, 76]},
+ *  { name: モーション名, dmg_type: 攻撃タイプ, vals: [モーション値]}} */
+const HAMMER_LIST = [
+    { name: "[抜刀]振り上げ", dmg_type: "打撃", vals: [20] },
+    { name: "横振り", dmg_type: "打撃", vals: [15] },
+    { name: "縦振り", dmg_type: "打撃", vals: [42] },
+    { name: "縦振り連打", dmg_type: "打撃", vals: [20] },
+    { name: "アッパー", dmg_type: "打撃", vals: [90] },
+    { name: "溜めI", dmg_type: "打撃", vals: [25] },
+    { name: "溜めI追加攻撃", dmg_type: "打撃", vals: [20] },
+    { name: "溜めII", dmg_type: "打撃", vals: [40] },
+    { name: "溜めIII", dmg_type: "打撃", vals: [15, 76] },
     // 20+10*n nはヒット数、最大6
-    "回転攻撃": {dmg_type: "打撃", motion_val: [20, 10], max_hits: 6},
-    "ぶんまわし": {dmg_type: "打撃", motion_val: [60]},
-    "ジャンプ攻撃": {dmg_type: "打撃", motion_val: [42]},
-    "ジャンプ溜めI": {dmg_type: "打撃", motion_val: [65]},
-    "ジャンプ溜めII": {dmg_type: "打撃", motion_val: [70]},
-    "ジャンプ溜めIII": {dmg_type: "打撃", motion_val: [80]}
-}
+    { name: "回転攻撃1撃目", dmg_type: "打撃", vals: [20] },
+    { name: "回転攻撃2撃目以降5ヒット", dmg_type: "打撃", 
+      vals: [10, 10, 10, 10, 10] },
+    { name: "ぶんまわし", dmg_type: "打撃", vals: [60] },
+    { name: "ジャンプ攻撃", dmg_type: "打撃", vals: [42] },
+    { name: "ジャンプ溜めI", dmg_type: "打撃", vals: [65] },
+    { name: "ジャンプ溜めII", dmg_type: "打撃", vals: [70] },
+    { name: "ジャンプ溜めIII", dmg_type: "打撃", vals: [80] }
+]
 
-const HH_DICT = {
-    "[抜刀]前方攻撃":33,
-    "ぶん回し":30,
-    "ツカ攻撃":10, //斬撃
-    "連音攻撃1":12,
-    "連音攻撃2":22,
-    "後方攻撃":45,
-    "叩きつけ1":15,
-    "叩きつけ2":45,
-    "[抜刀]ジャンプ叩きつけ":36,
-    "[抜刀]演奏":35,
-    "演奏(前方攻撃後)":20,
-    "演奏(ツカ攻撃後)":25,
-    "追加演奏(後方)1":40,
-    "追加演奏(後方)2":30,
-    "追加演奏(左右)":35,
-    "自分強化以外の追加演奏初撃":33,
-}
+/** 狩猟笛
+ *  { name: モーション名, dmg_type: 攻撃タイプ, vals: [モーション値]}}
+ */
+const HH_LIST = [
+    { name: "[抜刀]前方攻撃", dmg_type: "打撃", val: 33 },
+    { name: "ぶん回し", dmg_type: "打撃", val: 30 },
+    { name: "ツカ攻撃", dmg_type: "切断", val: 10 }, //斬撃
+    { name: "連音攻撃1", dmg_type: "打撃", val: 12 },
+    { name: "連音攻撃2", dmg_type: "打撃", val: 22 },
+    { name: "後方攻撃", dmg_type: "打撃", val: 45 },
+    { name: "叩きつけ1", dmg_type: "打撃", val: 15 },
+    { name: "叩きつけ2", dmg_type: "打撃", val: 45 },
+    { name: "[抜刀]ジャンプ叩きつけ", dmg_type: "打撃", val: 36 },
+    { name: "[抜刀]演奏", dmg_type: "打撃", val: 35 },
+    { name: "演奏(前方攻撃後)", dmg_type: "打撃", val: 20 },
+    { name: "演奏(ツカ攻撃後)", dmg_type: "打撃", val: 25 },
+    { name: "追加演奏(後方)1", dmg_type: "打撃", val: 40 },
+    { name: "追加演奏(後方)2", dmg_type: "打撃", val: 30 },
+    { name: "追加演奏(左右)", dmg_type: "打撃", val: 35 },
+    { name: "自分強化以外の追加演奏初撃", dmg_type: "打撃", val: 33 }
+]
 
 /** ランス
  *  {モーション名:モーション値}
@@ -434,6 +439,11 @@ const HAS_ELEMENT = (x, arr) => (arr.indexOf(x) >= 0) ? true : false
 function map_from_obj(obj){
     return Object.keys(obj).reduce(
         (map, key) => map.set(key, obj[key]), new Map())
+}
+
+/** objをmapに変換 */
+function obj_to_map(obj){
+    return new Map(Object.entries(obj))
 }
 
 /** 指定したkeysを参照して、objからvaluesリストをつくって返す
@@ -639,6 +649,20 @@ function get_ele_weak(part, ele_type){
     catch(e){ return [0, 0] } // 属性武器じゃない場合、こちらが実行される
 }
 
+/**********************************************************************/
+/*** ダメージ計算 *******************************************************/
+/**********************************************************************/
+
+/** 汎用的なダメージ計算関数 */
+function calc_dmg(weapon, motion, weak, i){
+    dmg_obj = {}
+    dmg_obj["物理"] = weapon.true_atk * weapon.sharp * weapon.affi_exp 
+                     * motion.val / 100 * weak.phys[i] / 100
+    dmg_obj["属性"] = weapon.true_element * weapon.ele_sharp
+                     * weapon.crit_ele_exp * weak.ele[i] / 100
+    return dmg_obj
+}
+
 
 /**********************************************************************/
 /*** 大剣 *************************************************************/
@@ -730,6 +754,26 @@ function db_calc_dmg(weapon, motion, weak, i){
 
 
 /**********************************************************************/
+/*** ハンマー **********************************************************/
+/**********************************************************************/
+
+function hammer_calc_dmg(weapon, motion, weak, i){
+    let dmg_obj = {},
+        sum_phys = 0,
+        sum_ele = 0
+    motion.vals.forEach( val => {
+        sum_phys += weapon.true_atk * weapon.sharp * weapon.affi_exp 
+            * val / 100 * weak.phys[i] / 100
+        sum_ele += weapon.true_element * weapon.ele_sharp 
+            * weapon.crit_ele_exp * weak.ele[i] / 100
+    })
+    dmg_obj["物理"] = sum_phys
+    dmg_obj["属性"] = sum_ele
+    return dmg_obj
+}
+
+
+/**********************************************************************/
 /*** ランス ************************************************************/
 /**********************************************************************/
 
@@ -751,17 +795,6 @@ function lance_get_weak(part, dmg_type, ele_type){
         weak.ele = get_ele_weak(part, ele_type)
     }
     return weak
-}
-
-/** ランスのダメージ計算をする関数 */
-function lance_calc_dmg(weapon, motion, weak, i){
-    dmg_obj = {}
-    dmg_obj["物理"] = weapon.true_atk * motion.val / 100 
-                     * weapon.affi_exp * weapon.sharp 
-                     * weak.phys[i] / 100
-    dmg_obj["属性"] = weapon.true_element * weapon.ele_sharp
-                     * weapon.crit_ele_exp * weak.ele[i] / 100
-    return dmg_obj
 }
 
 
@@ -1661,95 +1694,26 @@ function click_calc_button(){
                 break
             }
             case "ハンマー": {
-                for(motion in HAMMER_DICT){
-                    // モーションのダメージタイプを取得
-                    let dmg_type = HAMMER_DICT[motion]["dmg_type"]
-                    // モーション値
-                        motion_val = HAMMER_DICT[motion]["motion_val"],
-                        part_dmg_dict = {}, // 部位毎のダメージを格納するdict
-                        ele_flag = false
-                    if(!(ele_type == "" || ele_type == "無")){
-                        ele_flag = true
-                    }
-                    for(part in data[monster]){
-                        // モンスターの部位毎のダメージタイプ肉質を取得
-                        let phys_weak = data[monster][part][dmg_type],
-                            ele_weak = []
-                        // 肉質変化しない場合、怒り肉質を通常肉質と同じ値にする
-                        if(phys_weak.length == 1){ 
-                            phys_weak.push(phys_weak[0])
-                        }
-                        if(ele_flag){
-                            // モンスターの部位毎の耐属性を取得
-                            ele_weak = data[monster][part][ele_type]
-                            if(ele_weak.length == 1){ 
-                                ele_weak.push(ele_weak[0])
-                            }
-                        }
-                        // 肉質ごとのダメージを格納する配列
-                        let dmg_arr = [{}, {}]
-                        
-                        // 物理ダメージを計算
-                        // 肉質変化があればそれぞれ計算
-                        for(let i = 0; i < 2; i++){
-                            let sum_motion_dmg = 0,
-                                sum_element_dmg = 0
-                            if(motion == "回転攻撃"){
-                                let hits = 1
-                                for(let n = 0; n < motion_val.length;
-                                    n++){
-                                    if(n == 1){
-                                        hits = HAMMER_DICT[motion]["max_hits"]
-                                    }
-                                    sum_motion_dmg += mul(weapon_magn,
-                                        motion_val[n] / 100, affi_exp, phys_sharp_magn, phys_weak[i] / 100, hits)
-                                    if(ele_flag){
-                                        sum_element_dmg += mul(ele_magn,
-                                            ele_sharp_magn, 
-                                            ele_weak[i] / 100, 
-                                            crit_ele_exp, hits)
-                                    }
-                                    
-                                }
-                            }else{
-                                for(let n = 0; n < motion_val.length;
-                                    n++){
-                                    sum_motion_dmg += mul(weapon_magn,
-                                        motion_val[n] / 100, affi_exp, phys_sharp_magn, phys_weak[i] / 100)
-                                    if(ele_flag){
-                                        sum_element_dmg += mul(ele_magn,
-                                        ele_sharp_magn, ele_weak[i] / 100,
-                                        crit_ele_exp)
-                                }
-                            }}
-                            
-                            dmg_arr[i]["物理"] = sum_motion_dmg
-                            dmg_arr[i]["属性"] = sum_element_dmg
-                        }
-                        part_dmg_dict[part] = dmg_arr
-                    }
-                    damage_dict[motion] = part_dmg_dict
-                }
+                motions = HAMMER_LIST
+                // コールバック
+                callbacks.set_vars_for_calc = set_vars_for_calc
+                callbacks.get_weak = get_weak
+                callbacks.calc_dmg = hammer_calc_dmg
                 break
             }
-            case "狩猟笛":
-                for(m in HH_DICT){
-                    damage_dict[m] = []
-                    // 物理ダメ
-                    damage_dict[m].push(
-                        mul(weapon_magn, HH_DICT[m]/100, affi_exp, phys_sharp_magn, phys_weak))
-                    
-                    // 属性ダメ
-                    damage_dict[m].push(
-                        mul(ele_magn, ele_sharp_magn, ele_weak, crit_ele_exp))
-                }
+            case "狩猟笛": {
+                motions = HH_LIST
+                callbacks.set_vars_for_calc = set_vars_for_calc
+                callbacks.get_weak = get_weak
+                callbacks.calc_dmg = calc_dmg
                 break
+            }
             case "ランス": {
                 motions = LANCE_LIST
                 // コールバック
                 callbacks.set_vars_for_calc = set_vars_for_calc
                 callbacks.get_weak = lance_get_weak
-                callbacks.calc_dmg = lance_calc_dmg
+                callbacks.calc_dmg = calc_dmg
                 break
             }    
             case "ガンランス": {
